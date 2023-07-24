@@ -10,10 +10,12 @@
 		3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE13DF38BA29EA33DC36E417 /* Pods_SejongCommunity.framework */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
 		F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12465112A67BAB500037D8C /* SceneDelegate.swift */; };
-		F12465142A67BAB500037D8C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12465132A67BAB500037D8C /* ViewController.swift */; };
-		F12465172A67BAB500037D8C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F12465152A67BAB500037D8C /* Main.storyboard */; };
 		F12465192A67BAB600037D8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12465182A67BAB600037D8C /* Assets.xcassets */; };
 		F124651C2A67BAB600037D8C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F124651A2A67BAB600037D8C /* LaunchScreen.storyboard */; };
+		F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DA9A2A6D244100B6C7F0 /* MainTabBarController.swift */; };
+		F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */; };
+		F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */; };
+		F154DAA22A6D2C0A00B6C7F0 /* MypageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,11 +25,13 @@
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F124650F2A67BAB500037D8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F12465112A67BAB500037D8C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		F12465132A67BAB500037D8C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		F12465162A67BAB500037D8C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F12465182A67BAB600037D8C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F124651B2A67BAB600037D8C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F124651D2A67BAB600037D8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F154DA9A2A6D244100B6C7F0 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
+		F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MypageViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +60,6 @@
 				E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */,
 				0B32C66B2BBF22586B302105 /* Pods-SejongCommunity.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -81,15 +84,25 @@
 		F124650E2A67BAB500037D8C /* SejongCommunity */ = {
 			isa = PBXGroup;
 			children = (
+				F154DA9E2A6D2BA900B6C7F0 /* VC */,
 				F124650F2A67BAB500037D8C /* AppDelegate.swift */,
 				F12465112A67BAB500037D8C /* SceneDelegate.swift */,
-				F12465132A67BAB500037D8C /* ViewController.swift */,
-				F12465152A67BAB500037D8C /* Main.storyboard */,
 				F12465182A67BAB600037D8C /* Assets.xcassets */,
 				F124651A2A67BAB600037D8C /* LaunchScreen.storyboard */,
 				F124651D2A67BAB600037D8C /* Info.plist */,
 			);
 			path = SejongCommunity;
+			sourceTree = "<group>";
+		};
+		F154DA9E2A6D2BA900B6C7F0 /* VC */ = {
+			isa = PBXGroup;
+			children = (
+				F154DA9A2A6D244100B6C7F0 /* MainTabBarController.swift */,
+				F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */,
+				F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */,
+				F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */,
+			);
+			path = VC;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,7 +167,6 @@
 			files = (
 				F124651C2A67BAB600037D8C /* LaunchScreen.storyboard in Resources */,
 				F12465192A67BAB600037D8C /* Assets.xcassets in Resources */,
-				F12465172A67BAB500037D8C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,23 +219,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F12465142A67BAB500037D8C /* ViewController.swift in Sources */,
 				F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */,
+				F154DAA22A6D2C0A00B6C7F0 /* MypageViewController.swift in Sources */,
+				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
+				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
+				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		F12465152A67BAB500037D8C /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F12465162A67BAB500037D8C /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		F124651A2A67BAB600037D8C /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -362,9 +369,9 @@
 				INFOPLIST_FILE = SejongCommunity/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -391,9 +398,9 @@
 				INFOPLIST_FILE = SejongCommunity/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

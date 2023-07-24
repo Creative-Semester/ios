@@ -13,10 +13,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        
+        // UIWindowScene이 있을 경우에만 루트 뷰 컨트롤러를 설정합니다.
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+
+        // 윈도우 생성
+        window = UIWindow(windowScene: windowScene)
+
+        // MainTabBarController를 루트 뷰 컨트롤러로 설정
+        let mainTabBarController = MainTabBarController()
+        window?.rootViewController = mainTabBarController
+
+        // 윈도우를 키 윈도우로 설정하고 보이도록 합니다.
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
