@@ -10,32 +10,98 @@ import SnapKit
 
 class ChatViewController: UIViewController {
 
-    private let voteBoardButton: UIButton = {
+    private let studentCouncilImageView: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(named: "studentCouncil")
+        
+        return imageView
+    }()
+    
+    private let studentCouncilNameLabel: UILabel = {
+       let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)//임시로 추가
+        label.textColor = .black
+        label.textAlignment = .left
+        label.text = "AI로봇공학과"
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
+    private let studentCouncilExpLabel: UILabel = {
+       let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 13, weight: .medium)//임시로 추가
+        label.textColor = .darkGray
+        label.textAlignment = .left
+        label.text = "제 7대 학생회\nRU:RI - 하나되어 울리는 두드림입니다."
+        label.numberOfLines = 2
+        
+        return label
+    }()
+    
+    
+    private let officeDetailButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle("안건 투표 게시판", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        button.setTitleColor(.black, for: .normal)
-        button.backgroundColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(voteBoardButtonTapped), for: .touchUpInside)
+        button.setTitle("사무내역보기", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        button.setTitleColor(.darkGray, for: .normal)
+        button.addTarget(self, action: #selector(officeDetailButtonTapped), for: .touchUpInside)
 
-        
         return button
     }()
+    
+    private let officeDetailRightErrow: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(systemName: "chevron.right")?.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .darkGray
+        
+        return imageView
+    }()
+    
+    private let lineView: UIView = {
+       let view = UIView()
+        
+        view.backgroundColor = .lightGray
+        
+        return view
+    }()
+    
+    private let pledgeTitleLabel: UILabel = {
+       let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)//임시로 추가
+        label.textColor = .black
+        label.textAlignment = .left
+        label.text = "공약 이행도"
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
     
     private let pledgeButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle("학생회 공약 보기", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-        button.setTitleColor(.black, for: .normal)
-        button.backgroundColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        button.layer.cornerRadius = 10
+        button.setTitle("전체보기", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        button.setTitleColor(.darkGray, for: .normal)
         button.addTarget(self, action: #selector(pledgeButtonTabbed), for: .touchUpInside)
-
         
         return button
+    }()
+    
+    private let pledgeRightErrow: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.image = UIImage(systemName: "chevron.right")?.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .darkGray
+        
+        return imageView
     }()
     
     
@@ -61,7 +127,7 @@ class ChatViewController: UIViewController {
     private let totalProgressTitleLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .darkGray
         label.textAlignment = .center
         label.text = "학생회 전체 공약 이행률"
@@ -73,7 +139,7 @@ class ChatViewController: UIViewController {
     private let totalProgressPercentLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .black
         label.textAlignment = .center
         label.text = "47%"
@@ -105,7 +171,7 @@ class ChatViewController: UIViewController {
     private let welfareProgressTitleLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .darkGray
         label.textAlignment = .center
         label.text = "복지행사 공약 이행률"
@@ -117,7 +183,7 @@ class ChatViewController: UIViewController {
     private let welfareProgressPercentLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .black
         label.textAlignment = .center
         label.text = "47%"
@@ -148,7 +214,7 @@ class ChatViewController: UIViewController {
     private let cultureProgressTitleLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .darkGray
         label.textAlignment = .center
         label.text = "문화행사 공약 이행률"
@@ -160,7 +226,7 @@ class ChatViewController: UIViewController {
     private let cultureProgressPercentLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .black
         label.textAlignment = .center
         label.text = "47%"
@@ -191,7 +257,7 @@ class ChatViewController: UIViewController {
     private let scholarshipProgressTitleLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .darkGray
         label.textAlignment = .center
         label.text = "학술행사 공약 이행률"
@@ -203,7 +269,7 @@ class ChatViewController: UIViewController {
     private let scholarshipProgressPercentLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 15, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
         label.textColor = .black
         label.textAlignment = .center
         label.text = "47%"
@@ -236,21 +302,96 @@ class ChatViewController: UIViewController {
     }
     
 
+
+    @objc private func officeDetailButtonTapped() {
+        // 버튼을 클릭했을 때 호출되는 함수
+
+        let nextViewController = VoteBoardViewController() // 이동할 뷰 컨트롤러 생성
+
+        // SecondViewController로 화면 전환을 수행
+        self.navigationController?.pushViewController(nextViewController, animated: true)
+    }
+    
+    @objc private func pledgeButtonTabbed() {
+        // 버튼을 클릭했을 때 호출되는 함수
+
+        let nextViewController = PledgeBoardViewController() // 이동할 뷰 컨트롤러 생성
+
+        // SecondViewController로 화면 전환을 수행
+        self.navigationController?.pushViewController(nextViewController, animated: true)
+    }
+}
+
+extension ChatViewController {
+    
     func setupStudentCouncilView() {
-        view.addSubview(voteBoardButton)
         
-        voteBoardButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(5)
-            make.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(60)
+        view.addSubview(studentCouncilImageView)
+        
+        studentCouncilImageView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(170)
+        }
+        
+        view.addSubview(studentCouncilNameLabel)
+        
+        studentCouncilNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(studentCouncilImageView.snp.bottom).offset(15)
+            make.leading.equalTo(view.snp.leading).offset(15)
+        }
+        
+        view.addSubview(studentCouncilExpLabel)
+        
+        studentCouncilExpLabel.snp.makeConstraints { make in
+            make.top.equalTo(studentCouncilNameLabel.snp.bottom).offset(10)
+            make.leading.equalTo(view.snp.leading).offset(15)
+        }
+        
+        view.addSubview(officeDetailButton)
+        
+        officeDetailButton.snp.makeConstraints { make in
+            make.trailing.equalTo(view.snp.trailing).offset(-30)
+            make.bottom.equalTo(studentCouncilExpLabel.snp.bottom).offset(6.5)
+        }
+        
+        view.addSubview(officeDetailRightErrow)
+        
+        officeDetailRightErrow.snp.makeConstraints { make in
+            make.leading.equalTo(officeDetailButton.snp.trailing)
+            make.centerY.equalTo(officeDetailButton.snp.centerY)
+            make.height.width.equalTo(13)
+        }
+        
+        view.addSubview(lineView)
+        
+        lineView.snp.makeConstraints { make in
+            make.top.equalTo(officeDetailButton.snp.bottom).offset(10)
+            make.leading.equalTo(view.snp.leading).offset(15)
+            make.trailing.equalTo(view.snp.trailing).offset(-15)
+            make.height.equalTo(1)
+        }
+        
+        view.addSubview(pledgeTitleLabel)
+        
+        pledgeTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(lineView.snp.bottom).offset(10)
+            make.leading.equalTo(view.snp.leading).offset(15)
         }
         
         view.addSubview(pledgeButton)
         
         pledgeButton.snp.makeConstraints { make in
-            make.top.equalTo(voteBoardButton.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(10)
-            make.height.equalTo(60)
+            make.bottom.equalTo(pledgeTitleLabel.snp.bottom)
+            make.trailing.equalTo(view.snp.trailing).offset(-30)
+        }
+        
+        view.addSubview(pledgeRightErrow)
+        
+        pledgeRightErrow.snp.makeConstraints { make in
+            make.leading.equalTo(pledgeButton.snp.trailing)
+            make.centerY.equalTo(pledgeButton.snp.centerY)
+            make.height.width.equalTo(13)
         }
         
         setupStackView()
@@ -260,8 +401,8 @@ class ChatViewController: UIViewController {
         view.addSubview(progressStackView)
         
         progressStackView.snp.makeConstraints { make in
-            make.top.equalTo(pledgeButton.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(10)
+            make.top.equalTo(pledgeTitleLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(15)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         
@@ -367,23 +508,5 @@ class ChatViewController: UIViewController {
             make.trailing.equalTo(scholarshipProgressView.snp.trailing).offset(-10)
             make.height.equalTo(15)
         }
-    }
-
-    @objc private func voteBoardButtonTapped() {
-        // 버튼을 클릭했을 때 호출되는 함수
-
-        let nextViewController = VoteBoardViewController() // 이동할 뷰 컨트롤러 생성
-
-        // SecondViewController로 화면 전환을 수행
-        self.navigationController?.pushViewController(nextViewController, animated: true)
-    }
-    
-    @objc private func pledgeButtonTabbed() {
-        // 버튼을 클릭했을 때 호출되는 함수
-
-        let nextViewController = PledgeBoardViewController() // 이동할 뷰 컨트롤러 생성
-
-        // SecondViewController로 화면 전환을 수행
-        self.navigationController?.pushViewController(nextViewController, animated: true)
     }
 }
