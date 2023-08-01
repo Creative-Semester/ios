@@ -12,6 +12,7 @@ import SnapKit
 struct Post {
     let title : String
     let content : String
+    
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -31,7 +32,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         title = "자유게시판"
         setupTableView()
         //글쓰기 버튼을 상단 바에 추가
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(WriteBtnTappend))
+        let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
         navigationItem.leftBarButtonItem = addButton
         //게시글을 검색하는 버튼을 생성
         let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(SearchBtnTapped))
@@ -45,7 +46,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
         //UITableView에 셀 등록
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
         
     }
@@ -58,12 +59,13 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     }
     //cellForRowAt 메서드 각 셀에 해당하는 개시물의 제목 표시
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
         let post = posts[indexPath.row]
-        cell.textLabel?.text = post.title
+        cell.titleLabel.text = post.title
+        cell.commentLabel.text = post.content
+        
         return cell
     }
-    
     // MARK: - UITableViewDelegate
     //테이블 뷰의 델리게이트 프로토콜을 구현
     //didselectRowAt 메서드 특정 게시물의 상세 내용을 보여주기 위함
@@ -71,6 +73,9 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         tableView.deselectRow(at: indexPath, animated: true)
         let post = posts[indexPath.row]
         showPostDetail(post: post)
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
     }
     //셀을 선택했을 때 해당 게시물의 상세 내용을 보여주기 위함
     func showPostDetail(post: Post){
@@ -82,7 +87,11 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         navigationController?.pushViewController(OpenWriteViewController(), animated: true)
     }
     @objc func SearchBtnTapped() {
-        let alertController = UIAlertController(title: "검색", message: "검색어를 입력하세요.", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "검색", message: nil, preferredStyle: .alert)
+        // 검색어를 입력 받을 텍스트 필드 추가
+        alertController.addTextField() { (textField) in
+            textField.placeholder = "검색어를 입력하세요"
+        }
                 // '취소' 버튼 추가
                 let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
                 alertController.addAction(cancelAction)
