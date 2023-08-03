@@ -2,7 +2,7 @@
 //  CouncilBoardViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/07/25.
+//  Created by 강민수 on 2023/07/25.
 //
 
 import Foundation
