@@ -14,6 +14,8 @@ struct Coment {
 //게시물의 상세 내용을 보여주는 UIViewController
 class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     var tableView = UITableView()
+    // 댓글을 저장할 배열
+    var comments: [String] = []
     let post : Post
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
     init(post: Post) {
@@ -28,7 +30,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
         title = post.title
-//        setupViews()
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
         tableView = UITableView(frame: .zero, style: .grouped)
@@ -36,7 +37,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
-        tableView.showsHorizontalScrollIndicator = false
+        tableView.showsVerticalScrollIndicator = false
         self.view.addSubview(tableView)
         tableView.snp.makeConstraints{(make) in
             make.top.equalToSuperview().offset(60)
@@ -44,15 +45,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.bottom.equalToSuperview().offset(0)
         }
     }
-    //게시물의 상세 내용을 보여줄 라벨을 설정하는 메서드
-//    func setupViews() {
-//        let label = UILabel()
-//        label.text = post.content
-//        //numberOfLines 속성을 0으로 설정하여 여러 줄의 텍스트를 표시할 수 있도록 함
-//        label.numberOfLines = 0
-//        label.textAlignment = .center
-//        view.addSubview(label)
-//    }
     @objc func toolBtnTapped() {
         let alertController = UIAlertController(title: "글 메뉴", message: nil, preferredStyle: .alert)
         //메뉴 추가
@@ -91,10 +83,14 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         } else if section == 1{
             return 450
         }
+//        else if section == 2{
+//            return 600
+//        }
         return 0
     }
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 0{
+            //게시물의 상세 페이지를 보여주는 뷰
             let headerView = UIView()
             headerView.backgroundColor = .white
 
@@ -110,8 +106,57 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             }
             return headerView
         } else if section == 1{
+            //댓글 창을 만들 뷰
+//            let CommenttableView = UITableView(frame: .zero, style: .grouped)
+//            CommenttableView.delegate = self
+//            CommenttableView.dataSource = self
+//            CommenttableView.backgroundColor = .white
+//            CommenttableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
+//            CommenttableView.frame = view.bounds
+//
+//            return CommenttableView
             return nil
         }
+//        else if section == 2{
+//            //댓글을 입력하는 뷰
+//            let CommentWriteView = UIView()
+//            CommentWriteView.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+//            //댓글 입력 텍스트필드
+//            let CommentWriteText = UITextField()
+//            let spaceView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)) // 원하는 크기로 설정
+//            CommentWriteText.rightView = spaceView
+//            CommentWriteText.rightViewMode = .always // 항상 표시되도록 설정
+//            CommentWriteText.textAlignment = .right
+//            CommentWriteText.backgroundColor = .white
+//            CommentWriteText.layer.cornerRadius = 20
+//            CommentWriteText.layer.masksToBounds = true
+//            CommentWriteView.addSubview(CommentWriteText)
+//            //댓글 입력 버튼
+//            let CommentWriteBtn = UIButton(type: .system)
+//            CommentWriteBtn.backgroundColor = .white
+//            let iconImage = UIImage(systemName: "message")
+//            CommentWriteBtn.setImage(iconImage, for: .normal)
+//            CommentWriteView.addSubview(CommentWriteBtn)
+//
+//            //SnapKit을 이용해 오토레이아웃 설정
+//            CommentWriteText.snp.makeConstraints{ (make) in
+//                make.top.equalToSuperview().offset(10)
+//                make.bottom.equalToSuperview().offset(10)
+//                make.leading.equalToSuperview().offset(10)
+//                make.width.equalTo(200)
+//            }
+//            CommentWriteBtn.snp.makeConstraints{ (make) in
+//                make.top.equalToSuperview().offset(10)
+//                make.top.equalToSuperview().offset(10)
+//                make.leading.equalTo(CommentWriteText.snp.trailing).offset(10)
+//            }
+//            CommentWriteView.snp.makeConstraints{ (make) in
+//                make.bottom.equalToSuperview().offset(0)
+//                make.leading.trailing.equalToSuperview().inset(0)
+//            }
+//            return CommentWriteView
+//            return nil
+//        }
         return nil
     }
     // MARK: - UITableViewDelegate

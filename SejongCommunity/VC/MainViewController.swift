@@ -44,10 +44,11 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     // 캘린더 뷰 생성
     var CalenderView : UIView = {
-       let view = UIView()
+       let view = UIImageView()
        //뷰의 배경색 설정
         view.backgroundColor = #colorLiteral(red: 1, green: 0.8216146827, blue: 0.8565195203, alpha: 1)
-        
+        view.image = UIImage(named: "Image")
+        view.contentMode = .scaleAspectFill
         // 뷰를 둥글게
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
