@@ -24,6 +24,8 @@
 		F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */; };
 		F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */; };
 		F154DAA22A6D2C0A00B6C7F0 /* MypageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */; };
+		F16FE9EF2A70FEEE005F194C /* VoteBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16FE9EE2A70FEEE005F194C /* VoteBoardViewController.swift */; };
+		F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +50,8 @@
 		F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MypageViewController.swift; sourceTree = "<group>"; };
+		F16FE9EE2A70FEEE005F194C /* VoteBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteBoardViewController.swift; sourceTree = "<group>"; };
+		F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeBoardViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +152,8 @@
 				F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */,
 				F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */,
 				F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */,
+				F16FE9EE2A70FEEE005F194C /* VoteBoardViewController.swift */,
+				F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */,
 				E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */,
 			);
 			path = VC;
@@ -276,11 +282,13 @@
 				E4021E6D2A6F8B2800FFEAB2 /* DepartBoardViewController.swift in Sources */,
 				F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */,
 				F154DAA22A6D2C0A00B6C7F0 /* MypageViewController.swift in Sources */,
+				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
+				F16FE9EF2A70FEEE005F194C /* VoteBoardViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
