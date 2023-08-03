@@ -1,16 +1,16 @@
 {
   "images" : [
     {
-      "idiom" : "iphone",
+      "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "idiom" : "iphone",
+      "filename" : "스크린샷 2023-08-01 오후 9.52.25.png",
+      "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "스크린샷 2023-08-01 오후 9.52.25.png",
-      "idiom" : "iphone",
+      "idiom" : "universal",
       "scale" : "3x"
     }
   ],
