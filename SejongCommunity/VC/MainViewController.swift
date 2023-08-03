@@ -13,8 +13,9 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     var NotificationView : UIView = {
         let view = UIView()
         //뷰의 배경색을 하얀색으로 설정
-        view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         
+        let spaceView = UIView()
         //뷰 안에 레이블 추가(제목)
         let Notificationtitle = UILabel(frame: CGRect(x: 10, y: 10, width: 100, height: 40))
         Notificationtitle.text = "공지사항"
@@ -30,7 +31,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         //뷰 안에 공지사항을 알리는 레이블 추가
         let Notification = UILabel(frame: CGRect(x:120, y:10, width:220, height:40))
         Notification.text = "사물함 재배치 투표기간(~2023.08.27)"
-        Notification.backgroundColor = .white
+        Notification.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         Notification.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         Notification.textAlignment = .center
         Notification.font = UIFont(name: "Bold", size: 20)
@@ -57,7 +58,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // 게시판 뷰 생성
     var BoardView : UIView = {
        let view = UIView()
-        view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        view.backgroundColor = .white
         // 자유게시판 버튼 생성
         let OpenBoardBtn = UIButton(type: .system)
         OpenBoardBtn.backgroundColor = #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)
@@ -140,14 +141,30 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     }()
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        self.view.backgroundColor = .white
+        let image = UIImage(named: "SideLogo")
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        let View = UIView()
+        View.addSubview(imageView)
+        self.navigationController?.navigationBar.barTintColor = .white
+        let logoBarItem = UIBarButtonItem(customView: View)
+        self.navigationItem.leftBarButtonItem = logoBarItem
+        
+        View.snp.makeConstraints{ (make) in
+            make.width.equalTo(150)
+            make.height.equalTo(60)
+        }
+        imageView.snp.makeConstraints{ (make) in
+            make.edges.equalToSuperview()
+        }
         
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
         tableView.showsVerticalScrollIndicator = false
-        tableView.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        tableView.backgroundColor = .white
         view.addSubview(tableView)
         
         tableView.snp.makeConstraints{ (make) in
@@ -155,6 +172,10 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().offset(0)
         }
+    }
+    //로고를 눌렀을때 메서드
+    @objc func logoTapped() {
+        
     }
     //버튼 액션 처리 메서드
     //자유게시판 버튼 액션 처리
@@ -176,7 +197,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // MARK: - UITableViewDataSource
     //테이블 뷰의 섹션 개수를 반환하는 메서드
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
     //각 센션별 행 개수를 반환하는 메서드
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -192,10 +213,12 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // 각 섹션 헤더 뷰의 높이를 반환하는 메서드
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0{
-            return 60
+            return 1
         } else if section == 1{
-            return 200
+            return 60
         } else if section == 2{
+            return 200
+        } else if section == 3{
             return 330
         }
         return 0
@@ -203,10 +226,14 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // 테이블 뷰의 각 센션에 헤더 뷰를 반환하는 메서드
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 0{
-            return NotificationView
+            let View = UIView()
+            View.backgroundColor = .white
+            return View
         } else if section == 1{
-            return CalenderView
+            return NotificationView
         } else if section == 2{
+            return CalenderView
+        } else if section == 3{
             return BoardView
         }
         return nil
