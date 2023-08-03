@@ -8,6 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE13DF38BA29EA33DC36E417 /* Pods_SejongCommunity.framework */; };
+		E4021E6B2A6F8B1000FFEAB2 /* OpenBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E6A2A6F8B1000FFEAB2 /* OpenBoardViewController.swift */; };
+		E4021E6D2A6F8B2800FFEAB2 /* DepartBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E6C2A6F8B2800FFEAB2 /* DepartBoardViewController.swift */; };
+		E4021E6F2A6F8B4000FFEAB2 /* ClassBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E6E2A6F8B4000FFEAB2 /* ClassBoardViewController.swift */; };
+		E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E702A6F8B5100FFEAB2 /* CouncilBoardViewController.swift */; };
+		E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E742A750A4F00FFEAB2 /* CouncilRegisterViewController.swift */; };
+		E4021E782A76414400FFEAB2 /* PostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E772A76414400FFEAB2 /* PostDetailViewController.swift */; };
+		E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E792A76494000FFEAB2 /* OpenWtireViewController.swift */; };
+		E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
 		F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12465112A67BAB500037D8C /* SceneDelegate.swift */; };
 		F12465192A67BAB600037D8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12465182A67BAB600037D8C /* Assets.xcassets */; };
@@ -23,6 +31,14 @@
 /* Begin PBXFileReference section */
 		0B32C66B2BBF22586B302105 /* Pods-SejongCommunity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.release.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.release.xcconfig"; sourceTree = "<group>"; };
 		AE13DF38BA29EA33DC36E417 /* Pods_SejongCommunity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SejongCommunity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4021E6A2A6F8B1000FFEAB2 /* OpenBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenBoardViewController.swift; sourceTree = "<group>"; };
+		E4021E6C2A6F8B2800FFEAB2 /* DepartBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartBoardViewController.swift; sourceTree = "<group>"; };
+		E4021E6E2A6F8B4000FFEAB2 /* ClassBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassBoardViewController.swift; sourceTree = "<group>"; };
+		E4021E702A6F8B5100FFEAB2 /* CouncilBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilBoardViewController.swift; sourceTree = "<group>"; };
+		E4021E742A750A4F00FFEAB2 /* CouncilRegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilRegisterViewController.swift; sourceTree = "<group>"; };
+		E4021E772A76414400FFEAB2 /* PostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewController.swift; sourceTree = "<group>"; };
+		E4021E792A76494000FFEAB2 /* OpenWtireViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWtireViewController.swift; sourceTree = "<group>"; };
+		E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.debug.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.debug.xcconfig"; sourceTree = "<group>"; };
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F124650F2A67BAB500037D8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +83,35 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		E4021E722A6F8B6700FFEAB2 /* BoardVC */ = {
+			isa = PBXGroup;
+			children = (
+				E4021E762A763D2400FFEAB2 /* OpenBoard */,
+				E4021E6C2A6F8B2800FFEAB2 /* DepartBoardViewController.swift */,
+				E4021E6E2A6F8B4000FFEAB2 /* ClassBoardViewController.swift */,
+				E4021E702A6F8B5100FFEAB2 /* CouncilBoardViewController.swift */,
+			);
+			path = BoardVC;
+			sourceTree = "<group>";
+		};
+		E4021E732A750A2B00FFEAB2 /* MyPageVC */ = {
+			isa = PBXGroup;
+			children = (
+				E4021E742A750A4F00FFEAB2 /* CouncilRegisterViewController.swift */,
+			);
+			path = MyPageVC;
+			sourceTree = "<group>";
+		};
+		E4021E762A763D2400FFEAB2 /* OpenBoard */ = {
+			isa = PBXGroup;
+			children = (
+				E4021E6A2A6F8B1000FFEAB2 /* OpenBoardViewController.swift */,
+				E4021E772A76414400FFEAB2 /* PostDetailViewController.swift */,
+				E4021E792A76494000FFEAB2 /* OpenWtireViewController.swift */,
+			);
+			path = OpenBoard;
+			sourceTree = "<group>";
+		};
 		F12465032A67BAB500037D8C = {
 			isa = PBXGroup;
 			children = (
@@ -88,6 +133,8 @@
 		F124650E2A67BAB500037D8C /* SejongCommunity */ = {
 			isa = PBXGroup;
 			children = (
+				E4021E732A750A2B00FFEAB2 /* MyPageVC */,
+				E4021E722A6F8B6700FFEAB2 /* BoardVC */,
 				F154DA9E2A6D2BA900B6C7F0 /* VC */,
 				F124650F2A67BAB500037D8C /* AppDelegate.swift */,
 				F12465112A67BAB500037D8C /* SceneDelegate.swift */,
@@ -105,8 +152,11 @@
 				F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */,
 				F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */,
 				F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */,
+ feat-studentcouncilboard-ui-task
 				F16FE9EE2A70FEEE005F194C /* VoteBoardViewController.swift */,
 				F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */,
+				E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */,
+ develop
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -225,10 +275,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4021E6B2A6F8B1000FFEAB2 /* OpenBoardViewController.swift in Sources */,
+				E4021E782A76414400FFEAB2 /* PostDetailViewController.swift in Sources */,
+				E4021E6F2A6F8B4000FFEAB2 /* ClassBoardViewController.swift in Sources */,
+				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
+				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
+				E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */,
+				E4021E6D2A6F8B2800FFEAB2 /* DepartBoardViewController.swift in Sources */,
 				F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */,
 				F154DAA22A6D2C0A00B6C7F0 /* MypageViewController.swift in Sources */,
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
+				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
