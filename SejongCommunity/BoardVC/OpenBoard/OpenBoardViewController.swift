@@ -80,6 +80,8 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     //셀을 선택했을 때 해당 게시물의 상세 내용을 보여주기 위함
     func showPostDetail(post: Post){
         let detailViewController = PostDetailViewController(post: post)
+        //게시글의 상세 글 볼때 탭바 숨기기
+        tabBarController?.tabBar.isHidden = true
         navigationController?.pushViewController(detailViewController, animated: true)
     }
     //글쓰기 버튼을 누르면 글작성 뷰로 이동시킬 메서드

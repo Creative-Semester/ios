@@ -9,30 +9,42 @@ import Foundation
 import UIKit
 import SnapKit
 
-class OpenWriteViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+class OpenWriteViewController : UIViewController {
     var tableView = UITableView()
     //익명 표시
     let anonymousView : UIView = {
         let view = UIView()
         let ccLabel = UIView()
         ccLabel.backgroundColor = #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
-        ccLabel.layer.cornerRadius = 20
-        view.addSubview(ccLabel)
+        ccLabel.layer.cornerRadius = 10
         let StudentLabel = UILabel()
         StudentLabel.text = "익명"
         StudentLabel.textColor = .black
         StudentLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        view.addSubview(StudentLabel)
+        
+        //StackView를 이용해 오토레이아웃 설정
+        let StackView = UIStackView()
+        StackView.axis = .horizontal
+        StackView.spacing = 20
+        StackView.distribution = .fill
+        StackView.alignment = .fill
+        StackView.backgroundColor = .white
+        StackView.addArrangedSubview(ccLabel)
+        StackView.addArrangedSubview(StudentLabel)
+        view.addSubview(StackView)
         
         //Snapkit을 이용해 오토레이아웃 설정
+        StackView.snp.makeConstraints{ (make) in
+            make.bottom.leading.trailing.equalToSuperview().inset(0)
+            make.top.equalToSuperview().offset(27)
+        }
         ccLabel.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(45)
+            make.top.equalToSuperview().offset(0)
             make.leading.equalToSuperview().offset(0)
-            make.width.equalTo(50)
-            make.height.equalTo(50)
+            make.width.equalTo(StackView.snp.width).dividedBy(9.5)
         }
         StudentLabel.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset((60))
+            make.top.equalToSuperview().offset(0)
             make.leading.equalTo(ccLabel.snp.trailing).offset(20)
         }
         return view
@@ -87,9 +99,25 @@ class OpenWriteViewController : UIViewController, UITableViewDelegate, UITableVi
         UploadBtn.layer.masksToBounds = true
         view.addSubview(UploadBtn)
         
+        //StackView를 이용해 오토레이아웃 설정
+        let StackView = UIStackView()
+        StackView.axis = .vertical
+        StackView.spacing = 20
+        StackView.distribution = .fill
+        StackView.alignment = .fill
+        StackView.backgroundColor = .white
+        StackView.addArrangedSubview(Title)
+        StackView.addArrangedSubview(Message)
+        StackView.addArrangedSubview(UploadImage)
+        StackView.addArrangedSubview(UploadBtn)
+        view.addSubview(StackView)
+        
         //SnapKit을 이용한 오토레이아웃 설정
+        StackView.snp.makeConstraints{ (make) in
+            make.top.bottom.leading.trailing.equalToSuperview().inset(0)
+        }
         Title.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(30)
+            make.top.equalToSuperview().offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(60)
         }
@@ -113,53 +141,47 @@ class OpenWriteViewController : UIViewController, UITableViewDelegate, UITableVi
     override func viewDidLoad(){
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
-        tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.backgroundColor = .white
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.showsVerticalScrollIndicator = false
-        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
-        self.view.addSubview(tableView)
-        tableView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(60)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().offset(0)
-        }
+       
+        let ScrollView = UIScrollView()
+        ScrollView.backgroundColor = .white
+        ScrollView.isScrollEnabled = true
+        ScrollView.showsHorizontalScrollIndicator = false
+        let StackView = UIStackView()
+        StackView.axis = .vertical
+        StackView.spacing = 20
+        StackView.distribution = .fill
+        StackView.alignment = .fill
+        StackView.backgroundColor = .white
+        StackView.addArrangedSubview(anonymousView)
+        StackView.addArrangedSubview(OpenWriteView)
+        ScrollView.addSubview(StackView)
+        self.view.addSubview(ScrollView)
         
+        //Snapkit을 이용해 오토레이아웃 설정
+        ScrollView.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(self.view.frame.height / 8.5)
+            make.bottom.equalToSuperview().offset(-self.view.frame.height / 8.5)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        StackView.snp.makeConstraints{ (make) in
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.height.equalTo(ScrollView.snp.height)
+            make.width.equalTo(ScrollView.snp.width)
+            make.top.equalToSuperview().offset(0)
+            make.bottom.equalToSuperview().offset(-3)
+        }
+        anonymousView.snp.makeConstraints{ (make) in
+//            make.top.equalToSuperview().offset(50)
+            make.height.equalTo(StackView.snp.height).dividedBy(10)
+            make.leading.trailing.equalToSuperview().inset(0)
+        }
+        OpenWriteView.snp.makeConstraints{ (make) in
+            make.leading.trailing.equalToSuperview().offset(0)
+            make.top.equalTo(anonymousView.snp.bottom).offset(20)
+        }
     }
     //이미지 업로드 메서드
     @objc func UploadImageBtnTapped(){
         
-    }
-    // MARK: - UITableViewDataSource
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath)
-        return cell
-    }
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0{
-            return 100
-        } else if section == 1{
-            return 490
-        }
-        return 0
-    }
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            return anonymousView
-        } else if section == 1{
-            return OpenWriteView
-        }
-        return nil
-    }
-    // MARK: - UITableViewDelegate
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
     }
 }
