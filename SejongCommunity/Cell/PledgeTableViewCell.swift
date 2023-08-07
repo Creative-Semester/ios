@@ -12,7 +12,7 @@ class PledgeTableViewCell: UITableViewCell {
     private let pledgeTitleLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 17, weight: .medium)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 15, weight: .medium)//임시로 추가
         label.textColor = .black
         label.textAlignment = .left
         label.text = "지능기전 해지기전 학술제 개최"
@@ -23,6 +23,7 @@ class PledgeTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none // 선택되었을때 효과
         
         setupTableVieCell()
     }
