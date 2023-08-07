@@ -10,7 +10,7 @@ import SnapKit
 
 class PledgeBoardViewController: UIViewController {
     
-    private var pledgeTitle: String = "복지행사 공약"
+    private var isEditingMode: Bool = false
     
     private let welfareButton: UIButton = {
         let button = UIButton()
@@ -51,17 +51,17 @@ class PledgeBoardViewController: UIViewController {
         return button
     }()
     
-//    private let pledgeTitleLabel: UILabel = {
-//       let label = UILabel()
-//
-//        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)//임시로 추가
-//        label.textColor = .black
-//        label.textAlignment = .left
-//        label.text = "복지행사 공약"
-//        label.numberOfLines = 1
-//
-//        return label
-//    }()
+    private let pledgeTitleLabel: UILabel = {
+       let label = UILabel()
+
+        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+        label.textColor = .black
+        label.textAlignment = .left
+        label.text = "복지행사 공약"
+        label.numberOfLines = 1
+
+        return label
+    }()
     
     private let pledgeTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -73,18 +73,34 @@ class PledgeBoardViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.title = "공약전체보기"
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        setupNavigationBar()
+        
+        self.title = "공약전체보기"
+        
         pledgeTableView.dataSource = self
         pledgeTableView.delegate = self
         pledgeTableView.register(PledgeTableViewCell.self, forCellReuseIdentifier: "PledgeTableViewCell")
         
         setupUI()
+    }
+    
+    func setupNavigationBar() {
+        let editButtonTitle = isEditingMode ? "저장" : "편집"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: editButtonTitle,
+            style: .plain,
+            target: self,
+            action: #selector(editButtonTapped)
+        )
+        
+        let textColor = isEditingMode ? UIColor.systemBlue : UIColor.systemRed
+        navigationItem.rightBarButtonItem?.setTitleTextAttributes([.foregroundColor: textColor], for: .normal)
     }
     
     private func setupUI() {
@@ -102,15 +118,29 @@ class PledgeBoardViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
         }
         
+        view.addSubview(pledgeTitleLabel)
+        
+        pledgeTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(stackView.snp.bottom).offset(20)
+            make.leading.equalTo(view.snp.leading).offset(20)
+        }
+        
         view.addSubview(pledgeTableView)
         
         pledgeTableView.snp.makeConstraints { make in
-            make.top.equalTo(stackView.snp.bottom).offset(10)
+            make.top.equalTo(pledgeTitleLabel.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         
         welfareButton.isSelected = true
+    }
+    
+    @objc func editButtonTapped() {
+        isEditingMode.toggle()
+        
+        // 네비게이션 바 우측 버튼 텍스트 변경
+        setupNavigationBar()
     }
     
     @objc func pledgeMenuButtonTapped(_ sender: UIButton) {
@@ -123,12 +153,14 @@ class PledgeBoardViewController: UIViewController {
         sender.isSelected = true
         
         if sender == welfareButton {
-            pledgeTitle = "복지행사 공약"
+            pledgeTitleLabel.text = "복지행사 공약"
         } else if sender == cultureButton {
-            pledgeTitle = "문화행사 공약"
+            pledgeTitleLabel.text = "문화행사 공약"
         } else if sender == scholarshipButton {
-            pledgeTitle = "학술행사 공약"
+            pledgeTitleLabel.text = "학술행사 공약"
         }
+        
+        pledgeTableView.reloadData()
     }
 
 }
@@ -143,7 +175,7 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 10
+        return 15
     }
     
     // 각 센션 마다 사용할 cell의 종류
@@ -151,12 +183,33 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "PledgeTableViewCell", for: indexPath) as! PledgeTableViewCell
         
+        // 드래그 삭제 기능을 허용할 때만 셀의 드래그 삭제 스타일 설정
+//        if 학생회 {
+//            cell.showsReorderControl = true
+//            cell.selectionStyle = .default
+//        } else {
+//            cell.showsReorderControl = false
+//            cell.selectionStyle = .none
+//        }
+        
         return cell
     }
     
     //Cell의 높이를 지정한다.
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 50
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // 선택한 행을 삭제하고 테이블 뷰에서도 삭제
+            // 여기에 실제 삭제 작업을 구현하세요
+            tableView.beginUpdates()
+            // 삭제 작업 (예: 데이터 소스에서 항목 제거)
+            // data.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            tableView.endUpdates()
+        }
     }
 }
 
