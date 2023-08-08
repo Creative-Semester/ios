@@ -110,15 +110,6 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "PledgeTableViewCell", for: indexPath) as! PledgeTableViewCell
         
-        // 드래그 삭제 기능을 허용할 때만 셀의 드래그 삭제 스타일 설정
-//        if 학생회 {
-//            cell.showsReorderControl = true
-//            cell.selectionStyle = .default
-//        } else {
-//            cell.showsReorderControl = false
-//            cell.selectionStyle = .none
-//        }
-        
         return cell
     }
     
@@ -151,18 +142,6 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
             return indexPath
         } else {
             return nil
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // 선택한 행을 삭제하고 테이블 뷰에서도 삭제
-            // 여기에 실제 삭제 작업을 구현하세요
-            tableView.beginUpdates()
-            // 삭제 작업 (예: 데이터 소스에서 항목 제거)
-            // data.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            tableView.endUpdates()
         }
     }
 }
