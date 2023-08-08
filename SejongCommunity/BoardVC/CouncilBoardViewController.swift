@@ -302,12 +302,14 @@ class CouncilBoardViewController : UIViewController {
         setupStudentCouncilView()
     }
     
+}
 
-
+extension CouncilBoardViewController {
+    
     @objc private func officeDetailButtonTapped() {
         // 버튼을 클릭했을 때 호출되는 함수
 
-        let nextViewController = VoteBoardViewController() // 이동할 뷰 컨트롤러 생성
+        let nextViewController = OfficeDetailsViewController() // 이동할 뷰 컨트롤러 생성
 
         // SecondViewController로 화면 전환을 수행
         self.navigationController?.pushViewController(nextViewController, animated: true)
@@ -321,9 +323,6 @@ class CouncilBoardViewController : UIViewController {
         // SecondViewController로 화면 전환을 수행
         self.navigationController?.pushViewController(nextViewController, animated: true)
     }
-}
-
-extension CouncilBoardViewController {
     
     func setupStudentCouncilView() {
         
