@@ -42,10 +42,14 @@ class OfficeDetailsCellTappedViewController: UIViewController {
         view.addSubview(checkBoxImage)
         
         titleLabel.snp.makeConstraints { make in
-            make.centerX.equalTo(view.snp.centerX)
-            make.centerY.equalTo(view.snp.centerY)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
+            make.leading.equalTo(view.snp.leading).offset(20)
         }
 
+        checkBoxImage.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
     }
 
 }
