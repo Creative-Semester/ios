@@ -9,6 +9,8 @@ import UIKit
 
 class PledgeTableViewCell: UITableViewCell {
     
+    var isCompletion: Bool = false
+    
     private let pledgeTitleLabel: UILabel = {
         let label = UILabel()
         
@@ -21,25 +23,57 @@ class PledgeTableViewCell: UITableViewCell {
         return label
     }()
     
+    private var checkBoxImage: UIImageView = {
+        let imageView = UIImageView()
+        
+        return imageView
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .none // 선택되었을때 효과
+        selectionStyle = .default // 선택되었을때 효과
         
-        setupTableVieCell()
+        setup()
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        if selected {
+            // 선택 효과 지연 시간
+            let delay: TimeInterval = 0.2
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.setSelected(false, animated: true)
+            }
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
     
-    func setupTableVieCell() {
+    func setup() {
+        
+        checkBoxImage.image = isCompletion ? UIImage(systemName: "checkmark.square") : UIImage(systemName: "square")
+        
+        setupLayout()
+    }
+    
+    func setupLayout() {
         contentView.addSubview(pledgeTitleLabel)
+        contentView.addSubview(checkBoxImage)
+        
+        //[pledgeTitleLabel, checkBoxImage].forEach { addSubview($0)}
         
         pledgeTitleLabel.snp.makeConstraints { make in
             make.centerX.equalTo(contentView.snp.centerX)
             make.centerY.equalTo(contentView.snp.centerY)
             make.leading.equalTo(contentView.snp.leading).offset(30)
+        }
+        
+        checkBoxImage.snp.makeConstraints { make in
+            make.centerY.equalTo(pledgeTitleLabel.snp.centerY)
+            make.width.height.equalTo(30)
+            make.trailing.equalTo(contentView.snp.trailing).offset(-20)
         }
     }
 }
