@@ -1,5 +1,5 @@
 //
-//  OpenBoardViewController.swift
+//  DepartBoardViewController.swift
 //  SejongCommunity
 //
 //  Created by 정성윤 on 2023/07/25.
@@ -7,26 +7,22 @@
 
 import Foundation
 import UIKit
-import SnapKit
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
-struct Post {
+struct DepartPost {
     let title : String
     let content : String
     
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
-class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DepartBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
-    
-    
-    let posts : [Post] = [
-        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다."),
-        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다."),
-        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.")
+    let departposts : [DepartPost] = [
+        DepartPost(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다."),
+        DepartPost(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다."),
+        DepartPost(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.")
     ]
     override func viewDidLoad() {
-        self.view.backgroundColor = #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)
         self.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationController?.navigationBar.tintColor = .red
         title = "자유게시판"
@@ -50,17 +46,16 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         view.addSubview(tableView)
         
     }
-    
     // MARK: - UITableViewDataSource
     //테이블 뷰의 데이터 소스 프로토콜을 구현
     //numberOfRowsInSection 메서드 개시물 개수 반환
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
+        return departposts.count
     }
     //cellForRowAt 메서드 각 셀에 해당하는 개시물의 제목 표시
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
-        let post = posts[indexPath.row]
+        let post = departposts[indexPath.row]
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
         
@@ -71,14 +66,14 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     //didselectRowAt 메서드 특정 게시물의 상세 내용을 보여주기 위함
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let post = posts[indexPath.row]
+        let post = departposts[indexPath.row]
         showPostDetail(post: post)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
     //셀을 선택했을 때 해당 게시물의 상세 내용을 보여주기 위함
-    func showPostDetail(post: Post){
+    func showPostDetail(post: DepartPost){
         let detailViewController = PostDetailViewController(post: post)
         //게시글의 상세 글 볼때 탭바 숨기기
         tabBarController?.tabBar.isHidden = true

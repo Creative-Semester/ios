@@ -2,21 +2,22 @@
 //  MainViewController.swift
 //  SejongCommunity
 //
-//  Created by 강민수 on 2023/07/23.
+//  Created by 정성윤 on 2023/07/23.
 //
 
 import UIKit
 import SnapKit
-class MainViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class MainViewController: UIViewController{
     var tableView : UITableView!
     //공지사항을 알리는 뷰를 생성
     var NotificationView : UIView = {
         let view = UIView()
         //뷰의 배경색을 하얀색으로 설정
-        view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         
+        let spaceView = UIView()
         //뷰 안에 레이블 추가(제목)
-        let Notificationtitle = UILabel(frame: CGRect(x: 10, y: 10, width: 100, height: 40))
+        let Notificationtitle = UILabel()
         Notificationtitle.text = "공지사항"
         Notificationtitle.textAlignment = .center
         Notificationtitle.backgroundColor = #colorLiteral(red: 0.9913799167, green: 0.5604230165, blue: 0.5662528872, alpha: 1)
@@ -28,9 +29,9 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         view.addSubview(Notificationtitle)
         
         //뷰 안에 공지사항을 알리는 레이블 추가
-        let Notification = UILabel(frame: CGRect(x:120, y:10, width:220, height:40))
+        let Notification = UILabel()
         Notification.text = "사물함 재배치 투표기간(~2023.08.27)"
-        Notification.backgroundColor = .white
+        Notification.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         Notification.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         Notification.textAlignment = .center
         Notification.font = UIFont(name: "Bold", size: 20)
@@ -39,6 +40,20 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         //뷰를 둥글게 만들기
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
+        
+        //Snapkit을 이용해 오토레이아웃 설정
+        Notificationtitle.snp.makeConstraints{ (make) in
+            make.top.bottom.equalToSuperview().inset(10)
+            make.leading.equalToSuperview().offset(10)
+            make.width.equalTo(view.snp.width).dividedBy(3)
+        }
+        Notification.snp.makeConstraints{ (make) in
+            make.top.bottom.equalToSuperview().inset(0)
+            make.width.equalTo(view.snp.width).dividedBy(2)
+            make.leading.equalTo(Notificationtitle.snp.trailing).offset(15)
+        }
+        
+        
         return view
     }()
     
@@ -57,7 +72,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     // 게시판 뷰 생성
     var BoardView : UIView = {
        let view = UIView()
-        view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        view.backgroundColor = .white
         // 자유게시판 버튼 생성
         let OpenBoardBtn = UIButton(type: .system)
         OpenBoardBtn.backgroundColor = #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)
@@ -66,11 +81,8 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let Openimage = UIImage(named: "OpenBoard")?.withRenderingMode(.alwaysOriginal)
         OpenBoardBtn.setImage(Openimage, for: .normal)
         OpenBoardBtn.imageView?.contentMode = .scaleAspectFit
-//        OpenBoardBtn.setTitle("자유게시판", for: .normal)
-//        OpenBoardBtn.setTitleColor(.white, for: .normal)
-//        OpenBoardBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
         OpenBoardBtn.addTarget(self, action: #selector(OpenBoardBtnTapped), for: .touchUpInside)
-        view.addSubview(OpenBoardBtn)
+//        view.addSubview(OpenBoardBtn)
         
         // 과소식게시판 버튼 생성
         let DepartBoardBtn = UIButton()
@@ -81,7 +93,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         DepartBoardBtn.layer.cornerRadius = 10
         DepartBoardBtn.layer.masksToBounds = true
         DepartBoardBtn.addTarget(self, action: #selector(DepartBoardBtnTapped), for: .touchUpInside)
-        view.addSubview(DepartBoardBtn)
+//        view.addSubview(DepartBoardBtn)
         
         // 수업게시판 버튼 생성
         let ClassBoardBtn = UIButton()
@@ -92,7 +104,7 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         ClassBoardBtn.layer.cornerRadius = 10
         ClassBoardBtn.layer.masksToBounds = true
         ClassBoardBtn.addTarget(self, action: #selector(ClassBoardBtnTapped), for: .touchUpInside)
-        view.addSubview(ClassBoardBtn)
+//        view.addSubview(ClassBoardBtn)
         
         // 학생회 버튼 생성
         let CouncilBoardBtn = UIButton()
@@ -103,58 +115,144 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
         CouncilBoardBtn.layer.cornerRadius = 10
         CouncilBoardBtn.layer.masksToBounds = true
         CouncilBoardBtn.addTarget(self, action: #selector(CouncilBoardBtnTapped), for: .touchUpInside)
-        view.addSubview(CouncilBoardBtn)
+//        view.addSubview(CouncilBoardBtn)
         
         // 뷰를 둥글게
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
         
+        //전체 스택뷰
+        let AllStackView = UIStackView()
+        AllStackView.axis = .vertical
+        AllStackView.spacing = 20
+        AllStackView.distribution = .fill
+        AllStackView.alignment = .fill
+        AllStackView.backgroundColor = .white
+        
+        //스택뷰1로 화면의 크기 설정
+        let StackView1 = UIStackView()
+        StackView1.alignment = .fill
+        StackView1.backgroundColor = .white
+        StackView1.distribution = .fill
+        StackView1.spacing = 20
+        StackView1.axis = .horizontal
+        StackView1.addArrangedSubview(OpenBoardBtn)
+        StackView1.addArrangedSubview(DepartBoardBtn)
+        
+        //스택뷰2로 화면의 크기 설정
+        let StackView2 = UIStackView()
+        StackView2.alignment = .fill
+        StackView2.backgroundColor = .white
+        StackView2.distribution = .fill
+        StackView2.spacing = 20
+        StackView2.axis = .horizontal
+        StackView2.addArrangedSubview(ClassBoardBtn)
+        StackView2.addArrangedSubview(CouncilBoardBtn)
+
+        AllStackView.addArrangedSubview(StackView1)
+        AllStackView.addArrangedSubview(StackView2)
+        view.addSubview(AllStackView)
         //snapkit으로 오토레이아웃 설정
+        AllStackView.snp.makeConstraints{(make) in
+            make.top.bottom.leading.trailing.equalToSuperview().inset(0)
+        }
+        StackView1.snp.makeConstraints{(make) in
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.top.equalToSuperview().offset(0)
+            make.height.equalTo(AllStackView.snp.height).dividedBy(2).offset(-10)
+        }
         OpenBoardBtn.snp.makeConstraints{ (make) in
-//            make.top.equalToSuperview().offset(20)
-//            make.leading.equalToSuperview().offset(20)
-            make.width.equalTo(150)
-            make.height.equalTo(150)
+            make.leading.equalToSuperview().offset(0)
+            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
+            make.top.equalToSuperview().offset(0)
         }
-        DepartBoardBtn.snp.makeConstraints { (make) in
-//            make.top.equalToSuperview().offset(20)
+        DepartBoardBtn.snp.makeConstraints{ (make) in
             make.trailing.equalToSuperview().offset(-0)
-            make.width.equalTo(150)
-            make.height.equalTo(150)
+            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
+            make.top.equalToSuperview().offset(0)
         }
-        ClassBoardBtn.snp.makeConstraints { (make) in
-//            make.bottom.equalToSuperview().offset(-0)
-            make.top.equalTo(DepartBoardBtn.snp.bottom).offset(30)
-            make.leading.equalToSuperview().offset(-0)
-            make.width.equalTo(150)
-            make.height.equalTo(150)
+        StackView2.snp.makeConstraints{ (make) in
+            make.top.equalTo(StackView1.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.bottom.equalToSuperview().offset(-0)
+            make.height.equalTo(AllStackView.snp.height).dividedBy(2).offset(-10)
         }
-        CouncilBoardBtn.snp.makeConstraints { (make) in
-//            make.bottom.equalToSuperview().offset(-0)
-            make.top.equalTo(DepartBoardBtn.snp.bottom).offset(30)
+        ClassBoardBtn.snp.makeConstraints{(make) in
+            make.leading.equalToSuperview().inset(0)
+            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
+            make.bottom.equalToSuperview().offset(-0)
+        }
+        CouncilBoardBtn.snp.makeConstraints{(make) in
+            make.bottom.equalToSuperview().offset(-0)
+            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
             make.trailing.equalToSuperview().offset(-0)
-            make.width.equalTo(150)
-            make.height.equalTo(150)
         }
         return view
     }()
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        self.view.backgroundColor = .white
+        let image = UIImage(named: "SideLogo")
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        let View = UIView()
+        View.addSubview(imageView)
+        self.navigationController?.navigationBar.barTintColor = .white
+        let logoBarItem = UIBarButtonItem(customView: View)
+        self.navigationItem.leftBarButtonItem = logoBarItem
         
-        tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "CustomCell")
-        tableView.showsVerticalScrollIndicator = false
-        tableView.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        view.addSubview(tableView)
-        
-        tableView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(60)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().offset(0)
+        View.snp.makeConstraints{ (make) in
+            make.width.equalTo(150)
+            make.height.equalTo(60)
         }
+        imageView.snp.makeConstraints{ (make) in
+            make.edges.equalToSuperview()
+        }
+
+        let ScrollView = UIScrollView()
+        self.view.addSubview(ScrollView)
+        ScrollView.isScrollEnabled = true
+        ScrollView.showsHorizontalScrollIndicator = false
+        //Stack을 이용한 오토레이아웃 설정
+        let StackView = UIStackView()
+        StackView.alignment = .fill
+        StackView.axis = .vertical
+        StackView.distribution = .fill
+        StackView.backgroundColor = .white
+        StackView.spacing = 20
+        StackView.addArrangedSubview(NotificationView)
+        StackView.addArrangedSubview(CalenderView)
+        StackView.addArrangedSubview(BoardView)
+        ScrollView.addSubview(StackView)
+        //Snapkit을 이용해 오토레이아웃 설정
+        ScrollView.snp.makeConstraints{(make) in
+            make.center.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-self.view.frame.height / 8.5)
+            make.top.equalToSuperview().offset(self.view.frame.height / 8.5)
+            make.trailing.leading.equalToSuperview().inset(20)
+        }
+        StackView.snp.makeConstraints{ (make) in
+            make.height.equalTo(ScrollView.snp.height)
+            make.width.equalTo(ScrollView.snp.width)
+            make.bottom.equalToSuperview().offset(-3)
+            make.top.equalToSuperview().offset(0)
+        }
+        NotificationView.snp.makeConstraints{ (make) in
+            make.height.equalTo(StackView.snp.height).dividedBy(12)
+        }
+        CalenderView.snp.makeConstraints{ (make) in
+            make.top.equalTo(NotificationView.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.height.equalTo(StackView.snp.height).dividedBy(3.5)
+        }
+        BoardView.snp.makeConstraints{ (make) in
+            make.top.equalTo(CalenderView.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(0)
+        }
+    }
+    //로고를 눌렀을때 메서드
+    @objc func logoTapped() {
+        
     }
     //버튼 액션 처리 메서드
     //자유게시판 버튼 액션 처리
@@ -172,49 +270,5 @@ class MainViewController: UIViewController, UITableViewDelegate, UITableViewData
     //학생회 액션 처리
     @objc func CouncilBoardBtnTapped() {
         self.navigationController?.pushViewController(CouncilBoardViewController(), animated: true)
-    }
-    // MARK: - UITableViewDataSource
-    //테이블 뷰의 섹션 개수를 반환하는 메서드
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
-    }
-    //각 센션별 행 개수를 반환하는 메서드
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
-    }
-    //테이블 뷰 셀을 반환하는 메서드
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // 셀을 커스텀하여 사용하려면 UITablViewCell 대신 커스텀 셀을 반환하도록 구현
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath)
-        // 셀에 필요한 내용 설정
-        return cell
-    }
-    // 각 섹션 헤더 뷰의 높이를 반환하는 메서드
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0{
-            return 60
-        } else if section == 1{
-            return 200
-        } else if section == 2{
-            return 330
-        }
-        return 0
-    }
-    // 테이블 뷰의 각 센션에 헤더 뷰를 반환하는 메서드
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0{
-            return NotificationView
-        } else if section == 1{
-            return CalenderView
-        } else if section == 2{
-            return BoardView
-        }
-        return nil
-    }
-    
-    // MARK: - UITableViewDelegate
-    //테이블 뷰의 셀의 높이를 반환하는 메서드
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
     }
 }

@@ -1,15 +1,14 @@
 //
-//  OpenWtireViewController.swift
+//  DepartOpenWriteViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/07/30.
+//  Created by 정성윤 on 2023/08/09.
 //
 
 import Foundation
 import UIKit
 import SnapKit
-
-class OpenWriteViewController : UIViewController {
+class DepartOpenWriteViewController : UIViewController {
     var tableView = UITableView()
     //익명 표시
     let anonymousView : UIView = {
