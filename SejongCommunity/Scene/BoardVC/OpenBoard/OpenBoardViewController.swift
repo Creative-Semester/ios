@@ -12,7 +12,7 @@ import SnapKit
 struct Post {
     let title : String
     let content : String
-    
+    let image : UIImage?
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -21,12 +21,11 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     
     
     let posts : [Post] = [
-        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다."),
-        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다."),
-        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.")
+        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!),
+        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil),
+        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!)
     ]
     override func viewDidLoad() {
-        self.view.backgroundColor = #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)
         self.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationController?.navigationBar.tintColor = .red
         title = "자유게시판"
@@ -63,7 +62,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         let post = posts[indexPath.row]
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
-        
+        cell.postImageView.image = post.image
         return cell
     }
     // MARK: - UITableViewDelegate
