@@ -15,20 +15,6 @@ class LoginIntroViewController : UIViewController {
         setUpView()
     }
     func setUpView() {
-        let StackView = UIStackView()
-        StackView.axis = .vertical
-        StackView.distribution = .fill
-        StackView.alignment = .fill
-        StackView.backgroundColor = .white
         
-        let WelcomeLabel = UILabel()
-        WelcomeLabel.text = "Welcome To"
-        WelcomeLabel.textColor = .red
-        WelcomeLabel.textAlignment = .center
-        WelcomeLabel.backgroundColor = .white
-        WelcomeLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        StackView.addArrangedSubview(WelcomeLabel)
-        
-        let LogoImage = UIImage(named: "")
     }
 }
