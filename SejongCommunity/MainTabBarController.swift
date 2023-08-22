@@ -21,7 +21,7 @@ class MainTabBarController: UITabBarController {
         let vc3 = MypageViewController()
 
         vc1.tabBarItem = UITabBarItem(title: "메인페이지", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
-        vc2.tabBarItem = UITabBarItem(title: "쪽지", image: UIImage(systemName: "bubble.right"), selectedImage: UIImage(systemName: "bubble.right.fill"))
+        vc2.tabBarItem = UITabBarItem(title: "메시지", image: UIImage(systemName: "bubble.right"), selectedImage: UIImage(systemName: "bubble.right.fill"))
         vc3.tabBarItem = UITabBarItem(title: "마이페이지", image: UIImage(systemName: "person"), selectedImage: UIImage(systemName: "person.fill"))
         
         let nav1 = UINavigationController(rootViewController: vc1)
