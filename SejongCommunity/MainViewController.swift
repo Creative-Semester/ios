@@ -265,7 +265,8 @@ class MainViewController: UIViewController{
     }
     //수업게시판 버튼 액션 처리
     @objc func ClassBoardBtnTapped() {
-        self.navigationController?.pushViewController(ClassBoardViewController(), animated: true)
+//        self.navigationController?.pushViewController(ClassBoardViewController(), animated: true)
+        self.navigationController?.pushViewController(LoginIntroViewController(), animated: true)
     }
     //학생회 액션 처리
     @objc func CouncilBoardBtnTapped() {

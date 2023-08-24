@@ -14,6 +14,7 @@ struct DepartComment {
 //게시물의 상세 내용을 보여주는 UIViewController
 class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     var CommentTableView = UITableView()
+    private let GreatBtn = UIButton()
     // 댓글을 저장할 배열
     let comments : [DepartComment] = [
         DepartComment(comment: "첫 번째 댓글입니다"),
@@ -39,6 +40,7 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         navigationItem.rightBarButtonItem = toolBtn
         
         setupView()
+        setupTapGesture()
     }
     func setupView(){
         //각 뷰들을 넣을 스크롤뷰 생성
@@ -64,19 +66,47 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         DetailLabel.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
+            make.height.equalTo(40)
         }
         //이미지를 넣을 뷰
         let ImageView = UIImageView()
-        ImageView.image = post.image
-        ImageView.contentMode = .scaleAspectFit
-        ImageView.backgroundColor = .white
-        DetailView.addSubview(ImageView)
-        //Snapkit을 이용한 오토레이아웃
-        ImageView.snp.makeConstraints{ (make) in
-            make.top.equalTo(DetailLabel.snp.bottom).offset(20)
-            make.trailing.equalToSuperview().offset(-40)
-            make.leading.equalToSuperview().offset(30)
-            make.height.equalTo(300)
+        print("post.image가 nil인가? : \(post.image)")
+        if(post.image == nil) {
+            print("post.image가 nil인데 화면의 크기의 조정이 필요합니다.")
+        }else{
+            ImageView.image = post.image
+            ImageView.contentMode = .scaleAspectFit
+            ImageView.backgroundColor = .white
+            DetailView.addSubview(ImageView)
+            //Snapkit을 이용한 오토레이아웃
+            ImageView.snp.makeConstraints{ (make) in
+                make.top.equalTo(DetailLabel.snp.bottom).offset(10)
+                make.trailing.equalToSuperview().offset(-40)
+                make.leading.equalToSuperview().offset(30)
+                make.height.equalTo(200)
+            }
+        }
+        //게시글에 대한 좋아요를 누를 버튼
+        let image = UIImage(systemName: "heart.fill")
+        GreatBtn.setImage(image, for: .normal)
+        GreatBtn.backgroundColor = .white
+        GreatBtn.tintColor = .darkGray
+        GreatBtn.setTitle(" \(comments.count)", for: .normal)
+        GreatBtn.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        GreatBtn.setTitleColor(.darkGray, for: .normal)
+        GreatBtn.contentHorizontalAlignment = .right
+        GreatBtn.addTarget(self, action: #selector(GreatBtnTapped), for: .touchUpInside)
+        DetailView.addSubview(GreatBtn)
+        GreatBtn.snp.makeConstraints{ (make) in
+            if(post.image == nil) {
+                make.top.equalTo(DetailLabel.snp.bottom).offset(5)
+                make.trailing.equalToSuperview().offset(-20)
+            }else{
+                make.top.equalTo(ImageView.snp.bottom).offset(5)
+                make.trailing.equalToSuperview().offset(-40)
+            }
+            make.width.equalTo(200)
+            make.height.equalTo(50)
         }
         //게시물의 댓글을 나열 할 뷰
         let CommentTableView = UITableView()
@@ -97,9 +127,6 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         commentField.layer.cornerRadius = 10
         commentField.layer.masksToBounds = true
         commentField.font = UIFont.boldSystemFont(ofSize: 17)
-//        let spaceView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)) // 원하는 크기로 설정
-//        commentField.leftView = spaceView
-//        commentField.leftViewMode = .always // 항상 표시되도록 설정
         //Snapkit을 이용한 오토레이아웃
         view.addSubview(commentField)
         commentField.snp.makeConstraints{ (make) in
@@ -137,19 +164,31 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
             make.trailing.leading.equalToSuperview().inset(0)
         }
         StackView.snp.makeConstraints{ (make) in
-            make.height.equalTo(ScrollView.snp.height)
+//            make.height.equalTo(CommentTableView.frame.height)
+            if(post.image == nil){
+                print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
+            }else{
+                make.height.equalTo(DetailLabel.frame.height + ImageView.frame.height + CGFloat((comments.count + 4) * 100))
+            }
             make.width.equalTo(ScrollView.snp.width)
-            make.bottom.equalToSuperview().offset(0)
+            make.bottom.equalToSuperview().offset(-0)
             make.top.equalToSuperview().offset(0)
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            make.height.equalTo(DetailLabel.frame.height + ImageView.frame.height + 300)
+            if(post.image == nil){
+                print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                make.height.equalTo(DetailLabel.frame.height + 100)
+            }else{
+                make.height.equalTo(DetailLabel.frame.height + ImageView.frame.height + 300)
+            }
             make.leading.equalToSuperview().offset(20)
         }
         CommentTableView.snp.makeConstraints{ (make) in
-            make.top.equalTo(DetailView.snp.bottom).offset(20)
+            make.top.equalTo(DetailView.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
+            make.bottom.equalToSuperview().offset(0)
         }
         self.view.addSubview(view)
         view.snp.makeConstraints{ (make) in
@@ -162,13 +201,48 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
 
     }
+    //좋아요 버튼을 누르면 좋아요 수 + 색이 변함
+    @objc func GreatBtnTapped() {
+        if GreatBtn.isSelected {
+                    // 버튼이 이미 선택된 상태일 경우, 이전 색으로 되돌리기
+            GreatBtn.isSelected = false
+            GreatBtn.tintColor = .darkGray
+            GreatBtn.setTitleColor(.darkGray, for: .normal)
+            
+            // 좋아요 수 증가 및 버튼 타이틀 업데이트
+            if let currentLikes = Int(GreatBtn.title(for: .normal) ?? "0"){
+                var newLikes = currentLikes
+                newLikes -= 1
+                GreatBtn.setTitle("\(newLikes)", for: .normal)
+            }
+                } else {
+                    // 버튼이 선택되지 않은 상태일 경우, 새로운 색으로 설정
+                    GreatBtn.isSelected = true
+                    GreatBtn.tintColor = .red // 또는 원하는 다른 색상
+                    
+                    GreatBtn.setTitleColor(.red, for: .normal)
+                    // 좋아요 수 증가 및 버튼 타이틀 업데이트
+                    if let currentLikes = Int(GreatBtn.title(for: .normal) ?? "0"){
+                        var newLikes = currentLikes
+                        newLikes += 1
+                        GreatBtn.setTitle("\(newLikes)", for: .normal)
+                    }
+                }
+    }
+    //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
+    func setupTapGesture(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            self.view.addGestureRecognizer(tapGesture)
+    }
+    @objc func handleTap() {
+        self.view.endEditing(true) // 키보드가 열려있을 경우 닫기
+    }
     @objc private func keyboardWillShow(_ notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
             adjustCommentView(insets: contentInsets)
         }
     }
-
     @objc private func keyboardWillHide(_ notification: Notification) {
         let contentInsets = UIEdgeInsets.zero
         adjustCommentView(insets: contentInsets)
