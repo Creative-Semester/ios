@@ -34,6 +34,8 @@
 		F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547322A84C11B00671182 /* DepartBoardViewController.swift */; };
 		F1E547352A84C13D00671182 /* DepartOpenWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547342A84C13D00671182 /* DepartOpenWriteViewController.swift */; };
 		F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547362A84C15400671182 /* DepartPostDetailViewController.swift */; };
+		F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547442A9373B300671182 /* ChatTableViewCell.swift */; };
+		F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547462A937B8000671182 /* ChatRoomViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +70,8 @@
 		F1E547322A84C11B00671182 /* DepartBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartBoardViewController.swift; sourceTree = "<group>"; };
 		F1E547342A84C13D00671182 /* DepartOpenWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartOpenWriteViewController.swift; sourceTree = "<group>"; };
 		F1E547362A84C15400671182 /* DepartPostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartPostDetailViewController.swift; sourceTree = "<group>"; };
+		F1E547442A9373B300671182 /* ChatTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewCell.swift; sourceTree = "<group>"; };
+		F1E547462A937B8000671182 /* ChatRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +215,8 @@
 			isa = PBXGroup;
 			children = (
 				F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */,
+				F1E547442A9373B300671182 /* ChatTableViewCell.swift */,
+				F1E547462A937B8000671182 /* ChatRoomViewController.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -343,6 +349,7 @@
 				E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */,
 				E4021E6F2A6F8B4000FFEAB2 /* ClassBoardViewController.swift in Sources */,
 				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
+				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
 				E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */,
 				F1E547352A84C13D00671182 /* DepartOpenWriteViewController.swift in Sources */,
@@ -356,6 +363,7 @@
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
+				F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */,
 				F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
