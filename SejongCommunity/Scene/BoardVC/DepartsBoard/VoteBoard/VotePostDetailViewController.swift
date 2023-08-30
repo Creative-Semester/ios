@@ -1,30 +1,26 @@
 //
-//  DepartPostDetailViewController.swift
+//  VotePostDetailViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/08/09.
+//  Created by 정성윤 on 2023/08/30.
 //
 
 import Foundation
 import UIKit
-//댓글 창
-struct DepartComment {
-    let comment : String
-}
-//게시물의 상세 내용을 보여주는 UIViewController
-class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+
+class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     var CommentTableView = UITableView()
     private let GreatBtn = UIButton()
     // 댓글을 저장할 배열
     let comments : [DepartComment] = [
-        DepartComment(comment: "첫 번째 댓글입니다"),
-        DepartComment(comment: "두 번째 댓글입니다"),
-        DepartComment(comment: "세 번째 댓글입니다"),
-        DepartComment(comment: "네 번째 댓글입니다")
+        DepartComment(comment: "그건 아니죠,,"),
+        DepartComment(comment: "아니 이걸?"),
+        DepartComment(comment: "ㄹㅇㅋㅋ"),
+        DepartComment(comment: "와우!! 핫게 가자")
     ]
-    let post : DepartPost
+    let post : VotePost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
-    init(post: DepartPost) {
+    init(post: VotePost) {
         self.post = post
         super.init(nibName: nil, bundle: nil)
     }
@@ -156,7 +152,12 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         StackView.addArrangedSubview(CommentTableView)
         ScrollView.addSubview(StackView)
         self.view.addSubview(ScrollView)
-        
+        self.view.addSubview(view)
+        view.snp.makeConstraints{ (make) in
+            make.height.equalTo(self.view.frame.height / 9)
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.bottom.equalToSuperview()
+        }
         //SnapKit을 이용한 오토레이아웃 설정
         ScrollView.snp.makeConstraints{ (make) in
             make.bottom.equalToSuperview().offset(-self.view.frame.height / 8.5)
@@ -189,12 +190,6 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
             make.top.equalTo(DetailView.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview().offset(0)
-        }
-        self.view.addSubview(view)
-        view.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 9)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.bottom.equalToSuperview()
         }
         // 댓글 입력 필드에 대한 Notification Observer 등록
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -292,11 +287,11 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
     }
     override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
-            //부모로 이동했을때 탭바를 다시 켬
-            if isMovingFromParent {
-                print("Back 버튼 클릭됨")
-                tabBarController?.tabBar.isHidden = false
-            }
+            //부모로 이동해도 새로운 탭바를 사용할 것이기 때문에 기존의 탭바를 켤 필요 없음
+//            if isMovingFromParent {
+//                print("Back 버튼 클릭됨")
+//                tabBarController?.tabBar.isHidden = false
+//            }
         }
 }
 

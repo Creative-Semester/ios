@@ -26,16 +26,16 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!)
     ]
     override func viewDidLoad() {
-        self.navigationItem.setHidesBackButton(true, animated: false)
+//        self.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationController?.navigationBar.tintColor = .red
         title = "자유게시판"
         setupTableView()
         //글쓰기 버튼을 상단 바에 추가
         let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
-        navigationItem.leftBarButtonItem = addButton
+        navigationItem.rightBarButtonItem = addButton
         //게시글을 검색하는 버튼을 생성
-        let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(SearchBtnTapped))
-        navigationItem.rightBarButtonItem = searchButton
+//        let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(SearchBtnTapped))
+//        navigationItem.rightBarButtonItem = searchButton
     }
     //테이블뷰를 설정하는 메서드
     func setupTableView() {

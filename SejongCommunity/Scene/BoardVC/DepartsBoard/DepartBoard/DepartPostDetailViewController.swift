@@ -1,36 +1,30 @@
 //
-//  PostDetailViewController.swift
+//  DepartPostDetailViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/07/30.
+//  Created by 정성윤 on 2023/08/09.
 //
 
 import Foundation
 import UIKit
 //댓글 창
-struct Comment {
+struct DepartComment {
     let comment : String
 }
 //게시물의 상세 내용을 보여주는 UIViewController
-class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     var CommentTableView = UITableView()
     private let GreatBtn = UIButton()
     // 댓글을 저장할 배열
-    let comments : [Comment] = [
-        Comment(comment: "첫 번째 댓글입니다"),
-        Comment(comment: "두 번째 댓글입니다"),
-        Comment(comment: "세 번째 댓글입니다"),
-        Comment(comment: "네 번째 댓글입니다"),
-        Comment(comment: "5 번째 댓글입니다"),
-        Comment(comment: "6 번째 댓글입니다"),
-        Comment(comment: "7 번째 댓글입니다"),
-        Comment(comment: "8 번째 댓글입니다"),
-        Comment(comment: "9 번째 댓글입니다"),
-        Comment(comment: "10 번째 댓글입니다")
+    let comments : [DepartComment] = [
+        DepartComment(comment: "첫 번째 댓글입니다"),
+        DepartComment(comment: "두 번째 댓글입니다"),
+        DepartComment(comment: "세 번째 댓글입니다"),
+        DepartComment(comment: "네 번째 댓글입니다")
     ]
-    let post : Post
+    let post : DepartPost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
-    init(post: Post) {
+    init(post: DepartPost) {
         self.post = post
         super.init(nibName: nil, bundle: nil)
     }
@@ -53,7 +47,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         let ScrollView = UIScrollView()
         ScrollView.backgroundColor = .white
         ScrollView.isScrollEnabled = true
-        ScrollView.showsHorizontalScrollIndicator = true
+        ScrollView.showsHorizontalScrollIndicator = false
         //스택뷰를 이용해 오토레이아웃 설정
         let StackView = UIStackView()
         StackView.axis = .vertical
@@ -114,7 +108,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.width.equalTo(200)
             make.height.equalTo(50)
         }
-        
         //게시물의 댓글을 나열 할 뷰
         let CommentTableView = UITableView()
         CommentTableView.backgroundColor = .white
@@ -122,8 +115,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         CommentTableView.dataSource = self
         CommentTableView.frame = view.bounds
         CommentTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        CommentTableView.showsHorizontalScrollIndicator = false
-        CommentTableView.isScrollEnabled = false
         CommentTableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         
         let view = UIView()
@@ -132,6 +123,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         
         //댓글 입력 창과 버튼을 추가
         let commentField = UITextView()
+//        commentField.placeholder = "댓글을 입력하세요"
         commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         commentField.layer.cornerRadius = 10
         commentField.layer.masksToBounds = true
@@ -250,7 +242,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             adjustCommentView(insets: contentInsets)
         }
     }
-
     @objc private func keyboardWillHide(_ notification: Notification) {
         let contentInsets = UIEdgeInsets.zero
         adjustCommentView(insets: contentInsets)
@@ -281,6 +272,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             
         }
         alertController.addAction(CancelController)
+        
         present(alertController, animated: true)
     }
     // MARK: - UITableViewDataSource
@@ -299,10 +291,11 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     }
     override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
-            //부모로 이동했을때 탭바를 다시 켬
-            if isMovingFromParent {
-                print("Back 버튼 클릭됨")
-                tabBarController?.tabBar.isHidden = false
-            }
+            //부모로 이동해도 새로운 탭바를 사용할 것이기 때문에 기존의 탭바를 켤 필요 없음
+//            if isMovingFromParent {
+//                print("Back 버튼 클릭됨")
+//                tabBarController?.tabBar.isHidden = false
+//            }
         }
 }
+

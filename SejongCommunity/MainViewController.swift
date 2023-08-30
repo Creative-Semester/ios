@@ -196,6 +196,7 @@ class MainViewController: UIViewController{
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         let View = UIView()
+        
         View.addSubview(imageView)
         self.navigationController?.navigationBar.barTintColor = .white
         let logoBarItem = UIBarButtonItem(customView: View)
@@ -259,14 +260,15 @@ class MainViewController: UIViewController{
     @objc func OpenBoardBtnTapped() {
         self.navigationController?.pushViewController(OpenBoardViewController(), animated: true)
     }
-    //과소식 버튼 액션 처리
+    //학생회공지사항, 투표 버튼 액션 처리
     @objc func DepartBoardBtnTapped() {
         self.navigationController?.pushViewController(DepartBoardViewController(), animated: true)
+        //상세페이지로 들어갈때 탭바 숨기기
+        tabBarController?.tabBar.isHidden = true
     }
     //수업게시판 버튼 액션 처리
     @objc func ClassBoardBtnTapped() {
-//        self.navigationController?.pushViewController(ClassBoardViewController(), animated: true)
-        self.navigationController?.pushViewController(LoginIntroViewController(), animated: true)
+        self.navigationController?.pushViewController(ClassBoardViewController(), animated: true)
     }
     //학생회 액션 처리
     @objc func CouncilBoardBtnTapped() {
