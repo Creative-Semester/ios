@@ -178,6 +178,15 @@ class DepartOpenWriteViewController : UIViewController {
             make.leading.trailing.equalToSuperview().offset(0)
             make.top.equalTo(anonymousView.snp.bottom).offset(20)
         }
+        setupTapGesture()
+    }
+    //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
+    func setupTapGesture(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            self.view.addGestureRecognizer(tapGesture)
+    }
+    @objc func handleTap() {
+        self.view.endEditing(true) // 키보드가 열려있을 경우 닫기
     }
     //이미지 업로드 메서드
     @objc func UploadImageBtnTapped(){

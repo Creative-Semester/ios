@@ -289,6 +289,26 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
+    //댓글을 눌렀을때 신고하기 팝업
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
+        //쪽지 보내기
+        let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+            // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+        }
+        alertController.addAction(SendMessageController)
+        //신고
+        let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
+            
+        }
+        alertController.addAction(DeclarationController)
+        //취소
+        let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
+            
+        }
+        alertController.addAction(CancelController)
+        present(alertController, animated: true)
+    }
     override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
             //부모로 이동해도 새로운 탭바를 사용할 것이기 때문에 기존의 탭바를 켤 필요 없음
