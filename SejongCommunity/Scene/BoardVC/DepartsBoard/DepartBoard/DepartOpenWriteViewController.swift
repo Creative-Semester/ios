@@ -48,11 +48,21 @@ class DepartOpenWriteViewController : UIViewController {
         }
         return view
     }()
-    //게시판 제목과 글, 그림을 등록하기 위한 뷰
-    let OpenWriteView : UIView = {
-        let view = UIView()
-        //게시물의 제목
-        let Title = UITextField()
+    // 전역 변수로 선언
+    var titleTextField: UITextField?
+    var messageTextView: UITextView?
+    override func viewDidLoad(){
+        self.view.backgroundColor = .white
+        navigationController?.navigationBar.tintColor = .red
+        //게시판 제목과 글, 그림을 등록하기 위한 뷰
+        let OpenWriteView = UIView()
+        let WriteStackView = UIStackView()
+        WriteStackView.axis = .vertical
+        WriteStackView.spacing = 20
+        WriteStackView.distribution = .fill
+        WriteStackView.alignment = .fill
+        WriteStackView.backgroundColor = .white
+        var Title = UITextField()
         Title.textAlignment = .left
         Title.placeholder = "Title"
         Title.font = UIFont.boldSystemFont(ofSize: 20)
@@ -63,16 +73,13 @@ class DepartOpenWriteViewController : UIViewController {
         let spaceView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)) // 원하는 크기로 설정
         Title.leftView = spaceView
         Title.leftViewMode = .always // 항상 표시되도록 설정
-        view.addSubview(Title)
-        
         //게시물의 본문
-        let Message = UITextView()
+        var Message = UITextView()
         Message.textAlignment = .left
         Message.font = UIFont.boldSystemFont(ofSize: 15)
         Message.layer.borderWidth = 0.6
         Message.layer.cornerRadius = 10
         Message.layer.masksToBounds = true
-        view.addSubview(Message)
         
         //게시물의 사진 업로드
         let UploadImage = UIButton()
@@ -88,7 +95,6 @@ class DepartOpenWriteViewController : UIViewController {
         UploadImage.tintColor = .black
         UploadImage.setImage(iconImage, for: .normal)
         UploadImage.semanticContentAttribute = .forceRightToLeft
-        view.addSubview(UploadImage)
         
         let UploadBtn = UIButton()
         UploadBtn.backgroundColor =  #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
@@ -96,23 +102,15 @@ class DepartOpenWriteViewController : UIViewController {
         UploadBtn.setTitleColor(.black, for: .normal)
         UploadBtn.layer.cornerRadius = 20
         UploadBtn.layer.masksToBounds = true
-        view.addSubview(UploadBtn)
+        UploadBtn.addTarget(self, action: #selector(UploadBtnTapped), for: .touchUpInside)
         
-        //StackView를 이용해 오토레이아웃 설정
-        let StackView = UIStackView()
-        StackView.axis = .vertical
-        StackView.spacing = 20
-        StackView.distribution = .fill
-        StackView.alignment = .fill
-        StackView.backgroundColor = .white
-        StackView.addArrangedSubview(Title)
-        StackView.addArrangedSubview(Message)
-        StackView.addArrangedSubview(UploadImage)
-        StackView.addArrangedSubview(UploadBtn)
-        view.addSubview(StackView)
-        
+        WriteStackView.addArrangedSubview(Title)
+        WriteStackView.addArrangedSubview(Message)
+        WriteStackView.addArrangedSubview(UploadImage)
+        WriteStackView.addArrangedSubview(UploadBtn)
+        OpenWriteView.addSubview(WriteStackView)
         //SnapKit을 이용한 오토레이아웃 설정
-        StackView.snp.makeConstraints{ (make) in
+        WriteStackView.snp.makeConstraints{ (make) in
             make.top.bottom.leading.trailing.equalToSuperview().inset(0)
         }
         Title.snp.makeConstraints{ (make) in
@@ -135,12 +133,9 @@ class DepartOpenWriteViewController : UIViewController {
             make.leading.trailing.equalToSuperview().inset(30)
             make.height.equalTo(40)
         }
-        return view
-    }()
-    override func viewDidLoad(){
-        self.view.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = .red
-       
+        self.titleTextField = Title
+        self.messageTextView = Message
+        
         let ScrollView = UIScrollView()
         ScrollView.backgroundColor = .white
         ScrollView.isScrollEnabled = true
@@ -188,8 +183,81 @@ class DepartOpenWriteViewController : UIViewController {
     @objc func handleTap() {
         self.view.endEditing(true) // 키보드가 열려있을 경우 닫기
     }
-    //이미지 업로드 메서드
-    @objc func UploadImageBtnTapped(){
-        
+    //업로드 메서드
+    @objc func UploadBtnTapped(){
+        let apiURLString = ""
+//        var request = URLRequest(url: URL(string: apiURLString)!)
+//        request.httpMethod = "POST"
+        // 전송할 데이터 (텍스트 뷰와 필드의 내용)
+        let titleText = titleTextField?.text ?? ""
+        let messageText = messageTextView?.text ?? ""
+                
+        print("전송 버튼이 클릭되었습니다. \(titleText), \(messageText)")
+        if(titleText == ""){
+            if(messageText == ""){
+                //둘다 없을때
+                let alertController = UIAlertController(title: nil, message: "제목과 내용을 써주세요.", preferredStyle: .alert)
+                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                }
+                alertController.addAction(CancelController)
+                present(alertController, animated: true)
+            }
+            //게시글의 제목이 없을때 팝업
+            else{let alertController = UIAlertController(title: nil, message: "제목을 써주세요.", preferredStyle: .alert)
+                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                }
+                alertController.addAction(CancelController)
+                present(alertController, animated: true)}
+        }else if(messageText == ""){
+            //게시글의 내용이 없을때 팝업
+            let alertController = UIAlertController(title: nil, message: "내용을 써주세요.", preferredStyle: .alert)
+            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+            }
+            alertController.addAction(CancelController)
+            present(alertController, animated: true)
+        }else{
+            //MARK: JSON 통신
+            let apiURLString = "https://example.com/api/upload"
+            var request = URLRequest(url: URL(string: apiURLString)!)
+            request.httpMethod = "POST"
+            //적절할때 통신
+            let requestBody: [String: Any] = [
+                "title": titleText,
+                "message": messageText
+            ]
+            // JSON 데이터를 HTTP 요청 바디에 설정
+            
+            if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
+                request.httpBody = jsonData
+            }
+            // HTTP 요성 헤더 설정(필요에 따라 추가)
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            // URLSession을 사용하여 서버와 통신
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                        // 서버 응답 처리
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                } else if let data = data {
+                // 서버 응답 데이터 처리 (만약 필요하다면)
+                if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    // 서버로부터 받은 JSON 데이터 처리
+                    print("Response JSON: \(responseJSON)")
+                    }
+                }
+            }
+            task.resume() // 요청 보내기
+            
+            //적절할때 업로드 완료 팝업
+            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
+            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                // OpenBoardViewController로 이동
+                if let departboardViewController = self.navigationController?.viewControllers.first(where: { $0 is DepartBoardViewController }) {
+                    self.navigationController?.popToViewController(departboardViewController, animated: true)
+                }
+            }
+            alertController.addAction(CancelController)
+            present(alertController, animated: true)
+        }
     }
 }
