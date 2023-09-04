@@ -29,12 +29,11 @@ class MainViewController: UIViewController{
         view.addSubview(Notificationtitle)
         
         //뷰 안에 공지사항을 알리는 레이블 추가
-        let Notification = UILabel()
-        Notification.text = "사물함 재배치 투표기간(~2023.08.27)"
+        let Notification = UIButton()
+        Notification.setTitle("앱 점검 공지(10.19 ~. ", for: .normal)
         Notification.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        Notification.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
-        Notification.textAlignment = .center
-        Notification.font = UIFont(name: "Bold", size: 20)
+        Notification.setTitleColor(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1), for: .normal)
+        Notification.addTarget(self, action: #selector(NotificationBtnTapped), for: .touchUpInside)
         view.addSubview(Notification)
         
         //뷰를 둥글게 만들기
@@ -275,5 +274,8 @@ class MainViewController: UIViewController{
     //학생회 액션 처리
     @objc func CouncilBoardBtnTapped() {
         self.navigationController?.pushViewController(CouncilBoardViewController(), animated: true)
+    }
+    @objc func NotificationBtnTapped() {
+        self.navigationController?.pushViewController(NotificationViewController(), animated: true)
     }
 }

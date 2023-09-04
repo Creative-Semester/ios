@@ -52,6 +52,7 @@ class VoteBoardWriteViewController : UIViewController {
     var titleTextField: UITextField?
     var messageTextView: UITextView?
     override func viewDidLoad(){
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
         //게시판 제목과 글, 그림을 등록하기 위한 뷰

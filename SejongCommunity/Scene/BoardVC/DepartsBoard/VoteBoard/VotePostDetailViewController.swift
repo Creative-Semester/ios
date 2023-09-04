@@ -55,6 +55,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
         title = post.title

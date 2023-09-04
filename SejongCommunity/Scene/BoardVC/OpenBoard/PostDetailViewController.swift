@@ -42,6 +42,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
         title = post.title
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
         

@@ -16,15 +16,20 @@ struct VotePost {
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource  {
+    //페이지 번호와 크기
+    var currentPage = 1
+    let pageSize = 20
+    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
-    let voteposts : [VotePost] = [
+    var voteposts : [VotePost] = [
         VotePost(title: "박정곤 학생의 교내 추방 투표", content: "박정곤 학생의 교내 추방 투표입니다.", image: nil),
         VotePost(title: "박정곤 학생 집들이 찬반 투표", content: "박정곤 학생 집들이 찬반 투표입니다.", image: nil),
         VotePost(title: "박정곤 학생 피파 잘한다 찬반 투표", content: "박정곤 학생 피파 잘한다 찬반 투표입니다.", image: nil)
     ]
     override func viewDidLoad() {
         self.navigationItem.setHidesBackButton(true, animated: false)
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         let closeIcon = UIImage(systemName: "chevron.backward")
         let MainBackButton = UIBarButtonItem(image: closeIcon, style: .plain, target: self, action: #selector(MainBackButtonTapped))
         self.navigationController?.navigationBar.tintColor = .red
@@ -34,7 +39,33 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
         setupTableView()
         //글쓰기 버튼을 상단 바에 추가
         let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
-        navigationItem.rightBarButtonItem = addButton
+        //새로 고침 버튼 상단 바에 추가
+        let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(updatePage))
+        // 우측 바 버튼 아이템 배열에 추가
+        navigationItem.rightBarButtonItems = [refreshButton, addButton]
+        // 로딩 인디케이터 뷰 초기 설정
+        activityIndicator.color = .gray
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
+        
+        // 처음에 초기 데이터를 불러옴
+        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+                guard let self = self else { return }
+                
+                if let newPosts = newPosts {
+                    // 초기 데이터를 posts 배열에 추가
+                    self.voteposts += newPosts
+                    
+                    // 테이블 뷰 갱신
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                    print("Initial data fetch - Success")
+                } else if let error = error {
+                    // 오류 처리
+                    print("Error fetching initial data: \(error.localizedDescription)")
+                }
+            }
         setTabBarView()
     }
     //메인으로 돌아갈 백 버튼
@@ -193,5 +224,118 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
     //글쓰기 버튼을 누르면 글작성 뷰로 이동시킬 메서드
     @objc func WriteBtnTappend() {
         navigationController?.pushViewController(VoteBoardWriteViewController(), animated: true)
+    }
+    //MARK: - 서버에서 데이터 가져오기
+    var isLoading = false  // 중복 로드 방지를 위한 플래그
+    func fetchPosts(page: Int, pageSize: Int, completion: @escaping ([VotePost]?, Error?) -> Void){
+        // 서버에서 페이지와 페이지 크기를 기반으로 게시글 데이터를 가져옴
+        // 결과는 completion 핸들러를 통해 반환
+        // URLSession을 사용하여 데이터를 가져오는 경우
+        let url = URL(string: "https://example.com/api/posts?page=\(page)&pageSize=\(pageSize)")!
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+                // 요청이 완료된 후 실행될 클로저
+                // 에러 처리
+                if let error = error {
+                    completion(nil, error)
+                    return
+                }
+                // 데이터 파싱
+                guard let data = data else {
+                    completion(nil, nil) // 데이터가 없는 경우
+                    return
+                }
+                do {
+                    // JSON 데이터를 파싱하여 Post 객체 배열로 변환
+//                    let posts = try JSONDecoder().decode([Post].self, from: data)
+
+                    // 성공적으로 데이터를 가져온 경우
+//                    completion(posts, nil)
+                } catch {
+                    // JSON 파싱 오류 처리
+                    completion(nil, error)
+                }
+            }.resume() // URLSession 작업 시작
+    }
+    var isScrolling = false
+    var lastContentOffsetY : CGFloat = 0
+    var isScrollingDown = false
+    var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffsetY = scrollView.contentOffset.y
+        let screenHeight = scrollView.bounds.size.height
+
+        if contentOffsetY >= 0 {
+            isScrollingDown = true
+        } else {
+            isScrollingDown = false
+        }
+
+        if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
+            if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
+                loadNextPageCalled = true // 호출되었다고 표시
+                loadNextPage()
+            }
+        } else if !isScrollingDown && contentOffsetY == 0 {            loadNextPageCalled = false // 상단으로 스크롤될 때 호출되지 않았다고 표시
+        }
+    }
+
+    //새로운 페이지 새로고침
+    @objc func updatePage() {
+        print("updatePage() - called")
+        currentPage = 1 //처음 페이지부터 다시 시작
+        isLoading = false
+        //스크롤을 감지해서 인디케이터가 시작되면
+//        activityIndicator.startAnimating() // 로딩 인디케이터 시작
+        // 서버에서 다음 페이지의 데이터를 가져옴
+        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+            guard let self = self else { return }
+            // 로딩 인디케이터 멈춤
+//            DispatchQueue.main.async {
+//                self.activityIndicator.stopAnimating()
+//            }
+            
+            if let newPosts = newPosts {
+                // 새로운 데이터를 기존 데이터와 병합
+                self.voteposts += newPosts
+                
+                // 테이블 뷰 갱신
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+                print("updatePage - Success")
+            } else if let error = error {
+                // 오류 처리
+                print("Error fetching next page: \(error.localizedDescription)")
+            }
+            self.isLoading = false
+        }
+    }
+    //스크롤이 아래로 내려갈때 기존페이지 + 다음 페이지 로드
+    func loadNextPage() {
+        print("loadNextPage() - called")
+        currentPage += 1
+        isLoading = true
+        //스크롤을 감지해서 인디케이터가 시작되면
+//        activityIndicator.startAnimating() // 로딩 인디케이터 시작
+
+        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+            guard let self = self else { return }
+            // 로딩 인디케이터 멈춤
+//            DispatchQueue.main.async {
+//                self.activityIndicator.stopAnimating()
+//            }
+            if let newPosts = newPosts {
+                self.voteposts += newPosts
+
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+                print("loadNextPage - Success")
+            } else if let error = error {
+                print("Error fetching next page: \(error.localizedDescription)")
+            }
+            self.isLoading = false
+            self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
+        }
     }
 }

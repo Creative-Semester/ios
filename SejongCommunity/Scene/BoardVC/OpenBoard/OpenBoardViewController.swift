@@ -33,6 +33,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
 //        self.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationController?.navigationBar.tintColor = .red
         title = "자유게시판"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         setupTableView()
         //글쓰기 버튼을 상단 바에 추가
         let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
@@ -251,5 +252,13 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
             self.isLoading = false
             self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
+    }
+    // 뷰 컨트롤러가 부모로 이동될 때 호출
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+            if isMovingFromParent {
+                // 해당 뷰 컨트롤러가 부모로부터 제거될 때 실행됩니다.
+                navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+            }
     }
 }

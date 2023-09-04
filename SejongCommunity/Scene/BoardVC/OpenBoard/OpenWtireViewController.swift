@@ -55,6 +55,7 @@ class OpenWriteViewController : UIViewController {
     override func viewDidLoad(){
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black] 
         //게시판 제목과 글, 그림을 등록하기 위한 뷰
         let OpenWriteView = UIView()
         let WriteStackView = UIStackView()

@@ -21,6 +21,7 @@
 		E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ECE2A9F3B6500FFEAB2 /* VoteViewController.swift */; };
 		E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */; };
 		E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */; };
+		E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
 		F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12465112A67BAB500037D8C /* SceneDelegate.swift */; };
 		F12465192A67BAB600037D8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12465182A67BAB600037D8C /* Assets.xcassets */; };
@@ -57,6 +58,7 @@
 		E4021ECE2A9F3B6500FFEAB2 /* VoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteViewController.swift; sourceTree = "<group>"; };
 		E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotePostDetailViewController.swift; sourceTree = "<group>"; };
 		E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteBoardWriteViewController.swift; sourceTree = "<group>"; };
+		E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.debug.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.debug.xcconfig"; sourceTree = "<group>"; };
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F124650F2A67BAB500037D8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 		F1E547382A84C2CA00671182 /* Scene */ = {
 			isa = PBXGroup;
 			children = (
+				E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */,
 				E4021EC72A92088400FFEAB2 /* LoginVC */,
 				E4021E722A6F8B6700FFEAB2 /* BoardVC */,
 				F1E5473A2A84C37E00671182 /* Chat */,
@@ -388,6 +391,7 @@
 				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
 				F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */,
 				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
+				E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */,
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
