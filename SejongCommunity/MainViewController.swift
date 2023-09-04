@@ -273,7 +273,7 @@ class MainViewController: UIViewController{
     }
     //학생회 액션 처리
     @objc func CouncilBoardBtnTapped() {
-        self.navigationController?.pushViewController(CouncilBoardViewController(), animated: true)
+        self.navigationController?.pushViewController(ProfessorBoardViewController(), animated: true)
     }
     @objc func NotificationBtnTapped() {
         self.navigationController?.pushViewController(NotificationViewController(), animated: true)
