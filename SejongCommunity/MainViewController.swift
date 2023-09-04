@@ -209,7 +209,9 @@ class MainViewController: UIViewController{
         imageView.snp.makeConstraints{ (make) in
             make.edges.equalToSuperview()
         }
-
+        title = "메인페이지"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white] 
+        
         let ScrollView = UIScrollView()
         self.view.addSubview(ScrollView)
         ScrollView.isScrollEnabled = true

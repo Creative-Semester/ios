@@ -196,21 +196,21 @@ class VoteBoardWriteViewController : UIViewController {
         if(titleText == ""){
             if(messageText == ""){
                 //둘다 없을때
-                let alertController = UIAlertController(title: nil, message: "제목과 내용을 써주세요.", preferredStyle: .alert)
+                let alertController = UIAlertController(title: nil, message: "제목과 내용을 작성해 주세요.", preferredStyle: .alert)
                 let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                 }
                 alertController.addAction(CancelController)
                 present(alertController, animated: true)
             }
             //게시글의 제목이 없을때 팝업
-            else{let alertController = UIAlertController(title: nil, message: "제목을 써주세요.", preferredStyle: .alert)
+            else{let alertController = UIAlertController(title: nil, message: "제목을 작성해 주세요.", preferredStyle: .alert)
                 let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                 }
                 alertController.addAction(CancelController)
                 present(alertController, animated: true)}
         }else if(messageText == ""){
             //게시글의 내용이 없을때 팝업
-            let alertController = UIAlertController(title: nil, message: "내용을 써주세요.", preferredStyle: .alert)
+            let alertController = UIAlertController(title: nil, message: "내용을 작성해 주세요.", preferredStyle: .alert)
             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
             }
             alertController.addAction(CancelController)
