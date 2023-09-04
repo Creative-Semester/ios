@@ -1,36 +1,52 @@
 //
-//  PostDetailViewController.swift
+//  VotePostDetailViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/07/30.
+//  Created by 정성윤 on 2023/08/30.
 //
 
 import Foundation
 import UIKit
-//댓글 창
-struct Comment {
-    let comment : String
-}
-//게시물의 상세 내용을 보여주는 UIViewController
-class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+
+class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+    //투표기능 변수
+    var agreeCount = 5
+    var disagreeCount = 2
+    //투표 중복 여부
+    var isAgreed = false
+    var isDisagreed = false
+    //투표 버튼, 라벨, 비율
+    let agreeButton = UIButton()
+    let disagreeButton = UIButton()
+    let agreeCountLabel = UILabel()
+    let disagreeCountLabel = UILabel()
+    let ratioLabel = UILabel()
+    //투표 막대그래프
+    let agreeProgressView = UIProgressView()
+    let disagreeProgressView = UIProgressView()
+    // 댓글 테이블
     var CommentTableView = UITableView()
+    // 좋아요 버튼
     private let GreatBtn = UIButton()
     // 댓글을 저장할 배열
-    let comments : [Comment] = [
-        Comment(comment: "첫 번째 댓글입니다"),
-        Comment(comment: "두 번째 댓글입니다"),
-        Comment(comment: "세 번째 댓글입니다"),
-        Comment(comment: "네 번째 댓글입니다"),
-        Comment(comment: "5 번째 댓글입니다"),
-        Comment(comment: "6 번째 댓글입니다"),
-        Comment(comment: "7 번째 댓글입니다"),
-        Comment(comment: "8 번째 댓글입니다"),
-        Comment(comment: "9 번째 댓글입니다"),
-        Comment(comment: "10 번째 댓글입니다")
+    let comments : [DepartComment] = [
+        DepartComment(comment: "그건 아니죠,,"),
+        DepartComment(comment: "아니 이걸?"),
+        DepartComment(comment: "ㄹㅇㅋㅋ"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "와우!! 핫게 가자"),
+        DepartComment(comment: "끝")
     ]
-    let post : Post
+    let post : VotePost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
-    init(post: Post) {
+    init(post: VotePost) {
         self.post = post
         super.init(nibName: nil, bundle: nil)
     }
@@ -39,14 +55,16 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
         title = post.title
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
         
         setupView()
+        updateRatioLabel()
+        updateProgressViews()
         setupTapGesture()
     }
     func setupView(){
@@ -54,7 +72,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         let ScrollView = UIScrollView()
         ScrollView.backgroundColor = .white
         ScrollView.isScrollEnabled = true
-        ScrollView.showsHorizontalScrollIndicator = true
+        ScrollView.showsHorizontalScrollIndicator = false
         //스택뷰를 이용해 오토레이아웃 설정
         let StackView = UIStackView()
         StackView.axis = .vertical
@@ -93,6 +111,89 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                 make.height.equalTo(200)
             }
         }
+        
+        //투표 구성
+        // 찬성 버튼
+        agreeButton.setTitle("찬성", for: .normal)
+        agreeButton.setTitleColor(.darkGray, for: .normal)
+        agreeButton.backgroundColor = isAgreed ? #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1) : #colorLiteral(red: 0.9472638965, green: 0.953559339, blue: 0.953448236, alpha: 1)
+        agreeButton.layer.cornerRadius = 20
+        agreeButton.layer.masksToBounds = true
+        agreeButton.addTarget(self, action: #selector(agreeButtonTapped), for: .touchUpInside)
+                
+        // 반대 버튼
+        disagreeButton.setTitle("반대", for: .normal)
+        disagreeButton.setTitleColor(.darkGray, for: .normal)
+        disagreeButton.backgroundColor = isDisagreed ? #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1) : #colorLiteral(red: 0.9472638965, green: 0.953559339, blue: 0.953448236, alpha: 1)
+        disagreeButton.layer.cornerRadius = 20
+        disagreeButton.layer.masksToBounds = true
+        disagreeButton.addTarget(self, action: #selector(disagreeButtonTapped), for: .touchUpInside)
+                
+        // 찬성 수 표시 라벨
+        agreeCountLabel.text = "찬성: \(agreeCount)"
+        agreeCountLabel.textColor = .black
+                
+        // 반대 수 표시 라벨
+        disagreeCountLabel.text = "반대: \(disagreeCount)"
+        disagreeCountLabel.textColor = .black
+        // 비율 표시 라벨
+        ratioLabel.textColor = .black
+        
+        //그래프 표시
+        agreeProgressView.tintColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+        disagreeProgressView.tintColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+        
+        // 스택뷰를 이용한 레이아웃 설정
+        let VoteView = UIView()
+        VoteView.backgroundColor = .white
+        VoteView.addSubview(agreeButton)
+        VoteView.addSubview(agreeCountLabel)
+        VoteView.addSubview(disagreeButton)
+        VoteView.addSubview(disagreeCountLabel)
+        VoteView.addSubview(ratioLabel)
+        VoteView.addSubview(agreeProgressView)
+        VoteView.addSubview(disagreeProgressView)
+        //Snapkit 오토레이아웃 설정
+        agreeButton.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 4)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.leading.equalToSuperview().offset(0)
+        }
+        agreeCountLabel.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 7)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.leading.equalTo(agreeButton.snp.trailing).offset(10)
+        }
+        disagreeCountLabel.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 7)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.trailing.equalToSuperview().offset(-10)
+        }
+        disagreeButton.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 4)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.trailing.equalTo(disagreeCountLabel.snp.leading).offset(-10)
+        }
+        ratioLabel.snp.makeConstraints{(make) in
+            make.top.equalTo(agreeButton.snp.bottom).offset(20)
+        }
+        agreeProgressView.snp.makeConstraints{(make) in
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-20)
+            make.top.equalTo(ratioLabel.snp.bottom).offset(20)
+            make.height.equalTo(30)
+        }
+        disagreeProgressView.snp.makeConstraints{(make) in
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-20)
+            make.top.equalTo(agreeProgressView.snp.bottom).offset(20)
+            make.height.equalTo(30)
+        }
+        
         //게시글에 대한 좋아요를 누를 버튼
         let image = UIImage(systemName: "heart.fill")
         GreatBtn.setImage(image, for: .normal)
@@ -115,24 +216,22 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.width.equalTo(200)
             make.height.equalTo(50)
         }
-        
         //게시물의 댓글을 나열 할 뷰
         let CommentTableView = UITableView()
         CommentTableView.backgroundColor = .white
         CommentTableView.delegate = self
         CommentTableView.dataSource = self
         CommentTableView.frame = view.bounds
-        CommentTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        CommentTableView.showsHorizontalScrollIndicator = false
         CommentTableView.isScrollEnabled = false
+        CommentTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         CommentTableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         
         let view = UIView()
         view.backgroundColor = .white
         view.layer.borderWidth = 0.2
-        
         //댓글 입력 창과 버튼을 추가
         let commentField = UITextView()
+//        commentField.placeholder = "댓글을 입력하세요"
         commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         commentField.layer.cornerRadius = 10
         commentField.layer.masksToBounds = true
@@ -163,6 +262,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         }
         
         StackView.addArrangedSubview(DetailView)
+        StackView.addArrangedSubview(VoteView)
         StackView.addArrangedSubview(CommentTableView)
         ScrollView.addSubview(StackView)
         self.view.addSubview(ScrollView)
@@ -182,9 +282,9 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
 //            make.height.equalTo(CommentTableView.frame.height)
             if(post.image == nil){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
+                make.height.equalTo(DetailLabel.frame.height + agreeButton.frame.height + CGFloat((comments.count + 4) * 100))
             }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageView.frame.height + CGFloat((comments.count + 4) * 100))
+                make.height.equalTo(DetailLabel.frame.height + agreeButton.frame.height + ImageView.frame.height + CGFloat((comments.count + 6) * 100))
             }
             make.width.equalTo(ScrollView.snp.width)
             make.bottom.equalToSuperview().offset(-0)
@@ -194,21 +294,82 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.top.equalToSuperview().offset(20)
             if(post.image == nil){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                make.height.equalTo(DetailLabel.frame.height + 100)
+                make.height.equalTo(DetailLabel.frame.height + agreeButton.frame.height + 100)
             }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageView.frame.height + 300)
+                make.height.equalTo(DetailLabel.frame.height + agreeButton.frame.height + ImageView.frame.height + 300)
+            }
+            make.leading.equalToSuperview().offset(20)
+        }
+        VoteView.snp.makeConstraints{ (make) in
+            make.top.equalTo(DetailView.snp.bottom).offset(20)
+            if(post.image == nil){
+                print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
+            }else{
+                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + ImageView.frame.height + 400)
             }
             make.leading.equalToSuperview().offset(20)
         }
         CommentTableView.snp.makeConstraints{ (make) in
-            make.top.equalTo(DetailView.snp.bottom).offset(0)
+            make.top.equalTo(VoteView.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview().offset(0)
         }
         // 댓글 입력 필드에 대한 Notification Observer 등록
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+
     }
+    //투표 비율
+    func updateRatioLabel() {
+        let totalVotes = agreeCount + disagreeCount
+                if totalVotes > 0 {
+                    let agreeRatio = Double(agreeCount) / Double(totalVotes) * 100
+                    let disagreeRatio = Double(disagreeCount) / Double(totalVotes) * 100
+                    ratioLabel.text = String(format: "찬성 비율: %.2f%% | 반대 비율: %.2f%%", agreeRatio, disagreeRatio)
+                } else {
+                    ratioLabel.text = "투표 없음"
+                }
+    }
+    //투표 비율에 따른 그래프
+    func updateProgressViews() {
+        let totalVotes = agreeCount + disagreeCount
+                if totalVotes > 0 {
+                    let agreeRatio = Float(agreeCount) / Float(totalVotes)
+                    let disagreeRatio = Float(disagreeCount) / Float(totalVotes)
+                    agreeProgressView.progress = agreeRatio
+                    disagreeProgressView.progress = disagreeRatio
+                } else {
+                    agreeProgressView.progress = 0
+                    disagreeProgressView.progress = 0
+                }
+    }
+    //찬성버튼을 눌렀을때 메서드
+    @objc func agreeButtonTapped() {
+            if !isAgreed {
+                agreeCount += 1
+                isAgreed = true
+                agreeCountLabel.text = "찬성: \(agreeCount)"
+                agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+                agreeButton.isEnabled = false
+                updateRatioLabel()
+                updateProgressViews()
+            }
+        }
+    //반대버튼을 눌렀을때 메서드
+    @objc func disagreeButtonTapped() {
+            if !isDisagreed {
+                disagreeCount += 1
+                isDisagreed = true
+                
+                disagreeCountLabel.text = "반대: \(disagreeCount)"
+                disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+                disagreeButton.isEnabled = false
+                updateRatioLabel()
+                updateProgressViews()
+            }
+        }
+    
     //좋아요 버튼을 누르면 좋아요 수 + 색이 변함
     @objc func GreatBtnTapped() {
         if GreatBtn.isSelected {
@@ -251,7 +412,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             adjustCommentView(insets: contentInsets)
         }
     }
-
     @objc private func keyboardWillHide(_ notification: Notification) {
         let contentInsets = UIEdgeInsets.zero
         adjustCommentView(insets: contentInsets)
@@ -282,6 +442,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             
         }
         alertController.addAction(CancelController)
+        
         present(alertController, animated: true)
     }
     // MARK: - UITableViewDataSource
@@ -320,10 +481,11 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     }
     override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
-            //부모로 이동했을때 탭바를 다시 켬
-            if isMovingFromParent {
-                print("Back 버튼 클릭됨")
-                tabBarController?.tabBar.isHidden = false
-            }
+            //부모로 이동해도 새로운 탭바를 사용할 것이기 때문에 기존의 탭바를 켤 필요 없음
+//            if isMovingFromParent {
+//                print("Back 버튼 클릭됨")
+//                tabBarController?.tabBar.isHidden = false
+//            }
         }
 }
+

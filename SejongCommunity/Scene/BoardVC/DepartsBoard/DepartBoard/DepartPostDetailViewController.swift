@@ -35,6 +35,7 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         super.viewDidLoad()
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         title = post.title
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
@@ -120,6 +121,7 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         let view = UIView()
         view.backgroundColor = .white
         view.layer.borderWidth = 0.2
+        
         //댓글 입력 창과 버튼을 추가
         let commentField = UITextView()
 //        commentField.placeholder = "댓글을 입력하세요"
@@ -156,7 +158,12 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         StackView.addArrangedSubview(CommentTableView)
         ScrollView.addSubview(StackView)
         self.view.addSubview(ScrollView)
-        
+        self.view.addSubview(view)
+        view.snp.makeConstraints{ (make) in
+            make.height.equalTo(self.view.frame.height / 9)
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.bottom.equalToSuperview()
+        }
         //SnapKit을 이용한 오토레이아웃 설정
         ScrollView.snp.makeConstraints{ (make) in
             make.bottom.equalToSuperview().offset(-self.view.frame.height / 8.5)
@@ -190,16 +197,9 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview().offset(0)
         }
-        self.view.addSubview(view)
-        view.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 9)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.bottom.equalToSuperview()
-        }
         // 댓글 입력 필드에 대한 Notification Observer 등록
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-
     }
     //좋아요 버튼을 누르면 좋아요 수 + 색이 변함
     @objc func GreatBtnTapped() {
@@ -290,13 +290,33 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
+    //댓글을 눌렀을때 신고하기 팝업
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
+        //쪽지 보내기
+        let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+            // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+        }
+        alertController.addAction(SendMessageController)
+        //신고
+        let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
+            
+        }
+        alertController.addAction(DeclarationController)
+        //취소
+        let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
+            
+        }
+        alertController.addAction(CancelController)
+        present(alertController, animated: true)
+    }
     override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
-            //부모로 이동했을때 탭바를 다시 켬
-            if isMovingFromParent {
-                print("Back 버튼 클릭됨")
-                tabBarController?.tabBar.isHidden = false
-            }
+            //부모로 이동해도 새로운 탭바를 사용할 것이기 때문에 기존의 탭바를 켤 필요 없음
+//            if isMovingFromParent {
+//                print("Back 버튼 클릭됨")
+//                tabBarController?.tabBar.isHidden = false
+//            }
         }
 }
 

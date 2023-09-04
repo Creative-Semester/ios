@@ -29,12 +29,11 @@ class MainViewController: UIViewController{
         view.addSubview(Notificationtitle)
         
         //뷰 안에 공지사항을 알리는 레이블 추가
-        let Notification = UILabel()
-        Notification.text = "사물함 재배치 투표기간(~2023.08.27)"
+        let Notification = UIButton()
+        Notification.setTitle("앱 점검 공지(10.19 ~. ", for: .normal)
         Notification.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        Notification.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
-        Notification.textAlignment = .center
-        Notification.font = UIFont(name: "Bold", size: 20)
+        Notification.setTitleColor(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1), for: .normal)
+        Notification.addTarget(self, action: #selector(NotificationBtnTapped), for: .touchUpInside)
         view.addSubview(Notification)
         
         //뷰를 둥글게 만들기
@@ -196,6 +195,7 @@ class MainViewController: UIViewController{
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         let View = UIView()
+        
         View.addSubview(imageView)
         self.navigationController?.navigationBar.barTintColor = .white
         let logoBarItem = UIBarButtonItem(customView: View)
@@ -208,7 +208,9 @@ class MainViewController: UIViewController{
         imageView.snp.makeConstraints{ (make) in
             make.edges.equalToSuperview()
         }
-
+        title = "메인페이지"
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white] 
+        
         let ScrollView = UIScrollView()
         self.view.addSubview(ScrollView)
         ScrollView.isScrollEnabled = true
@@ -259,17 +261,21 @@ class MainViewController: UIViewController{
     @objc func OpenBoardBtnTapped() {
         self.navigationController?.pushViewController(OpenBoardViewController(), animated: true)
     }
-    //과소식 버튼 액션 처리
+    //학생회공지사항, 투표 버튼 액션 처리
     @objc func DepartBoardBtnTapped() {
         self.navigationController?.pushViewController(DepartBoardViewController(), animated: true)
+        //상세페이지로 들어갈때 탭바 숨기기
+        tabBarController?.tabBar.isHidden = true
     }
     //수업게시판 버튼 액션 처리
     @objc func ClassBoardBtnTapped() {
-//        self.navigationController?.pushViewController(ClassBoardViewController(), animated: true)
-        self.navigationController?.pushViewController(LoginIntroViewController(), animated: true)
+        self.navigationController?.pushViewController(ClassBoardViewController(), animated: true)
     }
     //학생회 액션 처리
     @objc func CouncilBoardBtnTapped() {
-        self.navigationController?.pushViewController(CouncilBoardViewController(), animated: true)
+        self.navigationController?.pushViewController(ProfessorBoardViewController(), animated: true)
+    }
+    @objc func NotificationBtnTapped() {
+        self.navigationController?.pushViewController(NotificationViewController(), animated: true)
     }
 }

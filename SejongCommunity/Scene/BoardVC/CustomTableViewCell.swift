@@ -66,13 +66,13 @@ class CustomTableViewCell: UITableViewCell{
         titleLabel.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
             make.leading.equalToSuperview().offset((20))
-            make.width.equalTo(AllStackView.snp.width).dividedBy(2)
+            make.width.equalTo(AllStackView.snp.width).dividedBy(1.5)
             make.height.equalTo(20)
         }
         commentLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(titleLabel.snp.bottom).offset((20))
             make.leading.equalToSuperview().offset(20)
-            make.width.equalTo(AllStackView.snp.width).dividedBy(2)
+            make.width.equalTo(AllStackView.snp.width).dividedBy(1.5)
             make.height.equalTo(20)
         }
     }
