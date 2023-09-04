@@ -1,15 +1,14 @@
 //
-//  OpenWtireViewController.swift
+//  VoteBoardWriteViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/07/30.
+//  Created by 정성윤 on 2023/08/30.
 //
 
 import Foundation
 import UIKit
 import SnapKit
-
-class OpenWriteViewController : UIViewController {
+class VoteBoardWriteViewController : UIViewController {
     var tableView = UITableView()
     //익명 표시
     let anonymousView : UIView = {
@@ -53,9 +52,9 @@ class OpenWriteViewController : UIViewController {
     var titleTextField: UITextField?
     var messageTextView: UITextView?
     override func viewDidLoad(){
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black] 
         //게시판 제목과 글, 그림을 등록하기 위한 뷰
         let OpenWriteView = UIView()
         let WriteStackView = UIStackView()
@@ -187,11 +186,14 @@ class OpenWriteViewController : UIViewController {
     }
     //업로드 메서드
     @objc func UploadBtnTapped(){
+        let apiURLString = ""
+//        var request = URLRequest(url: URL(string: apiURLString)!)
+//        request.httpMethod = "POST"
         // 전송할 데이터 (텍스트 뷰와 필드의 내용)
         let titleText = titleTextField?.text ?? ""
         let messageText = messageTextView?.text ?? ""
                 
-        print("UploadBtnTapped() - \(titleText), \(messageText)")
+        print("전송 버튼이 클릭되었습니다. \(titleText), \(messageText)")
         if(titleText == ""){
             if(messageText == ""){
                 //둘다 없을때
@@ -251,8 +253,8 @@ class OpenWriteViewController : UIViewController {
             let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                 // OpenBoardViewController로 이동
-                if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
-                    self.navigationController?.popToViewController(openboardViewController, animated: true)
+                if let voteViewController = self.navigationController?.viewControllers.first(where: { $0 is VoteViewController }) {
+                    self.navigationController?.popToViewController(voteViewController, animated: true)
                 }
             }
             alertController.addAction(CancelController)
