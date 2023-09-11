@@ -16,6 +16,8 @@ class ProfessorCollectionViewCell: UICollectionViewCell {
         imageView.image = UIImage(named: "professor")
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .gray
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 10
         
         return imageView
     }()
@@ -64,7 +66,7 @@ class ProfessorCollectionViewCell: UICollectionViewCell {
         professorImageView.snp.makeConstraints{ make in
             make.leading.equalTo(contentView.snp.leading).offset(15)
             make.centerY.equalTo(contentView.snp.centerY)
-            make.width.height.equalTo(100)
+            make.width.height.equalTo(110)
         }
         
         contentView.addSubview(professorNameLabel)
