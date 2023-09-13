@@ -41,6 +41,9 @@
 		F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547462A937B8000671182 /* ChatRoomViewController.swift */; };
 		F1E5477F2AA0878700671182 /* ProfessorBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5477E2AA0878700671182 /* ProfessorBoardViewController.swift */; };
 		F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547802AA08B7200671182 /* ProfessorCollectionViewCell.swift */; };
+		F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547882AAF289700671182 /* ProfessorInfoViewController.swift */; };
+		F1E5478B2AAF3CB900671182 /* ProfessorClassTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478A2AAF3CB900671182 /* ProfessorClassTableViewCell.swift */; };
+		F1E5478D2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +85,9 @@
 		F1E547462A937B8000671182 /* ChatRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewController.swift; sourceTree = "<group>"; };
 		F1E5477E2AA0878700671182 /* ProfessorBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorBoardViewController.swift; sourceTree = "<group>"; };
 		F1E547802AA08B7200671182 /* ProfessorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorCollectionViewCell.swift; sourceTree = "<group>"; };
+		F1E547882AAF289700671182 /* ProfessorInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoViewController.swift; sourceTree = "<group>"; };
+		F1E5478A2AAF3CB900671182 /* ProfessorClassTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorClassTableViewCell.swift; sourceTree = "<group>"; };
+		F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorDetailClassViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +262,9 @@
 			children = (
 				F1E5477E2AA0878700671182 /* ProfessorBoardViewController.swift */,
 				F1E547802AA08B7200671182 /* ProfessorCollectionViewCell.swift */,
+				F1E547882AAF289700671182 /* ProfessorInfoViewController.swift */,
+				F1E5478A2AAF3CB900671182 /* ProfessorClassTableViewCell.swift */,
+				F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */,
 			);
 			path = ProfessorBoard;
 			sourceTree = "<group>";
@@ -378,9 +387,9 @@
 				E4021E782A76414400FFEAB2 /* PostDetailViewController.swift in Sources */,
 				F1E5472C2A82680B00671182 /* OfficeDetailsTableViewCell.swift in Sources */,
 				E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */,
+				F1E5478D2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift in Sources */,
 				E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */,
 				E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */,
-				E4021E6F2A6F8B4000FFEAB2 /* ClassBoardViewController.swift in Sources */,
 				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
@@ -395,6 +404,7 @@
 				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
 				F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */,
 				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
+				F1E5478B2AAF3CB900671182 /* ProfessorClassTableViewCell.swift in Sources */,
 				E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */,
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
@@ -405,6 +415,7 @@
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
+				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,
 				F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
