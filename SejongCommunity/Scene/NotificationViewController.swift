@@ -31,21 +31,12 @@ class NotificationViewController : UIViewController {
         StackView.alignment = .fill
         StackView.spacing = 20
         
-        //게시물의 상세내용을 넣을 뷰
-        let DetailView = UIView()
-        DetailView.backgroundColor = .white
-        let DetailLabel = UILabel()
-        DetailLabel.text = "앱 점검 공지사항입니다."
-        DetailLabel.textColor = .black
-        DetailLabel.font = UIFont.boldSystemFont(ofSize: 18)
-        DetailView.addSubview(DetailLabel)
-        DetailLabel.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(0)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.height.equalTo(40)
-        }
-        
-        StackView.addArrangedSubview(DetailView)
+        //공지사항 이미지를 넣을 뷰
+        let imageView = UIImageView()
+        let image = UIImage(named: "Notification")
+        imageView.image = image
+        imageView.contentMode = .scaleAspectFill
+        StackView.addArrangedSubview(imageView)
         ScrollView.addSubview(StackView)
         self.view.addSubview(ScrollView)
         //SnapKit을 이용한 오토레이아웃 설정
@@ -61,10 +52,8 @@ class NotificationViewController : UIViewController {
             make.top.equalToSuperview().offset(0)
             make.bottom.equalToSuperview().offset(-3)
         }
-        DetailView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(20)
-            
-            make.leading.equalToSuperview().offset(20)
+        imageView.snp.makeConstraints{ (make) in
+            make.top.bottom.leading.trailing.equalToSuperview().inset(0)
         }
     }
 }

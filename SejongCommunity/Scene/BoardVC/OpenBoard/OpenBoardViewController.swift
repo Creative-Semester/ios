@@ -121,25 +121,6 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     @objc func WriteBtnTappend() {
         navigationController?.pushViewController(OpenWriteViewController(), animated: true)
     }
-    @objc func SearchBtnTapped() {
-        let alertController = UIAlertController(title: "검색", message: nil, preferredStyle: .alert)
-        // 검색어를 입력 받을 텍스트 필드 추가
-        alertController.addTextField() { (textField) in
-            textField.placeholder = "검색어를 입력하세요"
-        }
-                // '취소' 버튼 추가
-                let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-                alertController.addAction(cancelAction)
-
-                // '검색' 버튼 추가
-                let searchAction = UIAlertAction(title: "검색", style: .default) { (_) in
-                    // '검색' 버튼을 눌렀을 때의 동작을 구현 (예: 검색 기능 실행)
-                }
-                alertController.addAction(searchAction)
-
-                // 팝업 표시
-                present(alertController, animated: true, completion: nil)
-    }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
     func fetchPosts(page: Int, pageSize: Int, completion: @escaping ([Post]?, Error?) -> Void){

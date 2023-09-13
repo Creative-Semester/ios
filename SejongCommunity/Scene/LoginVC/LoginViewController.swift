@@ -6,16 +6,253 @@
 //
 
 import Foundation
-import Foundation
 import UIKit
 
 class LoginViewController : UIViewController {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated) // 백 버튼 숨기기
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated) // 화면을 벗어날 때 다시 나타내기
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabBarController?.tabBar.isHidden = true
-        setUpView()
+        self.view.backgroundColor = .white
+        setupTapGesture()
+        setUpAutoLayout()
     }
-    func setUpView() {
+    //로고 이미지
+    private let imageView : UIView = {
+        let View = UIImageView()
+        let image = UIImage(named: "Logo")
+        View.image = image
+        View.contentMode = .scaleAspectFit
+        View.backgroundColor = .white
+        return View
+    }()
+    // 아이디와 비밀번호 입력 필드 선언
+    private let idText = UITextField()
+    private let passwordText = UITextField()
+    //아이디,비밀번호 입력 창
+    private let TextView : UIStackView = {
+        let StackView = UIStackView()
+        StackView.axis = .vertical
+        StackView.spacing = 10
+        StackView.distribution = .fill
+        StackView.backgroundColor = .white
         
+        
+        return StackView
+    }()
+    //로그인 버튼
+    private let LoginBtn : UIButton = {
+       let Btn = UIButton()
+        Btn.backgroundColor =  #colorLiteral(red: 1, green: 0.8216146827, blue: 0.8565195203, alpha: 1)
+        Btn.setTitle("Login", for: .normal)
+        Btn.setTitleColor(.black, for: .normal)
+        Btn.layer.cornerRadius = 20
+        Btn.layer.masksToBounds = true
+        Btn.addTarget(self, action: #selector(LoginBtnTapped), for: .touchUpInside)
+        
+      return Btn
+    }()
+    //설명 라벨
+    private let SecondLabel : UILabel = {
+        let ExplainLabel = UILabel()
+        ExplainLabel.text = "세종대학교 포털 아이디로 자동 로그인됩니다."
+        ExplainLabel.textColor =  #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        ExplainLabel.font = UIFont.boldSystemFont(ofSize: 15)
+        ExplainLabel.textAlignment = .center
+        ExplainLabel.backgroundColor = .white
+        
+        return ExplainLabel
+    }()
+    //오토레이아웃을 위한 스택뷰
+    private let StackView : UIStackView = {
+       let view = UIStackView()
+        view.axis = .vertical
+        view.distribution = .fill
+        view.backgroundColor = .white
+        view.alignment = .fill
+        
+       return view
+    }()
+    //MARK: - Login Method
+    //로그인 버튼 메서드
+    @objc func LoginBtnTapped() {
+        let id = idText.text ?? "" //아이디 가져오기
+        let password = passwordText.text ?? "" //비밀번호 가져오기
+        print("LoginBtnTapped - Called \(id), \(password)")
+        // 이후 서버와 통신하기 위한 URL 설정
+        let urlString = "https://example.com/login" // 서버의 로그인 API URL로 변경해야 합니다.
+
+        guard let url = URL(string: urlString) else {
+                // 유효하지 않은 URL 처리
+                return
+            }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let parameters: [String: Any] = [
+            "id": id,
+            "password" : password
+        ]
+        do {
+                // 파라미터를 JSON 데이터로 변환
+                let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+
+                // HTTP 요청의 HTTP Body에 JSON 데이터 설정
+                request.httpBody = jsonData
+
+                // HTTP 요청 헤더 설정 (Content-Type: application/json)
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+                // URLSession을 사용하여 요청 전송
+                let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                    if let error = error {
+                        // 에러 처리
+                        print("Error: \(error.localizedDescription)")
+                        return
+                    }
+
+                    guard let httpResponse = response as? HTTPURLResponse,
+                          (200...299).contains(httpResponse.statusCode) else {
+                        // 서버 응답 상태 코드 처리
+                        print("Invalid response status code")
+                        return
+                    }
+                    if let data = data {
+                        do {
+                            if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                                print("Response: \(jsonResponse)")
+
+                                // 서버로부터 받은 응답 데이터를 파싱하여 로그인 결과 처리
+                                // 예: 로그인 성공 또는 실패 처리
+                                if let token = jsonResponse["token"] as? String, let expirationDateString = jsonResponse["expirationDate"] as? String {
+                                    // DateFormatter를 사용하여 String을 Date로 변환
+                                    let dateFormatter = DateFormatter()
+                                    dateFormatter.dateFormat = "yyyy-MM-dd" // 서버에서 전달되는 날짜 형식에 맞게 설정
+
+                                    if let expirationDate = dateFormatter.date(from: expirationDateString) {
+                                        // 토큰 저장
+                                        AuthenticationManager.saveAuthToken(token: token, expirationDate: expirationDate)
+                                    } else {
+                                        print("Failed to convert expirationDate to Date")
+                                    }
+                                }
+                                
+                                // 토큰 유효성 검사
+                                AuthenticationManager.validateToken()
+                                
+                                // 로그인 성공 시 MainViewController로 이동
+                                DispatchQueue.main.async {
+                                    self.navigationController?.pushViewController(MainViewController(), animated: true)
+                                }
+                            } else {
+                                print("Invalid JSON response")
+                            }
+                        } catch {
+                            print("Error parsing response data: \(error.localizedDescription)")
+                        }
+                    }
+                }
+                // URLSession 작업 시작
+                task.resume()
+            } catch {
+                print("Error encoding parameters: \(error.localizedDescription)")
+            }
+        //임시 이동
+        navigationController?.pushViewController(MainViewController(), animated: true)
+    }
+    //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
+    func setupTapGesture(){
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            self.view.addGestureRecognizer(tapGesture)
+    }
+    @objc func handleTap() {
+        self.view.endEditing(true) // 키보드가 열려있을 경우 닫기
+    }
+}
+extension LoginViewController{
+    func setUpAutoLayout() {
+        // 아이디 입력 필드 설정
+        idText.backgroundColor = .white
+        idText.textAlignment = .center
+        idText.placeholder = "ID"
+        idText.layer.borderWidth = 0.1
+        idText.layer.cornerRadius = 20
+        idText.layer.masksToBounds = true
+
+        // 비밀번호 입력 필드 설정
+        passwordText.backgroundColor = .white
+        passwordText.textAlignment = .center
+        passwordText.placeholder = "Passward"
+        passwordText.layer.borderWidth = 0.1
+        passwordText.layer.cornerRadius = 20
+        passwordText.layer.masksToBounds = true
+
+        // 아이디와 비밀번호 입력 필드를 TextView에 추가
+        TextView.addArrangedSubview(idText)
+        TextView.addArrangedSubview(passwordText)
+        let TextSpacing = UIView()
+        TextSpacing.backgroundColor = .white
+        TextView.addArrangedSubview(TextSpacing)
+        //SnapKit AutoLayout
+        idText.snp.makeConstraints{ (make) in
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.top.equalToSuperview().offset(0)
+            make.height.equalTo(50)
+        }
+        passwordText.snp.makeConstraints{ (make) in
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.height.equalTo(50)
+        }
+        TextSpacing.snp.makeConstraints{ (make) in
+            make.leading.trailing.equalToSuperview().inset(0)
+        }
+        
+        StackView.addArrangedSubview(imageView)
+        let Spacing = UIView()
+        Spacing.backgroundColor = .white
+        
+        let Spacing2 = UIView()
+        Spacing2.backgroundColor = .white
+        StackView.addArrangedSubview(Spacing)
+        StackView.addArrangedSubview(TextView)
+        StackView.addArrangedSubview(LoginBtn)
+        StackView.addArrangedSubview(Spacing2)
+        StackView.addArrangedSubview(SecondLabel)
+        self.view.addSubview(StackView)
+        
+        //Snapkit AutoLayout
+        StackView.snp.makeConstraints{ (make) in
+            make.trailing.leading.equalToSuperview().inset(20)
+            make.bottom.top.equalToSuperview().inset(self.view.frame.height / 8.5)
+        }
+        imageView.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(20)
+            make.trailing.leading.equalToSuperview().inset(0)
+            make.height.equalTo(StackView.snp.height).dividedBy(3)
+        }
+        Spacing.snp.makeConstraints{ (make) in
+            make.height.equalTo(StackView.snp.height).dividedBy(5)
+        }
+        TextView.snp.makeConstraints{ (make) in
+            make.top.equalTo(Spacing.snp.bottom).offset(50)
+            make.trailing.leading.equalToSuperview().inset(10)
+        }
+        LoginBtn.snp.makeConstraints{ (make) in
+            make.top.equalTo(TextView.snp.bottom).offset(50)
+            make.trailing.leading.equalToSuperview().inset(20)
+            make.height.equalTo(StackView.snp.height).dividedBy(12)
+        }
+        Spacing2.snp.makeConstraints{ (make) in
+            make.height.equalTo(10)
+        }
+        SecondLabel.snp.makeConstraints{ (make) in
+            make.trailing.leading.equalToSuperview().inset(20)
+        }
     }
 }

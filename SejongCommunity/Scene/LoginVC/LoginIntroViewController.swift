@@ -3,16 +3,19 @@
 //  SejongCommunity
 //
 //  Created by 정성윤 on 2023/08/20.
-//
 
 import Foundation
 import UIKit
 import SnapKit
 
 class LoginIntroViewController : UIViewController {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated) // 백 버튼 숨기기
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.isHidden = true
         self.view.backgroundColor = .white
         setUpAutoLayout()
     }
@@ -30,9 +33,9 @@ class LoginIntroViewController : UIViewController {
     
     //세종대학교 로고 이미지
     private let LogoImage : UIImageView = {
-        let image = UIImage(named: "")
+        let image = UIImage(named: "Logo")
         let ImageView = UIImageView(image: image)
-        ImageView.backgroundColor = .black
+        ImageView.backgroundColor = .white
         ImageView.contentMode = .scaleAspectFit
         
         return ImageView
@@ -44,9 +47,9 @@ class LoginIntroViewController : UIViewController {
         LoginBtn.setTitle("Sign in with SejongEmail", for: .normal)
         LoginBtn.setTitleColor(.black, for: .normal)
         LoginBtn.backgroundColor = #colorLiteral(red: 1, green: 0.8216146827, blue: 0.8565195203, alpha: 1)
-        LoginBtn.layer.cornerRadius = 30
+        LoginBtn.layer.cornerRadius = 20
         LoginBtn.layer.masksToBounds = true
-        
+        LoginBtn.addTarget(self, action: #selector(BtnTapped), for: .touchUpInside)
         return LoginBtn
     }()
     
@@ -72,36 +75,45 @@ class LoginIntroViewController : UIViewController {
         
         return StackView
     }()
+    //버튼 메서드
+    @objc func BtnTapped() {
+        navigationController?.pushViewController(LoginViewController(), animated: true)
+    }
 }
 // 각 요소들의 오토레이아웃 설정을 위한 클래스 확장
 extension LoginIntroViewController {
     func setUpAutoLayout(){
         StackView.addArrangedSubview(FirstLabel)
         StackView.addArrangedSubview(LogoImage)
+        let Spacing = UIView()
+        Spacing.backgroundColor = .white
+        StackView.addArrangedSubview(Spacing)
         StackView.addArrangedSubview(Btn)
         StackView.addArrangedSubview(SecondLabel)
-        view.addSubview(StackView)
+        self.view.addSubview(StackView)
         
         //SnapKit을 이용한 오토레이아웃 설정
         StackView.snp.makeConstraints{ (make) in
-            make.bottom.trailing.leading.equalToSuperview().inset(0)
-            make.top.equalToSuperview().offset(self.view.frame.height / 8.5)
+            make.trailing.leading.equalToSuperview().inset(0)
+            make.bottom.top.equalToSuperview().inset(self.view.frame.height / 8.5)
         }
         FirstLabel.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(0)
-            make.trailing.leading.equalToSuperview().inset(40)
-//            make.width.equalTo(StackView.snp.width).dividedBy(2)
+            make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(StackView.snp.height).dividedBy(12)
         }
         LogoImage.snp.makeConstraints{ (make) in
             make.top.equalTo(FirstLabel.snp.bottom).offset(20)
-            make.trailing.leading.equalToSuperview().inset(40)
-            make.height.equalTo(StackView.snp.height).dividedBy(2)
+            make.trailing.leading.equalToSuperview().inset(60)
+            make.height.equalTo(StackView.snp.height).dividedBy(1.5)
+        }
+        Spacing.snp.makeConstraints{ (make) in
+            make.height.equalTo(StackView.snp.height).dividedBy(10)
         }
         Btn.snp.makeConstraints{ (make) in
-//            make.top.equalTo(LogoImage.snp.bottom).offset(30)
-            make.trailing.leading.equalToSuperview().inset(20)
-            make.height.equalTo(StackView.snp.height).dividedBy(10)
+            make.top.equalTo(Spacing.snp.bottom).offset(50)
+            make.trailing.leading.equalToSuperview().inset(30)
+            make.height.equalTo(StackView.snp.height).dividedBy(12)
         }
         SecondLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(Btn.snp.bottom).offset(0)

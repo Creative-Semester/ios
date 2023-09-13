@@ -7,7 +7,15 @@
 
 import UIKit
 import SnapKit
-class MainViewController: UIViewController{
+//캘린더 뷰 추가
+import FSCalendar
+class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource{
+    // 또는 viewWillAppear 메서드에서 설정
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            // 다시 탭 바를 표시
+            tabBarController?.tabBar.isHidden = false
+        }
     var tableView : UITableView!
     //공지사항을 알리는 뷰를 생성
     var NotificationView : UIView = {
@@ -30,7 +38,7 @@ class MainViewController: UIViewController{
         
         //뷰 안에 공지사항을 알리는 레이블 추가
         let Notification = UIButton()
-        Notification.setTitle("앱 점검 공지(10.19 ~. ", for: .normal)
+        Notification.setTitle("앱 점검 공지 매주 목...", for: .normal)
         Notification.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         Notification.setTitleColor(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1), for: .normal)
         Notification.addTarget(self, action: #selector(NotificationBtnTapped), for: .touchUpInside)
@@ -60,8 +68,8 @@ class MainViewController: UIViewController{
     var CalenderView : UIView = {
        let view = UIImageView()
        //뷰의 배경색 설정
-        view.backgroundColor = #colorLiteral(red: 1, green: 0.8216146827, blue: 0.8565195203, alpha: 1)
-        view.image = UIImage(named: "Image")
+        view.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        view.image = UIImage(named: "Image1")
         view.contentMode = .scaleAspectFill
         // 뷰를 둥글게
         view.layer.cornerRadius = 10
@@ -73,57 +81,57 @@ class MainViewController: UIViewController{
        let view = UIView()
         view.backgroundColor = .white
         // 자유게시판 버튼 생성
-        let OpenBoardBtn = UIButton(type: .system)
-        OpenBoardBtn.backgroundColor = #colorLiteral(red: 0.9686274529, green: 0.78039217, blue: 0.3450980484, alpha: 1)
+        let OpenBoardBtn = UIButton()
         OpenBoardBtn.layer.cornerRadius = 10
         OpenBoardBtn.layer.masksToBounds = true
-        let Openimage = UIImage(named: "OpenBoard")?.withRenderingMode(.alwaysOriginal)
+        let Openimage = UIImage(named: "icon1")
         OpenBoardBtn.setImage(Openimage, for: .normal)
-        OpenBoardBtn.imageView?.contentMode = .scaleAspectFit
+        OpenBoardBtn.contentMode = .scaleAspectFit
+        OpenBoardBtn.tintColor = UIColor(red: 252/255.0, green: 230/255.0, blue: 186/255.0, alpha: 1.0)
+        OpenBoardBtn.backgroundColor = UIColor(red: 252/255.0, green: 230/255.0, blue: 186/255.0, alpha: 1.0)
         OpenBoardBtn.addTarget(self, action: #selector(OpenBoardBtnTapped), for: .touchUpInside)
-//        view.addSubview(OpenBoardBtn)
+
         
-        // 과소식게시판 버튼 생성
+        // 학생회 공지사항/투표 버튼 생성
         let DepartBoardBtn = UIButton()
-        let Departimage = UIImage(named: "DepartBoard")?.withRenderingMode(.alwaysOriginal)
+        let Departimage = UIImage(named: "icon2")
         DepartBoardBtn.setImage(Departimage, for: .normal)
-        DepartBoardBtn.imageView?.contentMode = .scaleAspectFit
-        DepartBoardBtn.backgroundColor = #colorLiteral(red: 0.4761244059, green: 0.9626019597, blue: 0.514000833, alpha: 1)
+        DepartBoardBtn.contentMode = .scaleAspectFit
+        DepartBoardBtn.tintColor = UIColor(red: 0xCA / 255.0, green: 0xFF / 255.0, blue: 0xC9 / 255.0, alpha: 1.0)
+        DepartBoardBtn.backgroundColor = UIColor(red: 0xCA / 255.0, green: 0xFF / 255.0, blue: 0xC9 / 255.0, alpha: 1.0)
         DepartBoardBtn.layer.cornerRadius = 10
         DepartBoardBtn.layer.masksToBounds = true
         DepartBoardBtn.addTarget(self, action: #selector(DepartBoardBtnTapped), for: .touchUpInside)
-//        view.addSubview(DepartBoardBtn)
+
         
-        // 수업게시판 버튼 생성
+        // 교수게시판 버튼 생성
         let ClassBoardBtn = UIButton()
-        let Classimage = UIImage(named: "ClassBoard")?.withRenderingMode(.alwaysOriginal)
+        let Classimage = UIImage(named: "icon3")
         ClassBoardBtn.setImage(Classimage, for: .normal)
-        ClassBoardBtn.imageView?.contentMode = .scaleAspectFit
-        ClassBoardBtn.backgroundColor = #colorLiteral(red: 0.2588235438, green: 0.7568627596, blue: 0.9686274529, alpha: 1)
+        ClassBoardBtn.contentMode = .scaleAspectFit
+        ClassBoardBtn.tintColor = UIColor(red: 0xD9 / 255.0, green: 0xE6 / 255.0, blue: 0xFF / 255.0, alpha: 1.0)
+        ClassBoardBtn.backgroundColor = UIColor(red: 0xD9 / 255.0, green: 0xE6 / 255.0, blue: 0xFF / 255.0, alpha: 1.0)
         ClassBoardBtn.layer.cornerRadius = 10
         ClassBoardBtn.layer.masksToBounds = true
         ClassBoardBtn.addTarget(self, action: #selector(ClassBoardBtnTapped), for: .touchUpInside)
-//        view.addSubview(ClassBoardBtn)
+
         
         // 학생회 버튼 생성
         let CouncilBoardBtn = UIButton()
-        let Councilimage = UIImage(named: "CouncilBoard")?.withRenderingMode(.alwaysOriginal)
+        let Councilimage = UIImage(named: "icon4")
         CouncilBoardBtn.setImage(Councilimage, for: .normal)
-        CouncilBoardBtn.imageView?.contentMode = .scaleAspectFit
-        CouncilBoardBtn.backgroundColor = #colorLiteral(red: 1, green: 0.5347619653, blue: 0.7238742113, alpha: 1)
+        CouncilBoardBtn.contentMode = .scaleAspectFit
+        CouncilBoardBtn.tintColor = UIColor(red: 1.0, green: 0.8275, blue: 0.9843, alpha: 1.0)
+        CouncilBoardBtn.backgroundColor = UIColor(red: 1.0, green: 0.8275, blue: 0.9843, alpha: 1.0)
         CouncilBoardBtn.layer.cornerRadius = 10
         CouncilBoardBtn.layer.masksToBounds = true
         CouncilBoardBtn.addTarget(self, action: #selector(CouncilBoardBtnTapped), for: .touchUpInside)
-//        view.addSubview(CouncilBoardBtn)
-        
-        // 뷰를 둥글게
-        view.layer.cornerRadius = 10
-        view.layer.masksToBounds = true
+
         
         //전체 스택뷰
         let AllStackView = UIStackView()
         AllStackView.axis = .vertical
-        AllStackView.spacing = 20
+        AllStackView.spacing = 3
         AllStackView.distribution = .fill
         AllStackView.alignment = .fill
         AllStackView.backgroundColor = .white
@@ -137,54 +145,82 @@ class MainViewController: UIViewController{
         StackView1.axis = .horizontal
         StackView1.addArrangedSubview(OpenBoardBtn)
         StackView1.addArrangedSubview(DepartBoardBtn)
-        
+        StackView1.addArrangedSubview(ClassBoardBtn)
+        StackView1.addArrangedSubview(CouncilBoardBtn)
         //스택뷰2로 화면의 크기 설정
         let StackView2 = UIStackView()
+        let OpenBoardLabel = UILabel()
+        OpenBoardLabel.text = "자유게시판"
+        OpenBoardLabel.textAlignment = .center
+        OpenBoardLabel.font = UIFont.systemFont(ofSize: 12)
+        let DepartBoardLabel = UILabel()
+        DepartBoardLabel.text = "학생회 공지사항"
+        DepartBoardLabel.textAlignment = .center
+        DepartBoardLabel.font = UIFont.systemFont(ofSize: 11)
+        let ClassBoardLabel = UILabel()
+        ClassBoardLabel.textAlignment = .center
+        ClassBoardLabel.text = "교수게시판"
+        ClassBoardLabel.font = UIFont.systemFont(ofSize: 12)
+        let CouncilBoardLabel = UILabel()
+        CouncilBoardLabel.text = "학생회"
+        CouncilBoardLabel.textAlignment = .center
+        CouncilBoardLabel.font = UIFont.systemFont(ofSize: 12)
         StackView2.alignment = .fill
         StackView2.backgroundColor = .white
         StackView2.distribution = .fill
         StackView2.spacing = 20
         StackView2.axis = .horizontal
-        StackView2.addArrangedSubview(ClassBoardBtn)
-        StackView2.addArrangedSubview(CouncilBoardBtn)
-
-        AllStackView.addArrangedSubview(StackView1)
-        AllStackView.addArrangedSubview(StackView2)
-        view.addSubview(AllStackView)
+        StackView2.addArrangedSubview(OpenBoardLabel)
+        StackView2.addArrangedSubview(DepartBoardLabel)
+        StackView2.addArrangedSubview(ClassBoardLabel)
+        StackView2.addArrangedSubview(CouncilBoardLabel)
+        view.addSubview(StackView1)
+        view.addSubview(StackView2)
         //snapkit으로 오토레이아웃 설정
-        AllStackView.snp.makeConstraints{(make) in
-            make.top.bottom.leading.trailing.equalToSuperview().inset(0)
-        }
         StackView1.snp.makeConstraints{(make) in
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.top.equalToSuperview().offset(0)
-            make.height.equalTo(AllStackView.snp.height).dividedBy(2).offset(-10)
+            make.leading.trailing.top.equalToSuperview().inset(0)
         }
         OpenBoardBtn.snp.makeConstraints{ (make) in
             make.leading.equalToSuperview().offset(0)
-            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
             make.top.equalToSuperview().offset(0)
+            make.height.equalTo(view.snp.width).dividedBy(4).inset(7.5)
         }
         DepartBoardBtn.snp.makeConstraints{ (make) in
-            make.trailing.equalToSuperview().offset(-0)
-            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
             make.top.equalToSuperview().offset(0)
-        }
-        StackView2.snp.makeConstraints{ (make) in
-            make.top.equalTo(StackView1.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.bottom.equalToSuperview().offset(-0)
-            make.height.equalTo(AllStackView.snp.height).dividedBy(2).offset(-10)
+            make.height.equalTo(view.snp.width).dividedBy(4).inset(7.5)
         }
         ClassBoardBtn.snp.makeConstraints{(make) in
-            make.leading.equalToSuperview().inset(0)
-            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
             make.bottom.equalToSuperview().offset(-0)
+            make.height.equalTo(view.snp.width).dividedBy(4).inset(7.5)
         }
         CouncilBoardBtn.snp.makeConstraints{(make) in
             make.bottom.equalToSuperview().offset(-0)
-            make.width.equalTo(AllStackView.snp.width).dividedBy(2).offset(-10)
-            make.trailing.equalToSuperview().offset(-0)
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
+            make.height.equalTo(view.snp.width).dividedBy(4).inset(7.5)
+        }
+        StackView2.snp.makeConstraints{ (make) in
+            make.top.equalTo(CouncilBoardBtn.snp.bottom).offset(5)
+            make.leading.trailing.equalToSuperview().inset(0)
+        }
+        OpenBoardLabel.snp.makeConstraints{(make) in
+            make.leading.equalToSuperview().offset(0)
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
+            make.top.equalToSuperview().offset(0)
+        }
+        DepartBoardLabel.snp.makeConstraints{(make) in
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
+            make.top.equalToSuperview().offset(0)
+        }
+        ClassBoardLabel.snp.makeConstraints{ (make) in
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
+            make.bottom.equalToSuperview().offset(-0)
+        }
+        CouncilBoardLabel.snp.makeConstraints{(make) in
+            make.bottom.equalToSuperview().offset(-0)
+            make.width.equalTo(view.snp.width).dividedBy(4).inset(7.5)
         }
         return view
     }()
@@ -195,7 +231,7 @@ class MainViewController: UIViewController{
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         let View = UIView()
-        
+        tabBarController?.tabBar.isHidden = false
         View.addSubview(imageView)
         self.navigationController?.navigationBar.barTintColor = .white
         let logoBarItem = UIBarButtonItem(customView: View)
@@ -222,9 +258,14 @@ class MainViewController: UIViewController{
         StackView.distribution = .fill
         StackView.backgroundColor = .white
         StackView.spacing = 20
+        let BoardSummary = FSCalendar()
+        BoardSummary.delegate = self
+        BoardSummary.dataSource = self
+        BoardSummary.backgroundColor = .clear // 캘린더 뷰의 배경색 설정
         StackView.addArrangedSubview(NotificationView)
         StackView.addArrangedSubview(CalenderView)
         StackView.addArrangedSubview(BoardView)
+        StackView.addArrangedSubview(BoardSummary)
         ScrollView.addSubview(StackView)
         //Snapkit을 이용해 오토레이아웃 설정
         ScrollView.snp.makeConstraints{(make) in
@@ -250,6 +291,12 @@ class MainViewController: UIViewController{
         BoardView.snp.makeConstraints{ (make) in
             make.top.equalTo(CalenderView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(0)
+            make.height.equalToSuperview().dividedBy(7)
+        }
+        BoardSummary.snp.makeConstraints{ (make) in
+            make.top.equalTo(BoardView.snp.bottom).offset(20)
+            make.height.equalTo(view.frame.height / 3.5)
+            make.bottom.equalToSuperview().offset(-10)
         }
     }
     //로고를 눌렀을때 메서드

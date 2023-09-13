@@ -66,7 +66,7 @@ class OpenWriteViewController : UIViewController {
         WriteStackView.backgroundColor = .white
         var Title = UITextField()
         Title.textAlignment = .left
-        Title.placeholder = "Title"
+        Title.placeholder = "제목"
         Title.font = UIFont.boldSystemFont(ofSize: 20)
 //        Title.borderStyle = .roundedRect
         Title.layer.borderWidth = 0.6
