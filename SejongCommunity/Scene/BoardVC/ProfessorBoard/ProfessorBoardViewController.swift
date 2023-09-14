@@ -58,7 +58,8 @@ extension ProfessorBoardViewController: UICollectionViewDataSource {
 
 extension ProfessorBoardViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // Cell을 선택한 경우
+        let vc = ProfessorInfoViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
