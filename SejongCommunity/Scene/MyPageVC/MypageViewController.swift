@@ -93,6 +93,7 @@ class MypageViewController: UIViewController{
         LogoutBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         LogoutBtn.layer.cornerRadius = 30
         LogoutBtn.layer.masksToBounds = true
+        LogoutBtn.addTarget(self, action: #selector(LogoutBtnTapped), for: .touchUpInside)
         
         let Spacing = UIView()
         Spacing.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
@@ -183,5 +184,17 @@ class MypageViewController: UIViewController{
     @objc func CouncilRegisterTapped() {
         self.navigationController?
             .pushViewController(CouncilRegisterViewController(), animated: true)
+    }
+    //로그아웃 버튼 메서드
+    @objc func LogoutBtnTapped() {
+        //로그아웃 처리 메서드 추가
+        AuthenticationManager.logoutUser()
+        //로그인 페이지로 이동(임시)
+        navigationController?.pushViewController(LoginIntroViewController(), animated: false)
+        let loginViewController = LoginViewController()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.window?.rootViewController = loginViewController
+        //앱이 시작될 때 윈도우를 화면에 표시하고 사용자가 앱의 화면과 상호 작용할 수 있도록 준비
+        appDelegate.window?.makeKeyAndVisible()
     }
 }

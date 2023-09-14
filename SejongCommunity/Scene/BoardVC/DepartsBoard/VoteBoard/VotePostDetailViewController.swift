@@ -194,28 +194,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
             make.height.equalTo(30)
         }
         
-        //게시글에 대한 좋아요를 누를 버튼
-        let image = UIImage(systemName: "heart.fill")
-        GreatBtn.setImage(image, for: .normal)
-        GreatBtn.backgroundColor = .white
-        GreatBtn.tintColor = .darkGray
-        GreatBtn.setTitle(" \(comments.count)", for: .normal)
-        GreatBtn.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        GreatBtn.setTitleColor(.darkGray, for: .normal)
-        GreatBtn.contentHorizontalAlignment = .right
-        GreatBtn.addTarget(self, action: #selector(GreatBtnTapped), for: .touchUpInside)
-        DetailView.addSubview(GreatBtn)
-        GreatBtn.snp.makeConstraints{ (make) in
-            if(post.image == nil) {
-                make.top.equalTo(DetailLabel.snp.bottom).offset(5)
-                make.trailing.equalToSuperview().offset(-20)
-            }else{
-                make.top.equalTo(ImageView.snp.bottom).offset(5)
-                make.trailing.equalToSuperview().offset(-40)
-            }
-            make.width.equalTo(200)
-            make.height.equalTo(50)
-        }
+        
         //게시물의 댓글을 나열 할 뷰
         let CommentTableView = UITableView()
         CommentTableView.backgroundColor = .white
@@ -369,35 +348,6 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
                 updateProgressViews()
             }
         }
-    
-    //좋아요 버튼을 누르면 좋아요 수 + 색이 변함
-    @objc func GreatBtnTapped() {
-        if GreatBtn.isSelected {
-                    // 버튼이 이미 선택된 상태일 경우, 이전 색으로 되돌리기
-            GreatBtn.isSelected = false
-            GreatBtn.tintColor = .darkGray
-            GreatBtn.setTitleColor(.darkGray, for: .normal)
-            
-            // 좋아요 수 증가 및 버튼 타이틀 업데이트
-            if let currentLikes = Int(GreatBtn.title(for: .normal) ?? "0"){
-                var newLikes = currentLikes
-                newLikes -= 1
-                GreatBtn.setTitle("\(newLikes)", for: .normal)
-            }
-                } else {
-                    // 버튼이 선택되지 않은 상태일 경우, 새로운 색으로 설정
-                    GreatBtn.isSelected = true
-                    GreatBtn.tintColor = .red // 또는 원하는 다른 색상
-                    
-                    GreatBtn.setTitleColor(.red, for: .normal)
-                    // 좋아요 수 증가 및 버튼 타이틀 업데이트
-                    if let currentLikes = Int(GreatBtn.title(for: .normal) ?? "0"){
-                        var newLikes = currentLikes
-                        newLikes += 1
-                        GreatBtn.setTitle("\(newLikes)", for: .normal)
-                    }
-                }
-    }
     //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
     func setupTapGesture(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))

@@ -73,7 +73,9 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     }
     //메인으로 돌아갈 백 버튼
     @objc func MainBackButtonTapped() {
-        navigationController?.pushViewController(MainViewController(), animated: true)
+        if let mainViewController = navigationController?.viewControllers.first(where: { $0 is MainViewController }) {
+            navigationController?.popToViewController(mainViewController, animated: true)
+        }
         //메인으로 이동했을때 탭바를 다시 켬
         tabBarController?.tabBar.isHidden = false
     }
@@ -125,7 +127,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         CouncilBtn.layer.masksToBounds = true
         CouncilBtn.setImage(UIImage(systemName: "quote.bubble.fill"), for: .normal)
         CouncilBtn.tintColor = .black
-        CouncilBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
         CouncilBtn.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
         let CouncilLabel = UILabel()
         CouncilLabel.text = "공지사항"
@@ -142,7 +143,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         VoteBtn.layer.masksToBounds = true
         VoteBtn.setImage(UIImage(systemName: "slider.horizontal.3"), for: .normal)
         VoteBtn.tintColor = .black
-        VoteBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
         VoteBtn.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
         let VoteLabel = UILabel()
         VoteLabel.text = "투표"
@@ -358,6 +358,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
             //부모로 이동했을때 탭바를 다시 켬
             if isMovingFromParent {
                 print("Back 버튼 클릭됨")
+                navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                 tabBarController?.tabBar.isHidden = false
             }
         }

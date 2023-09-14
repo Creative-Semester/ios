@@ -70,7 +70,10 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
     }
     //메인으로 돌아갈 백 버튼
     @objc func MainBackButtonTapped() {
-        navigationController?.pushViewController(MainViewController(), animated: true)
+        if let mainViewController = navigationController?.viewControllers.first(where: { $0 is MainViewController }) {
+            navigationController?.popToViewController(mainViewController, animated: true)
+        }
+
         //메인으로 이동했을때 탭바를 다시 켬
         tabBarController?.tabBar.isHidden = false
     }
@@ -173,6 +176,7 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
             if isMovingFromParent {
                 print("Back 버튼 클릭됨")
                 tabBarController?.tabBar.isHidden = false
+                navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
             }
         }
     //테이블뷰를 설정하는 메서드

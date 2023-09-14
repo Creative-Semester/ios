@@ -22,11 +22,12 @@ class CustomTableViewCell: UITableViewCell{
     
     private func setupViews() {
         //titleLabel 설정
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
 //        contentView.addSubview(titleLabel)
         
         // commentLabel 설정
         commentLabel.numberOfLines = 0 //여러 줄의 텍스트를 표시하기 위해 설정
+        commentLabel.font = UIFont.systemFont(ofSize: 15)
 //        contentView.addSubview(commentLabel)
         
          
@@ -34,12 +35,12 @@ class CustomTableViewCell: UITableViewCell{
         let AllStackView = UIStackView()
         AllStackView.axis = .horizontal
         AllStackView.distribution = .fill
-        AllStackView.spacing = 20
+        AllStackView.spacing = 10
         AllStackView.alignment = .fill
         let StackView = UIStackView()
         StackView.axis = .vertical
         StackView.distribution = .fill
-        StackView.spacing = 20
+        StackView.spacing = 5
         StackView.alignment = .fill
         StackView.addArrangedSubview(titleLabel)
         StackView.addArrangedSubview(commentLabel)

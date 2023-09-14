@@ -16,11 +16,12 @@
 		E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */; };
 		E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021EC82A9208A000FFEAB2 /* LoginIntroViewController.swift */; };
 		E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ECA2A9208B100FFEAB2 /* LoginViewController.swift */; };
-		E4021ECD2A9208C000FFEAB2 /* WelcomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ECC2A9208C000FFEAB2 /* WelcomViewController.swift */; };
 		E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ECE2A9F3B6500FFEAB2 /* VoteViewController.swift */; };
 		E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */; };
 		E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */; };
 		E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */; };
+		E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */; };
+		E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = E4D466592AB1B7DA003E5DD9 /* FSCalendar */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
 		F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12465112A67BAB500037D8C /* SceneDelegate.swift */; };
 		F12465192A67BAB600037D8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12465182A67BAB600037D8C /* Assets.xcassets */; };
@@ -54,11 +55,11 @@
 		E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		E4021EC82A9208A000FFEAB2 /* LoginIntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginIntroViewController.swift; sourceTree = "<group>"; };
 		E4021ECA2A9208B100FFEAB2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		E4021ECC2A9208C000FFEAB2 /* WelcomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomViewController.swift; sourceTree = "<group>"; };
 		E4021ECE2A9F3B6500FFEAB2 /* VoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteViewController.swift; sourceTree = "<group>"; };
 		E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotePostDetailViewController.swift; sourceTree = "<group>"; };
 		E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteBoardWriteViewController.swift; sourceTree = "<group>"; };
 		E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
+		E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.debug.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.debug.xcconfig"; sourceTree = "<group>"; };
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F124650F2A67BAB500037D8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -90,6 +91,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */,
+				E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,7 +151,7 @@
 			children = (
 				E4021EC82A9208A000FFEAB2 /* LoginIntroViewController.swift */,
 				E4021ECA2A9208B100FFEAB2 /* LoginViewController.swift */,
-				E4021ECC2A9208C000FFEAB2 /* WelcomViewController.swift */,
+				E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */,
 			);
 			path = LoginVC;
 			sourceTree = "<group>";
@@ -278,6 +280,9 @@
 			dependencies = (
 			);
 			name = SejongCommunity;
+			packageProductDependencies = (
+				E4D466592AB1B7DA003E5DD9 /* FSCalendar */,
+			);
 			productName = SejongCommunity;
 			productReference = F124650C2A67BAB500037D8C /* SejongCommunity.app */;
 			productType = "com.apple.product-type.application";
@@ -306,6 +311,9 @@
 				Base,
 			);
 			mainGroup = F12465032A67BAB500037D8C;
+			packageReferences = (
+				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+			);
 			productRefGroup = F124650D2A67BAB500037D8C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -380,7 +388,6 @@
 				E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */,
 				E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */,
 				E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */,
-				E4021E6F2A6F8B4000FFEAB2 /* ClassBoardViewController.swift in Sources */,
 				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
@@ -389,7 +396,6 @@
 				F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */,
 				F1E5477F2AA0878700671182 /* ProfessorBoardViewController.swift in Sources */,
 				F154DAA22A6D2C0A00B6C7F0 /* MypageViewController.swift in Sources */,
-				E4021ECD2A9208C000FFEAB2 /* WelcomViewController.swift in Sources */,
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
@@ -404,6 +410,7 @@
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
+				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */,
 			);
@@ -617,6 +624,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E4D466592AB1B7DA003E5DD9 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F12465042A67BAB500037D8C /* Project object */;
 }
