@@ -87,7 +87,7 @@ class LoginViewController : UIViewController {
         print("LoginBtnTapped - Called \(id), \(password)")
         // 이후 서버와 통신하기 위한 URL 설정
         let urlString = "https://example.com/login" // 서버의 로그인 API URL로 변경해야 합니다.
-
+//        let urlString = "http://ime-locker.shop:8081/api/auth/login"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return
@@ -97,8 +97,9 @@ class LoginViewController : UIViewController {
         request.httpMethod = "POST"
         let parameters: [String: Any] = [
             "id": id,
-            "password" : password
+            "pw" : password
         ]
+        print("Send - \(parameters)")
         do {
                 // 파라미터를 JSON 데이터로 변환
                 let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
@@ -120,7 +121,7 @@ class LoginViewController : UIViewController {
                     guard let httpResponse = response as? HTTPURLResponse,
                           (200...299).contains(httpResponse.statusCode) else {
                         // 서버 응답 상태 코드 처리
-                        print("Invalid response status code")
+                        print("Invalid response status code - \(response)")
                         return
                     }
                     if let data = data {

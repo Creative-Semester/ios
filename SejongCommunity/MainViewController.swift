@@ -329,7 +329,7 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
     }
     //학생회 액션 처리
     @objc func CouncilBoardBtnTapped() {
-        self.navigationController?.pushViewController(ProfessorBoardViewController(), animated: true)
+        self.navigationController?.pushViewController(CouncilBoardViewController(), animated: true)
     }
     @objc func NotificationBtnTapped() {
         self.navigationController?.pushViewController(NotificationViewController(), animated: true)
