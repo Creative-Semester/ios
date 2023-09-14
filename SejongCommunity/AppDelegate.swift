@@ -14,18 +14,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         //MARK: - 토큰 유효성 검사 > 로그인 검사
-//        if AuthenticationManager.isUserLoggedIn() {
-//                    // 사용자가 로그인되어 있는 경우 탭바 컨트롤러를 보여줍니다.
-//        let mainTabBarController = MainTabBarController()
-//        self.window?.rootViewController = mainTabBarController
-//        } else {
-//        // 사용자가 로그인되어 있지 않은 경우 로그인 뷰 컨트롤러를 보여줍니다.
-//        let loginViewController = LoginViewController()
-//        let navigationController = UINavigationController(rootViewController: loginViewController)
-//        self.window?.rootViewController = navigationController
-//                }
-//                
-//        self.window?.makeKeyAndVisible()
+        if AuthenticationManager.isUserLoggedIn() {
+            // 사용자가 로그인되어 있는 경우 탭바 컨트롤러를 보여줍니다.
+            print("첫 로그인 - 탭바뷰를 보여줍니다.")
+            let mainTabBarController = MainTabBarController()
+            mainTabBarController.setRootViewController()
+            self.window?.rootViewController = mainTabBarController
+            self.window?.makeKeyAndVisible()
+        } else {
+            // 사용자가 로그인되어 있지 않은 경우 로그인 뷰 컨트롤러를 보여줍니다.
+            print("첫 로그인 - 로그인뷰를 보여줍니다.")
+            // 사용자가 로그인하지 않은 경우
+            let loginViewController = LoginViewController()
+            let navigationController = UINavigationController(rootViewController: loginViewController)
+            window?.rootViewController = navigationController
+            self.window?.makeKeyAndVisible()
+        }
+        self.window?.makeKeyAndVisible()
         return true
     }
 

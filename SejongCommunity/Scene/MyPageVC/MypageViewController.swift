@@ -190,11 +190,6 @@ class MypageViewController: UIViewController{
         //로그아웃 처리 메서드 추가
         AuthenticationManager.logoutUser()
         //로그인 페이지로 이동(임시)
-        navigationController?.pushViewController(LoginIntroViewController(), animated: false)
-        let loginViewController = LoginViewController()
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.window?.rootViewController = loginViewController
-        //앱이 시작될 때 윈도우를 화면에 표시하고 사용자가 앱의 화면과 상호 작용할 수 있도록 준비
-        appDelegate.window?.makeKeyAndVisible()
+//        navigationController?.pushViewController(LoginIntroViewController(), animated: false)
     }
 }

@@ -28,7 +28,7 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         let Notificationtitle = UILabel()
         Notificationtitle.text = "공지사항"
         Notificationtitle.textAlignment = .center
-        Notificationtitle.backgroundColor = #colorLiteral(red: 0.9913799167, green: 0.5604230165, blue: 0.5662528872, alpha: 1)
+        Notificationtitle.backgroundColor = #colorLiteral(red: 0.9865735173, green: 0.7143028378, blue: 0.7033815384, alpha: 1)
         Notificationtitle.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         Notificationtitle.font = UIFont(name: "Bold", size: 20)
         //레이블을 둥글게 하기
@@ -38,9 +38,10 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         
         //뷰 안에 공지사항을 알리는 레이블 추가
         let Notification = UIButton()
-        Notification.setTitle("앱 점검 공지 매주 목...", for: .normal)
+        Notification.setTitle("앱 점검 공지 매주 목요일...", for: .normal)
         Notification.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         Notification.setTitleColor(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1), for: .normal)
+        Notification.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         Notification.addTarget(self, action: #selector(NotificationBtnTapped), for: .touchUpInside)
         view.addSubview(Notification)
         
@@ -154,9 +155,9 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         OpenBoardLabel.textAlignment = .center
         OpenBoardLabel.font = UIFont.systemFont(ofSize: 12)
         let DepartBoardLabel = UILabel()
-        DepartBoardLabel.text = "학생회 공지사항"
+        DepartBoardLabel.text = "학생회 공지"
         DepartBoardLabel.textAlignment = .center
-        DepartBoardLabel.font = UIFont.systemFont(ofSize: 11)
+        DepartBoardLabel.font = UIFont.systemFont(ofSize: 12)
         let ClassBoardLabel = UILabel()
         ClassBoardLabel.textAlignment = .center
         ClassBoardLabel.text = "교수게시판"
