@@ -176,6 +176,7 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
             if isMovingFromParent {
                 print("Back 버튼 클릭됨")
                 tabBarController?.tabBar.isHidden = false
+                navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
             }
         }
     //테이블뷰를 설정하는 메서드

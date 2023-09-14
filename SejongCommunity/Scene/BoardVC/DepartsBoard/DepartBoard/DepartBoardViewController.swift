@@ -358,6 +358,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
             //부모로 이동했을때 탭바를 다시 켬
             if isMovingFromParent {
                 print("Back 버튼 클릭됨")
+                navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                 tabBarController?.tabBar.isHidden = false
             }
         }

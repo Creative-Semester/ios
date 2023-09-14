@@ -258,10 +258,19 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         StackView.distribution = .fill
         StackView.backgroundColor = .white
         StackView.spacing = 20
+//        let BoardSummary = UIView()
+//        BoardSummary.backgroundColor = .white
+//        BoardSummary.layer.cornerRadius = 10
+//        BoardSummary.layer.masksToBounds = true
+//        BoardSummary.layer.borderWidth = 0.2
         let BoardSummary = FSCalendar()
         BoardSummary.delegate = self
         BoardSummary.dataSource = self
         BoardSummary.backgroundColor = .clear // 캘린더 뷰의 배경색 설정
+        BoardSummary.appearance.titleDefaultColor = .black // 달력의 평일 날짜 색
+        BoardSummary.appearance.titleWeekendColor = .red // 달력의 토일 날짜 색
+        BoardSummary.appearance.headerTitleColor = .systemRed // 년도, 월의 색
+        BoardSummary.appearance.weekdayTextColor = .orange // 요일 글자 색
         StackView.addArrangedSubview(NotificationView)
         StackView.addArrangedSubview(CalenderView)
         StackView.addArrangedSubview(BoardView)

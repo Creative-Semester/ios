@@ -9,8 +9,10 @@ import Foundation
 import UIKit
 import SnapKit
 
-class OpenWriteViewController : UIViewController {
+class OpenWriteViewController : UIViewController, UITextViewDelegate {
     var tableView = UITableView()
+    //Textview의 placeholder
+    let placeholderText = "내용"
     //익명 표시
     let anonymousView : UIView = {
         let view = UIView()
@@ -65,11 +67,11 @@ class OpenWriteViewController : UIViewController {
         WriteStackView.alignment = .fill
         WriteStackView.backgroundColor = .white
         var Title = UITextField()
+        Title.borderStyle = .none
+        Title.layer.backgroundColor = UIColor.white.cgColor
         Title.textAlignment = .left
         Title.placeholder = "제목"
         Title.font = UIFont.boldSystemFont(ofSize: 20)
-//        Title.borderStyle = .roundedRect
-        Title.layer.borderWidth = 0.6
         Title.layer.cornerRadius = 10
         Title.layer.masksToBounds = true
         let spaceView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)) // 원하는 크기로 설정
@@ -78,8 +80,10 @@ class OpenWriteViewController : UIViewController {
         //게시물의 본문
         var Message = UITextView()
         Message.textAlignment = .left
+        Message.text = placeholderText
+        Message.delegate = self
+        Message.textColor = UIColor.lightGray
         Message.font = UIFont.boldSystemFont(ofSize: 15)
-        Message.layer.borderWidth = 0.6
         Message.layer.cornerRadius = 10
         Message.layer.masksToBounds = true
         
@@ -107,6 +111,9 @@ class OpenWriteViewController : UIViewController {
         UploadBtn.addTarget(self, action: #selector(UploadBtnTapped), for: .touchUpInside)
         
         WriteStackView.addArrangedSubview(Title)
+        let Spacing = UIView()
+        Spacing.backgroundColor = .gray
+        WriteStackView.addArrangedSubview(Spacing)
         WriteStackView.addArrangedSubview(Message)
         WriteStackView.addArrangedSubview(UploadImage)
         WriteStackView.addArrangedSubview(UploadBtn)
@@ -120,9 +127,13 @@ class OpenWriteViewController : UIViewController {
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(60)
         }
+        Spacing.snp.makeConstraints{ (make) in
+            make.leading.trailing.equalToSuperview().inset(10)
+            make.height.equalTo(0.5)
+        }
         Message.snp.makeConstraints{(make) in
-            make.top.equalTo(Title.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview().inset(0)
+            make.top.equalTo(Spacing.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(10)
             make.height.equalTo(250)
         }
         UploadImage.snp.makeConstraints{ (make) in
@@ -176,6 +187,19 @@ class OpenWriteViewController : UIViewController {
             make.top.equalTo(anonymousView.snp.bottom).offset(20)
         }
         setupTapGesture()
+    }
+    // UITextView Delegate 메서드
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.text == placeholderText {
+            textView.text = ""
+            textView.textColor = UIColor.black
+        }
+    }
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = placeholderText
+            textView.textColor = UIColor.lightGray
+        }
     }
     //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
     func setupTapGesture(){
