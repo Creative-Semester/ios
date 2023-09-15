@@ -131,11 +131,11 @@ class LoginViewController : UIViewController {
                                    let refreshToken = result["refreshToken"] as? String,
                                    let serverResponseCode = jsonResponse["status"] as? Int {
                                     print("검사들어갑니다")
-                                    print("액세스토큰 - \(accessToken), 서버응답코드 - \(serverResponseCode)")
+                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken), 서버응답코드 - \(serverResponseCode)")
                                     if AuthenticationManager.isTokenValid(accessToken, serverResponseCode){
                                         //토큰이 유효한 경우
                                         // 토큰 저장
-                                        AuthenticationManager.saveAuthToken(token: accessToken)
+                                        AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
                                         DispatchQueue.main.async {
                                             let mainTabBarController = MainTabBarController()
                                             mainTabBarController.setRootViewController()

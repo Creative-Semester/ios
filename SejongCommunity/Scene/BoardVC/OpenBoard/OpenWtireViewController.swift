@@ -239,14 +239,21 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             alertController.addAction(CancelController)
             present(alertController, animated: true)
         }else{
+            var token : String = ""
+            token = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
             //MARK: JSON 통신
-            let apiURLString = "https://example.com/api/upload"
-            var request = URLRequest(url: URL(string: apiURLString)!)
+            let urlString = "http://15.164.161.53:8082/api/v1/boards?name=\(token)&boardType=Free"
+            guard let url = URL(string: urlString) else {
+                    // 유효하지 않은 URL 처리
+                    return
+                }
+            var request = URLRequest(url: url)
             request.httpMethod = "POST"
             //적절할때 통신
             let requestBody: [String: Any] = [
                 "title": titleText,
-                "message": messageText
+                "content": messageText,
+                "image": ""
             ]
             // JSON 데이터를 HTTP 요청 바디에 설정
             

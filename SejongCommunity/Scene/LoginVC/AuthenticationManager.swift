@@ -11,18 +11,12 @@ import UIKit
 class AuthenticationManager {
     // 사용자 정보 및 토큰을 저장하는 UserDefaults 키
     private static let kAuthTokenKey = "AuthToken"
-    private static let kTokenExpirationKey = "TokenExpiration"
+    private static let krefreshTokenKey = "refreshToken"
     private static let serverResponseCode = 0
-    
-    //로그인 시 토큰 저장
-//    static func saveAuthToken(token: String, expirationDate: Date){
-//        print("AuthenticationManager.saveAuthToken - called()")
-//        UserDefaults.standard.set(token, forKey: kAuthTokenKey)
-//        UserDefaults.standard.set(expirationDate, forKey: kTokenExpirationKey)
-//    }
-    static func saveAuthToken(token: String){
+    static func saveAuthToken(token: String, refresh: String){
         print("AuthenticationManager.saveAuthToken - called()")
         UserDefaults.standard.set(token, forKey: kAuthTokenKey)
+        UserDefaults.standard.set(refresh, forKey: krefreshTokenKey)
     }
     
     //현재 로그인 상태 확인
@@ -37,16 +31,12 @@ class AuthenticationManager {
     }
     static func isTokenValid(_ token: String, _ serverCode: Int) -> Bool {
         if serverResponseCode == 400 {
+            //refresh토큰을 이용해 > AccessToken 새로 발급
+            
             return false
         }
         return true
     }
-    //로그아웃 처리
-//    static func logoutUser() {
-//        print("AuthenticationManager.logoutUser - called()")
-//        UserDefaults.standard.removeObject(forKey: kAuthTokenKey)
-//        UserDefaults.standard.removeObject(forKey: kTokenExpirationKey)
-//    }
     static func logoutUser() {
         print("AuthenticationManager.logoutUser - called()")
         UserDefaults.standard.removeObject(forKey: kAuthTokenKey)

@@ -127,6 +127,9 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         // 서버에서 페이지와 페이지 크기를 기반으로 게시글 데이터를 가져옴
         // 결과는 completion 핸들러를 통해 반환
         // URLSession을 사용하여 데이터를 가져오는 경우
+        //token
+        var token : String = ""
+        token = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
         let url = URL(string: "https://example.com/api/posts?page=\(page)&pageSize=\(pageSize)")!
         URLSession.shared.dataTask(with: url) { (data, response, error) in
                 // 요청이 완료된 후 실행될 클로저

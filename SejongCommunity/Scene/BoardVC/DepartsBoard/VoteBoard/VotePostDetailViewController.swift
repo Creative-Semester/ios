@@ -209,7 +209,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
         view.backgroundColor = .white
         view.layer.borderWidth = 0.2
         //댓글 입력 창과 버튼을 추가
-        let commentField = UITextView()
+        let commentField = ExpandingTextView()
 //        commentField.placeholder = "댓글을 입력하세요"
         commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         commentField.layer.cornerRadius = 10
@@ -221,8 +221,8 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
             make.top.equalToSuperview().offset(10)
             make.leading.equalToSuperview().offset(10)
             make.width.equalTo(self.view.frame.width / 1.4)
-            make.height.equalTo(self.view.frame.height / 18)
-            
+            make.height.greaterThanOrEqualTo(self.view.frame.height / 20) // 최소 높이
+            make.height.lessThanOrEqualTo(self.view.frame.height / 11) // 최대 높이
         }
         let CommentBtn = UIButton()
         CommentBtn.backgroundColor =  #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
@@ -237,7 +237,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
             make.top.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
             make.width.equalTo(self.view.frame.width / 5)
-            make.height.equalTo(self.view.frame.height / 18)
+            make.height.equalTo(self.view.frame.height / 20)
         }
         
         StackView.addArrangedSubview(DetailView)
@@ -247,7 +247,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
         self.view.addSubview(ScrollView)
         self.view.addSubview(view)
         view.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 9)
+            make.height.equalTo(self.view.frame.height / 7.5)
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview()
         }

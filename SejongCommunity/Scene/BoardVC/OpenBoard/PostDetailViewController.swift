@@ -12,7 +12,7 @@ struct Comment {
     let comment : String
 }
 //게시물의 상세 내용을 보여주는 UIViewController
-class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
     var CommentTableView = UITableView()
     private let GreatBtn = UIButton()
     // 댓글을 저장할 배열
@@ -109,7 +109,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         view.layer.borderWidth = 0.2
         
         //댓글 입력 창과 버튼을 추가
-        let commentField = UITextView()
+        let commentField = ExpandingTextView()
         commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         commentField.layer.cornerRadius = 10
         commentField.layer.masksToBounds = true
@@ -120,8 +120,8 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.top.equalToSuperview().offset(10)
             make.leading.equalToSuperview().offset(10)
             make.width.equalTo(self.view.frame.width / 1.4)
-            make.height.equalTo(self.view.frame.height / 18)
-            
+            make.height.greaterThanOrEqualTo(self.view.frame.height / 20) // 최소 높이
+            make.height.lessThanOrEqualTo(self.view.frame.height / 11) // 최대 높이
         }
         let CommentBtn = UIButton()
         CommentBtn.backgroundColor =  #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
@@ -136,7 +136,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.top.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
             make.width.equalTo(self.view.frame.width / 5)
-            make.height.equalTo(self.view.frame.height / 18)
+            make.height.equalTo(self.view.frame.height / 20)
         }
         
         StackView.addArrangedSubview(DetailView)
@@ -145,7 +145,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         self.view.addSubview(ScrollView)
         self.view.addSubview(view)
         view.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 9)
+            make.height.equalTo(self.view.frame.height / 7.5)
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview()
         }
@@ -275,4 +275,20 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                 tabBarController?.tabBar.isHidden = false
             }
         }
+}
+//UITextView 서브클래스 정의
+class ExpandingTextView: UITextView {
+    //UITextView의 내용의 크기, 텍스트가 입력 될때마다 내용 크기가 변경
+    override var contentSize: CGSize {
+        //변경 감지를 위해 didSet
+        didSet {
+            invalidateIntrinsicContentSize()
+        }
+    }
+    //UIView의 내용의 크기 : 다른 레이아웃 구성요소, 해당 뷰의 적절한 크기를 알려줌
+    override var intrinsicContentSize: CGSize {
+        //noIntrinsicMetric 텍스트 뷰의 폭이 무제한, 높이는 내용에 따라 자동 조절
+        let size = CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
+        return size
+    }
 }
