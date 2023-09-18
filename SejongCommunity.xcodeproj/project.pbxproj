@@ -45,6 +45,7 @@
 		F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547882AAF289700671182 /* ProfessorInfoViewController.swift */; };
 		F1E5478B2AAF3CB900671182 /* ProfessorClassTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478A2AAF3CB900671182 /* ProfessorClassTableViewCell.swift */; };
 		F1E5478D2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */; };
+		F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +90,7 @@
 		F1E547882AAF289700671182 /* ProfessorInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoViewController.swift; sourceTree = "<group>"; };
 		F1E5478A2AAF3CB900671182 /* ProfessorClassTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorClassTableViewCell.swift; sourceTree = "<group>"; };
 		F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorDetailClassViewController.swift; sourceTree = "<group>"; };
+		F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorReviewTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,6 +269,7 @@
 				F1E547882AAF289700671182 /* ProfessorInfoViewController.swift */,
 				F1E5478A2AAF3CB900671182 /* ProfessorClassTableViewCell.swift */,
 				F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */,
+				F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */,
 			);
 			path = ProfessorBoard;
 			sourceTree = "<group>";
@@ -418,6 +421,7 @@
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */,
 				F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */,
+				F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
