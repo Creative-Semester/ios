@@ -23,6 +23,7 @@ class MypageViewController: UIViewController{
         MyWriteBtn.setTitle("내가 쓴 글", for: .normal)
         MyWriteBtn.setTitleColor( #colorLiteral(red: 0.1660557687, green: 0.4608593583, blue: 0.6628261209, alpha: 1), for: .normal)
         MyWriteBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        MyWriteBtn.addTarget(self, action: #selector(MyWriteBtnTapped), for: .touchUpInside)
         MyWriteBtn.layer.cornerRadius = 30
         MyWriteBtn.layer.masksToBounds = true
         
@@ -223,6 +224,9 @@ class MypageViewController: UIViewController{
         }
     }
     //버튼 액션 처리 메서드
+    @objc func MyWriteBtnTapped() {
+        self.navigationController?.pushViewController(MyWriteViewController(), animated: true)
+    }
     //학생회 신청 버튼 메서드
     @objc func CouncilRegisterTapped() {
         self.navigationController?
