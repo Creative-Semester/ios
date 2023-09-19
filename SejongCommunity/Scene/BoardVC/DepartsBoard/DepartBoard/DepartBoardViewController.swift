@@ -12,6 +12,7 @@ struct DepartPost {
     let title : String
     let content : String
     let image : UIImage?
+    let day : String
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class DepartBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -22,9 +23,9 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
     var departposts : [DepartPost] = [
-        DepartPost(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!),
-        DepartPost(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil),
-        DepartPost(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!)
+        DepartPost(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!, day: "2023-09-19 19:44"),
+        DepartPost(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil, day: "2023-09-18 15:42"),
+        DepartPost(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!, day: "2023-09-13 11:02")
     ]
     override func viewDidLoad() {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
@@ -104,7 +105,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
         cell.postImageView.image = post.image
-        
+        cell.DayLabel.text = post.day
         return cell
     }
     //학생회 공지사항, 투표를 할 뷰를 나눌 탭바 메서드

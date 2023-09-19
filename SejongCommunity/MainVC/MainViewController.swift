@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import WebKit
 //캘린더 뷰 추가
 import FSCalendar
 class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource{
@@ -64,19 +65,14 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         
         return view
     }()
-    
-    // 캘린더 뷰 생성
-    var CalenderView : UIView = {
-       let view = UIImageView()
-       //뷰의 배경색 설정
-        view.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        view.image = UIImage(named: "Image1")
-        view.contentMode = .scaleAspectFill
-        // 뷰를 둥글게
-        view.layer.cornerRadius = 10
-        view.layer.masksToBounds = true
-       return view
-    }()
+    // 현재 표시 중인 이미지의 인덱스를 추적하기 위한 변수를 추가합니다.
+    var currentImageIndex = 0
+    // 이미지 파일 이름 배열
+    let imageNames = ["Image1", "Image2", "image3"]
+    // 타이머
+    var slideshowTimer: Timer?
+    // 웹 뷰 생성
+    var CalenderView: UIButton!
     // 게시판 뷰 생성
     var BoardView : UIView = {
        let view = UIView()
@@ -247,6 +243,19 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         }
         title = "메인페이지"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white] 
+        //뷰의 배경색 설정
+        CalenderView = UIButton()
+        CalenderView.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        CalenderView.addTarget(self, action: #selector(WebViewBtnTapped), for: .touchUpInside)
+        // 뷰를 둥글게
+        CalenderView.layer.cornerRadius = 10
+        CalenderView.layer.masksToBounds = true
+        CalenderView.setImage(UIImage(named: self.imageNames[self.currentImageIndex]), for: .normal)
+        
+        // 시작할 때 이미지 설정
+        updateImage()
+        // 슬라이드 쇼 타이머 설정
+        startSlideshow()
         
         let ScrollView = UIScrollView()
         self.view.addSubview(ScrollView)
@@ -308,6 +317,30 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
             make.height.equalTo(view.frame.height / 3.5)
             make.bottom.equalToSuperview().offset(-10)
         }
+    }
+    // 이미지 변경 메서드
+    func updateImage() {
+        CalenderView.setImage(UIImage(named: imageNames[currentImageIndex]), for: .normal)
+    }
+    // 슬라이드 쇼 시작 메서드
+    func startSlideshow() {
+        slideshowTimer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(nextImage), userInfo: nil, repeats: true)
+    }
+    // 다음 이미지로 넘어가는 메서드
+    @objc func nextImage() {
+        currentImageIndex = (currentImageIndex + 1) % imageNames.count
+        updateImage()
+    }
+    // 슬라이드 쇼 중지 메서드
+    func stopSlideshow() {
+        slideshowTimer?.invalidate()
+        slideshowTimer = nil
+    }
+    //웹으로 이동하는 메서드
+    @objc func WebViewBtnTapped() {
+        print("WebViewBtnTapped - called()")
+        // 뷰 컨트롤러를 표시
+        self.navigationController?.pushViewController(WebViewController(), animated: true)
     }
     //로고를 눌렀을때 메서드
     @objc func logoTapped() {

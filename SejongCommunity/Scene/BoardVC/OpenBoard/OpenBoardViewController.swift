@@ -13,6 +13,7 @@ struct Post {
     let title : String
     let content : String
     let image : UIImage?
+    let day : String
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource,UIScrollViewDelegate {
@@ -25,9 +26,9 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     
     var posts : [Post] = [
-        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!),
-        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil),
-        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!)
+        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!, day: "2023-09-19 19:44"),
+        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil, day: "2023-09-18 13:44"),
+        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!, day: "2023-09-17 12:44")
     ]
     override func viewDidLoad() {
 //        self.navigationItem.setHidesBackButton(true, animated: false)
@@ -97,6 +98,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
         cell.postImageView.image = post.image
+        cell.DayLabel.text = post.day
         return cell
     }
     // MARK: - UITableViewDelegate

@@ -13,6 +13,7 @@ struct VotePost {
     let title : String
     let content : String
     let image : UIImage?
+    let day : String
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource  {
@@ -23,9 +24,9 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
     var voteposts : [VotePost] = [
-        VotePost(title: "박정곤 학생의 교내 추방 투표", content: "박정곤 학생의 교내 추방 투표입니다.", image: nil),
-        VotePost(title: "박정곤 학생 집들이 찬반 투표", content: "박정곤 학생 집들이 찬반 투표입니다.", image: nil),
-        VotePost(title: "박정곤 학생 피파 잘한다 찬반 투표", content: "박정곤 학생 피파 잘한다 찬반 투표입니다.", image: nil)
+        VotePost(title: "박정곤 학생의 교내 추방 투표", content: "박정곤 학생의 교내 추방 투표입니다.", image: nil, day: "2023-09-18 12:44"),
+        VotePost(title: "박정곤 학생 집들이 찬반 투표", content: "박정곤 학생 집들이 찬반 투표입니다.", image: nil, day: "2023-09-17 19:20"),
+        VotePost(title: "박정곤 학생 피파 잘한다 찬반 투표", content: "박정곤 학생 피파 잘한다 찬반 투표입니다.", image: nil, day: "2023-09-14 19:01")
     ]
     override func viewDidLoad() {
         self.navigationItem.setHidesBackButton(true, animated: false)
@@ -204,7 +205,7 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
         cell.postImageView.image = post.image
-        
+        cell.DayLabel.text = post.day
         return cell
     }
     // MARK: - UITableViewDelegate
