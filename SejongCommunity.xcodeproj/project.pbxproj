@@ -22,6 +22,7 @@
 		E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */; };
 		E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E472375D2AB83DA5003BD82B /* WebViewController.swift */; };
 		E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237602AB972DE003BD82B /* MyWriteViewController.swift */; };
+		E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237622ABC0823003BD82B /* NetworkManager.swift */; };
 		E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */; };
 		E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = E4D466592AB1B7DA003E5DD9 /* FSCalendar */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
@@ -66,6 +67,7 @@
 		E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		E472375D2AB83DA5003BD82B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		E47237602AB972DE003BD82B /* MyWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWriteViewController.swift; sourceTree = "<group>"; };
+		E47237622ABC0823003BD82B /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.debug.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.debug.xcconfig"; sourceTree = "<group>"; };
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -225,6 +227,7 @@
 				F12465182A67BAB600037D8C /* Assets.xcassets */,
 				F124651A2A67BAB600037D8C /* LaunchScreen.storyboard */,
 				F124651D2A67BAB600037D8C /* Info.plist */,
+				E47237622ABC0823003BD82B /* NetworkManager.swift */,
 			);
 			path = SejongCommunity;
 			sourceTree = "<group>";
@@ -424,6 +427,7 @@
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
 				E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */,
+				E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */,
 				F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */,
 				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
 				F1E5478B2AAF3CB900671182 /* ProfessorClassTableViewCell.swift in Sources */,

@@ -11,6 +11,10 @@ import UIKit
 struct Comment {
     let comment : String
 }
+struct User: Codable {
+    let userId: String // 사용자 아이디에 맞는 속성을 추가
+    // 다른 사용자 정보 속성들도 추가할 수 있습니다
+}
 //게시물의 상세 내용을 보여주는 UIViewController
 class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
     var CommentTableView = UITableView()
@@ -218,21 +222,30 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     }
 
     @objc func toolBtnTapped() {
-        let alertController = UIAlertController(title: "글 메뉴", message: nil, preferredStyle: .alert)
-        //메뉴 추가
-        //내 게시글일 경우에는 수정, 삭제, 취소 팝업창 띄우기
+        let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
+        getAuthorInfo() // 게시글 작성자 정보를 가져옴
+        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
+        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
         
-        //내 게시글이 아닐경우에, 쪽지 보내기, 신고, 취소 팝업창 띄우기
-        //쪽지 보내기
-        let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
-            // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+        //게시글의 작성자와 현재 사용자가 같을때
+        if isMyPost {
+                    // 삭제
+            let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
+                self.PostDelete()
+                    }
+            alertController.addAction(deleteAction)
+        }else{ //게시글의 작성자와 현재 사용자가 다를때
+            //쪽지 보내기
+            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+            }
+            alertController.addAction(SendMessageController)
+            //신고
+            let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
+                
+            }
+            alertController.addAction(DeclarationController)
         }
-        alertController.addAction(SendMessageController)
-        //신고
-        let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
-            
-        }
-        alertController.addAction(DeclarationController)
         //취소
         let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
             
@@ -257,19 +270,15 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     //댓글을 눌렀을때 신고하기 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        GetUserInfo()
+        getAuthorInfo() // 게시글 작성자 정보를 가져옴
+        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
         let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
         
         //게시글의 작성자와 현재 사용자가 같을때
         if isMyPost {
-            // 수정
-            let editAction = UIAlertAction(title: "수정", style: .default) { (_) in
-                        // '수정' 버튼을 눌렀을 때의 동작을 구현
-                    }
-            alertController.addAction(editAction)
                     // 삭제
             let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
-                        
+                self.CommentDelete()
                     }
             alertController.addAction(deleteAction)
         }else{ //게시글의 작성자와 현재 사용자가 다를때
@@ -319,19 +328,144 @@ class ExpandingTextView: UITextView {
 extension PostDetailViewController {
     //게시물 작성자와 현재 사용자를 비교하는 함수
     func checkIfCurrentIsAuthorOfPost(userIdOfAuthor: String, currentUserId: String) -> Bool {
+        print("checkIfCurrentIsAutorOfPost - called()")
         //게시물 작성자와 현재 작성자를 판별
         return userIdOfAuthor == currentUserId // 현재는 내 게시물로 가정 true 반환
     }
-    //현재 게시물의 작성자를 가져오는 메서드
-    func GetUserInfo() {
+    //현재 게시물의 작성자, 사용자를 가져오는 메서드
+    // 현재 사용자 정보를 가져오는 메서드
+    func getCurrentUserInfo() {
+        print("getCurrentUserInfo - called()")
         
+        // 현재 사용자의 사용자 ID 또는 다른 식별자를 사용하여 API 호출
+        let currentUserId = "현재 사용자의 사용자 ID" // 실제 사용자 ID 또는 식별자로 대체해야 합니다.
+        
+        guard let url = URL(string: "https://yourapi.com/userInfo/\(currentUserId)") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        // 인증 헤더 또는 토큰을 추가!!
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            if let data = data {
+                do {
+                    let user = try JSONDecoder().decode(User.self, from: data)
+                    self.currentUserId = user.userId
+                    // 여기서 현재 사용자 정보를 필요한 속성에 저장하거나 처리할 수 있습니다.
+                } catch {
+                    print("Error decoding current user data: \(error.localizedDescription)")
+                }
+            }
+        }
+        task.resume()
     }
+    // 게시물의 작성자 정보를 가져오는 메서드
+    func getAuthorInfo() {
+        print("getAuthorInfo - called()")
+        
+        
+        guard let url = URL(string: "https://yourapi.com/userInfo/") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        // 인증 헤더 또는 토큰을 추가!!
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            if let data = data {
+                do {
+                    let user = try JSONDecoder().decode(User.self, from: data)
+                    self.userIdOfAuthor = user.userId
+                    // 게시물 작성자 정보를 필요한 속성에 저장, 처리 가능
+                } catch {
+                    print("Error decoding author data: \(error.localizedDescription)")
+                }
+            }
+        }
+        task.resume()
+    }
+
     //게시글 삭제 메서드
     func PostDelete() {
-        
+        print("PostDelete - called()")
+        if checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) {
+            // 지금 임시로 삭제 팝업창 띄우기 > 수정 필요
+            let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                // OpenBoardViewController로 이동
+                if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+                    self.navigationController?.popToViewController(openboardViewController, animated: true)
+                }
+            }
+            DeleteAlertController.addAction(CancelController)
+            self.present(DeleteAlertController, animated: true)
+            // 서버에 삭제 요청을 보내는 예시
+            guard let url = URL(string: "https://yourapi.com/deletePost/") else { return }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "DELETE"
+            // 인증 헤더 또는 토큰을 추가
+
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                    return
+                }
+                // 삭제가 성공하면 화면에서 업데이트 필요 >> OpenBoard로 이동해서 새로운 창 로딩 필요 >> 새로고침 필요
+//                let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+//                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+//                    // OpenBoardViewController로 이동
+//                    if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+//                        self.navigationController?.popToViewController(openboardViewController, animated: true)
+//                    }
+//                }
+//                DeleteAlertController.addAction(CancelController)
+//                self.present(DeleteAlertController, animated: true)
+            }
+            task.resume()
+        } else {
+            // 게시글 작성자가 아닌 경우 삭제 권한이 없음을 사용자에게 알릴기 >> 애초에 팝업창이 다르게 뜨도록 설정
+        }
     }
-    //게시글 수정 메서드
-    func PostModify() {
-        
+    //댓글 삭제 메서드
+    func CommentDelete() {
+        print("CommentDelete - called()")
+        if checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) {
+            // 지금 임시로 삭제 팝업창 띄우기 > 수정 필요
+            let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다.", preferredStyle: .alert)
+            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                //해당 게시글 페이지 재로드
+            }
+            DeleteAlertController.addAction(CancelController)
+            self.present(DeleteAlertController, animated: true)
+            // 서버에 삭제 요청을 보내는 예시
+            guard let url = URL(string: "https://yourapi.com/deletePost/") else { return }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "DELETE"
+            // 인증 헤더 또는 토큰을 추가
+
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                    return
+                }
+                // 삭제가 성공하면 화면에서 업데이트 필요 >> OpenBoard로 이동해서 새로운 창 로딩 필요 >> 새로고침 필요
+//                let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+//                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+//                    // OpenBoardViewController로 이동
+//                }
+//                DeleteAlertController.addAction(CancelController)
+//                self.present(DeleteAlertController, animated: true)
+            }
+            task.resume()
+        } else {
+            // 게시글 작성자가 아닌 경우 삭제 권한이 없음을 사용자에게 알릴기 >> 애초에 팝업창이 다르게 뜨도록 설정
+        }
     }
 }
