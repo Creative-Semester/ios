@@ -15,6 +15,10 @@ struct Comment {
 class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
     var CommentTableView = UITableView()
     private let GreatBtn = UIButton()
+    //현재 게시물의 작성자를 전역변수로 선언
+    var userIdOfAuthor : String = ""
+    //현재 로그인한 사용자의 사용자 ID
+    var currentUserId : String = ""
     // 댓글을 저장할 배열
     let comments : [Comment] = [
         Comment(comment: "첫 번째 댓글입니다"),
@@ -216,6 +220,9 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     @objc func toolBtnTapped() {
         let alertController = UIAlertController(title: "글 메뉴", message: nil, preferredStyle: .alert)
         //메뉴 추가
+        //내 게시글일 경우에는 수정, 삭제, 취소 팝업창 띄우기
+        
+        //내 게시글이 아닐경우에, 쪽지 보내기, 신고, 취소 팝업창 띄우기
         //쪽지 보내기
         let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
             // '쪽지' 버튼을 눌렀을 대의 동작을 구현
@@ -250,16 +257,33 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     //댓글을 눌렀을때 신고하기 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        //쪽지 보내기
-        let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
-            // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+        GetUserInfo()
+        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
+        
+        //게시글의 작성자와 현재 사용자가 같을때
+        if isMyPost {
+            // 수정
+            let editAction = UIAlertAction(title: "수정", style: .default) { (_) in
+                        // '수정' 버튼을 눌렀을 때의 동작을 구현
+                    }
+            alertController.addAction(editAction)
+                    // 삭제
+            let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
+                        
+                    }
+            alertController.addAction(deleteAction)
+        }else{ //게시글의 작성자와 현재 사용자가 다를때
+            //쪽지 보내기
+            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+            }
+            alertController.addAction(SendMessageController)
+            //신고
+            let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
+                
+            }
+            alertController.addAction(DeclarationController)
         }
-        alertController.addAction(SendMessageController)
-        //신고
-        let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
-            
-        }
-        alertController.addAction(DeclarationController)
         //취소
         let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
             
@@ -290,5 +314,24 @@ class ExpandingTextView: UITextView {
         //noIntrinsicMetric 텍스트 뷰의 폭이 무제한, 높이는 내용에 따라 자동 조절
         let size = CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
         return size
+    }
+}
+extension PostDetailViewController {
+    //게시물 작성자와 현재 사용자를 비교하는 함수
+    func checkIfCurrentIsAuthorOfPost(userIdOfAuthor: String, currentUserId: String) -> Bool {
+        //게시물 작성자와 현재 작성자를 판별
+        return userIdOfAuthor == currentUserId // 현재는 내 게시물로 가정 true 반환
+    }
+    //현재 게시물의 작성자를 가져오는 메서드
+    func GetUserInfo() {
+        
+    }
+    //게시글 삭제 메서드
+    func PostDelete() {
+        
+    }
+    //게시글 수정 메서드
+    func PostModify() {
+        
     }
 }
