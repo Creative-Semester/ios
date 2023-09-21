@@ -50,7 +50,6 @@ class CouncilBoardViewController : UIViewController {
         button.setTitle("사무내역보기", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         button.setTitleColor(.darkGray, for: .normal)
-        button.addTarget(self, action: #selector(officeDetailButtonTapped), for: .touchUpInside)
 
         return button
     }()
@@ -91,7 +90,6 @@ class CouncilBoardViewController : UIViewController {
         button.setTitle("전체보기", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         button.setTitleColor(.darkGray, for: .normal)
-        button.addTarget(self, action: #selector(pledgeButtonTabbed), for: .touchUpInside)
         
         return button
     }()
@@ -298,6 +296,9 @@ class CouncilBoardViewController : UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        
+        pledgeButton.addTarget(self, action: #selector(pledgeButtonTabbed), for: .touchUpInside)
+        officeDetailButton.addTarget(self, action: #selector(officeDetailButtonTapped), for: .touchUpInside)
 
         setupStudentCouncilView()
     }
