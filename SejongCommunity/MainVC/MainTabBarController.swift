@@ -11,11 +11,15 @@ class MainTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("MainTabBarController - viewDidLoad")
         tabBar.backgroundColor = .white
         tabBar.tintColor = .gray
         tabBar.unselectedItemTintColor = .black
         tabBar.barTintColor = .white
-
+    }
+    // 루트 뷰 컨트롤러 설정
+    func setRootViewController() {
+        print("setRootViewController - called")
         let vc1 = MainViewController()
         let vc2 = ChatViewController()
         let vc3 = MypageViewController()
@@ -30,5 +34,4 @@ class MainTabBarController: UITabBarController {
 
         setViewControllers([nav1, nav2, nav3], animated: false)
     }
-
 }

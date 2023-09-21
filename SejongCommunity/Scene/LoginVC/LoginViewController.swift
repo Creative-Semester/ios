@@ -16,8 +16,15 @@ class LoginViewController : UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated) // 화면을 벗어날 때 다시 나타내기
+        //부모로 이동했을때 탭바를 다시 켬
+        if isMovingFromParent {
+            tabBarController?.tabBar.isHidden = false
+            //메인뷰의 타이틀을 흰색으로
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        }
     }
     override func viewDidLoad() {
+        print("LoginViewController - called()")
         super.viewDidLoad()
         self.view.backgroundColor = .white
         setupTapGesture()
@@ -86,8 +93,8 @@ class LoginViewController : UIViewController {
         let password = passwordText.text ?? "" //비밀번호 가져오기
         print("LoginBtnTapped - Called \(id), \(password)")
         // 이후 서버와 통신하기 위한 URL 설정
-        let urlString = "https://example.com/login" // 서버의 로그인 API URL로 변경해야 합니다.
-//        let urlString = "http://ime-locker.shop:8081/api/auth/login"
+//        let urlString = "https://example.com/login" // 서버의 로그인 API URL로 변경해야 합니다.
+        let urlString = "http://ime-locker.shop:8081/api/auth/login?id=\(id)&pw=\(password)"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return
@@ -95,18 +102,7 @@ class LoginViewController : UIViewController {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        let parameters: [String: Any] = [
-            "id": id,
-            "pw" : password
-        ]
-        print("Send - \(parameters)")
         do {
-                // 파라미터를 JSON 데이터로 변환
-                let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
-
-                // HTTP 요청의 HTTP Body에 JSON 데이터 설정
-                request.httpBody = jsonData
-
                 // HTTP 요청 헤더 설정 (Content-Type: application/json)
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -128,28 +124,31 @@ class LoginViewController : UIViewController {
                         do {
                             if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                                 print("Response: \(jsonResponse)")
-
                                 // 서버로부터 받은 응답 데이터를 파싱하여 로그인 결과 처리
                                 // 예: 로그인 성공 또는 실패 처리
-                                if let token = jsonResponse["token"] as? String, let expirationDateString = jsonResponse["expirationDate"] as? String {
-                                    // DateFormatter를 사용하여 String을 Date로 변환
-                                    let dateFormatter = DateFormatter()
-                                    dateFormatter.dateFormat = "yyyy-MM-dd" // 서버에서 전달되는 날짜 형식에 맞게 설정
-
-                                    if let expirationDate = dateFormatter.date(from: expirationDateString) {
+                                if let result = jsonResponse["result"] as? [String: Any],
+                                   let accessToken = result["accessToken"] as? String,
+                                   let refreshToken = result["refreshToken"] as? String,
+                                   let serverResponseCode = jsonResponse["status"] as? Int {
+                                    print("검사들어갑니다")
+                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken), 서버응답코드 - \(serverResponseCode)")
+                                    if AuthenticationManager.isTokenValid(accessToken, serverResponseCode){
+                                        //토큰이 유효한 경우
                                         // 토큰 저장
-                                        AuthenticationManager.saveAuthToken(token: token, expirationDate: expirationDate)
-                                    } else {
-                                        print("Failed to convert expirationDate to Date")
+                                        AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
+                                        DispatchQueue.main.async {
+                                            let mainTabBarController = MainTabBarController()
+                                            mainTabBarController.setRootViewController()
+                                            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(mainTabBarController, animated: true)
+                                            if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                                                sceneDeleagate.window?.makeKeyAndVisible()
+                                            }
+                                        }
+                                    }else{
+                                        //토큰이 유효하지 않은 경우
+                                        // 로그아웃
+                                        AuthenticationManager.logoutUser()
                                     }
-                                }
-                                
-                                // 토큰 유효성 검사
-                                AuthenticationManager.validateToken()
-                                
-                                // 로그인 성공 시 MainViewController로 이동
-                                DispatchQueue.main.async {
-                                    self.navigationController?.pushViewController(MainViewController(), animated: true)
                                 }
                             } else {
                                 print("Invalid JSON response")
@@ -164,8 +163,6 @@ class LoginViewController : UIViewController {
             } catch {
                 print("Error encoding parameters: \(error.localizedDescription)")
             }
-        //임시 이동
-        navigationController?.pushViewController(MainViewController(), animated: true)
     }
     //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
     func setupTapGesture(){

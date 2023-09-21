@@ -8,49 +8,9 @@
 import UIKit
 import SnapKit
 class MypageViewController: UIViewController{
-    var tableView : UITableView!
-    //학생의 정보를 나타낼 텍스트를 가지고 있는 LabelView
-    let StudentLabelView : UIView = {
-       let StudentView = UIView()
-        let Studenttitle = UILabel()
-        let StudentInfo = UILabel()
-        Studenttitle.text = "강민수 (학생)"
-        Studenttitle.font = UIFont.boldSystemFont(ofSize: 20)
-        Studenttitle.textAlignment = .left
-        Studenttitle.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        Studenttitle.textColor = #colorLiteral(red: 0.1660557687, green: 0.4608593583, blue: 0.6628261209, alpha: 1)
-        
-        StudentInfo.text = "지능기전공학부 스마트기기공학과"
-        StudentInfo.font = UIFont.boldSystemFont(ofSize: 15)
-        StudentInfo.textAlignment = .left
-        StudentInfo.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        StudentInfo.textColor = #colorLiteral(red: 0.1660557687, green: 0.4608593583, blue: 0.6628261209, alpha: 1)
-        
-        //StackView를 이용한 오토레이아웃 설정
-        let StackView = UIStackView()
-        StackView.alignment = .fill
-        StackView.distribution = .fill
-        StackView.axis = .vertical
-        StackView.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        StackView.spacing = 30
-        StackView.addArrangedSubview(Studenttitle)
-        StackView.addArrangedSubview(StudentInfo)
-        StudentView.addSubview(StackView)
-        
-        //SnapKit을 이용한 오토레이아웃 설정
-        StackView.snp.makeConstraints{(make) in
-            make.top.bottom.trailing.leading.equalToSuperview().inset(0)
-        }
-        Studenttitle.snp.makeConstraints{ (make) in
-            make.leading.equalToSuperview().offset(0)
-            make.top.equalToSuperview().offset(10)
-        }
-        StudentInfo.snp.makeConstraints{ (make) in
-            make.top.equalTo(Studenttitle.snp.bottom).offset(5)
-            make.leading.equalToSuperview().offset(0)
-        }
-        return StudentView
-    }()
+    //학생의 정보(이름, 과)
+    let Studenttitle = UILabel()
+    let StudentInfo = UILabel()
     
     //각 버튼을 넣을 뷰 생성
     let BtnView : UIView = {
@@ -63,6 +23,7 @@ class MypageViewController: UIViewController{
         MyWriteBtn.setTitle("내가 쓴 글", for: .normal)
         MyWriteBtn.setTitleColor( #colorLiteral(red: 0.1660557687, green: 0.4608593583, blue: 0.6628261209, alpha: 1), for: .normal)
         MyWriteBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        MyWriteBtn.addTarget(self, action: #selector(MyWriteBtnTapped), for: .touchUpInside)
         MyWriteBtn.layer.cornerRadius = 30
         MyWriteBtn.layer.masksToBounds = true
         
@@ -146,7 +107,6 @@ class MypageViewController: UIViewController{
         
         //StackView를 이용해 오토레이아웃 설정
         let ScrollView = UIScrollView()
-        self.view.addSubview(ScrollView)
         ScrollView.showsHorizontalScrollIndicator = false
         ScrollView.isScrollEnabled = true
         let StackView = UIStackView()
@@ -155,9 +115,47 @@ class MypageViewController: UIViewController{
         StackView.alignment = .fill
         StackView.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         StackView.spacing = 20
+        //학생의 정보를 가져와 표시(이름, 과)
+        let StudentLabelView = UIView()
+        Studenttitle.font = UIFont.boldSystemFont(ofSize: 20)
+        Studenttitle.textAlignment = .left
+        Studenttitle.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        Studenttitle.textColor = #colorLiteral(red: 0.1660557687, green: 0.4608593583, blue: 0.6628261209, alpha: 1)
+        StudentInfo.font = UIFont.boldSystemFont(ofSize: 15)
+        StudentInfo.textAlignment = .left
+        StudentInfo.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        StudentInfo.textColor = #colorLiteral(red: 0.1660557687, green: 0.4608593583, blue: 0.6628261209, alpha: 1)
+        //학생의 이름과 과에 대한 정보를 가져올 메서드
+        SetStudentInfo()
+        
+        //StackView를 이용한 오토레이아웃 설정
+        let StudentStackView = UIStackView()
+        StudentStackView.alignment = .fill
+        StudentStackView.distribution = .fill
+        StudentStackView.axis = .vertical
+        StudentStackView.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        StudentStackView.spacing = 30
+        StudentStackView.addArrangedSubview(Studenttitle)
+        StudentStackView.addArrangedSubview(StudentInfo)
+        StudentLabelView.addSubview(StudentStackView)
+        
+        //SnapKit을 이용한 오토레이아웃 설정
+        StudentStackView.snp.makeConstraints{(make) in
+            make.top.bottom.trailing.leading.equalToSuperview().inset(0)
+        }
+        Studenttitle.snp.makeConstraints{ (make) in
+            make.leading.equalToSuperview().offset(0)
+            make.top.equalToSuperview().offset(10)
+        }
+        StudentInfo.snp.makeConstraints{ (make) in
+            make.top.equalTo(Studenttitle.snp.bottom).offset(5)
+            make.leading.equalToSuperview().offset(0)
+        }
+        
         StackView.addArrangedSubview(StudentLabelView)
         StackView.addArrangedSubview(BtnView)
         ScrollView.addSubview(StackView)
+        self.view.addSubview(ScrollView)
         
         //Snapkit을 이용한 오토레이아웃 설정
         ScrollView.snp.makeConstraints{ (make) in
@@ -179,7 +177,56 @@ class MypageViewController: UIViewController{
             make.leading.trailing.equalToSuperview().inset(0)
         }
     }
+    //학생의 이름, 과 정보를 가져올 메서드
+    func SetStudentInfo() {
+        Studenttitle.text = "박정곤"
+        StudentInfo.text = "지능기전공학부 무인이동체공학과"
+        let urlString = "https://example.com/login"
+        guard let url = URL(string: urlString)else{
+            return //유효한 URL 인가?
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        do{
+            // HTTP 요청 헤더 설정
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            // URLSession을 사용하여 요청 전송
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    // 에러 처리
+                    print("Error: \(error.localizedDescription)")
+                    return
+                }
+                guard let httpResponse = response as? HTTPURLResponse, (200...299)
+                    .contains(httpResponse.statusCode)else{
+                    // 서버 응답 상태 코드 처리
+                    print("Invalid response status code - \(response)")
+                    return
+                }
+                if let data = data {
+                    do {
+                        if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                            print("Response: \(jsonResponse)")
+                            // 서버로부터 받은 응답 데이터를 파싱하여 로그인 결과 처리
+                            
+                        }else{
+                            
+                        }
+                    }catch {
+                        print("Error parsing response data: \(error.localizedDescription)")
+                    }
+                }
+            }
+            // URLSession 작업 시작
+            task.resume()
+        }catch {
+            print("Error encoding parameters: \(error.localizedDescription)")
+        }
+    }
     //버튼 액션 처리 메서드
+    @objc func MyWriteBtnTapped() {
+        self.navigationController?.pushViewController(MyWriteViewController(), animated: true)
+    }
     //학생회 신청 버튼 메서드
     @objc func CouncilRegisterTapped() {
         self.navigationController?
@@ -190,11 +237,6 @@ class MypageViewController: UIViewController{
         //로그아웃 처리 메서드 추가
         AuthenticationManager.logoutUser()
         //로그인 페이지로 이동(임시)
-        navigationController?.pushViewController(LoginIntroViewController(), animated: false)
-        let loginViewController = LoginViewController()
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.window?.rootViewController = loginViewController
-        //앱이 시작될 때 윈도우를 화면에 표시하고 사용자가 앱의 화면과 상호 작용할 수 있도록 준비
-        appDelegate.window?.makeKeyAndVisible()
+//        navigationController?.pushViewController(LoginIntroViewController(), animated: false)
     }
 }

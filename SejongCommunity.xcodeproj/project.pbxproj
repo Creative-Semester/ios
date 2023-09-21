@@ -20,6 +20,9 @@
 		E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */; };
 		E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */; };
 		E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */; };
+		E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E472375D2AB83DA5003BD82B /* WebViewController.swift */; };
+		E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237602AB972DE003BD82B /* MyWriteViewController.swift */; };
+		E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237622ABC0823003BD82B /* NetworkManager.swift */; };
 		E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */; };
 		E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = E4D466592AB1B7DA003E5DD9 /* FSCalendar */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
@@ -64,6 +67,9 @@
 		E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotePostDetailViewController.swift; sourceTree = "<group>"; };
 		E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteBoardWriteViewController.swift; sourceTree = "<group>"; };
 		E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
+		E472375D2AB83DA5003BD82B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		E47237602AB972DE003BD82B /* MyWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWriteViewController.swift; sourceTree = "<group>"; };
+		E47237622ABC0823003BD82B /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.debug.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.debug.xcconfig"; sourceTree = "<group>"; };
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +148,7 @@
 			children = (
 				E4021E742A750A4F00FFEAB2 /* CouncilRegisterViewController.swift */,
 				F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */,
+				E47237602AB972DE003BD82B /* MyWriteViewController.swift */,
 			);
 			path = MyPageVC;
 			sourceTree = "<group>";
@@ -186,6 +193,16 @@
 			path = VoteBoard;
 			sourceTree = "<group>";
 		};
+		E472375F2AB83F2B003BD82B /* MainVC */ = {
+			isa = PBXGroup;
+			children = (
+				F154DA9A2A6D244100B6C7F0 /* MainTabBarController.swift */,
+				E472375D2AB83DA5003BD82B /* WebViewController.swift */,
+				F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */,
+			);
+			path = MainVC;
+			sourceTree = "<group>";
+		};
 		F12465032A67BAB500037D8C = {
 			isa = PBXGroup;
 			children = (
@@ -210,11 +227,11 @@
 				F1E547382A84C2CA00671182 /* Scene */,
 				F124650F2A67BAB500037D8C /* AppDelegate.swift */,
 				F12465112A67BAB500037D8C /* SceneDelegate.swift */,
-				F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */,
-				F154DA9A2A6D244100B6C7F0 /* MainTabBarController.swift */,
+				E472375F2AB83F2B003BD82B /* MainVC */,
 				F12465182A67BAB600037D8C /* Assets.xcassets */,
 				F124651A2A67BAB600037D8C /* LaunchScreen.storyboard */,
 				F124651D2A67BAB600037D8C /* Info.plist */,
+				E47237622ABC0823003BD82B /* NetworkManager.swift */,
 			);
 			path = SejongCommunity;
 			sourceTree = "<group>";
@@ -416,6 +433,8 @@
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
+				E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */,
+				E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */,
 				F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */,
 				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
 				F1E5478B2AAF3CB900671182 /* ProfessorClassTableViewCell.swift in Sources */,
@@ -432,6 +451,7 @@
 				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,
+				E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */,
 				F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

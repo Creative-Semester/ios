@@ -20,14 +20,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // 윈도우 생성
         window = UIWindow(windowScene: windowScene)
 
-        // MainTabBarController를 루트 뷰 컨트롤러로 설정
-        let mainTabBarController = MainTabBarController()
-        window?.rootViewController = mainTabBarController
-
-        // 윈도우를 키 윈도우로 설정하고 보이도록 합니다.
-        window?.makeKeyAndVisible()
+        if AuthenticationManager.isUserLoggedIn() {
+            // 사용자가 로그인되어 있는 경우 탭바 컨트롤러를 보여줍니다.
+            print("첫 로그인 - 탭바뷰를 보여줍니다.")
+            let mainTabBarController = MainTabBarController()
+            mainTabBarController.setRootViewController()
+            self.window?.rootViewController = mainTabBarController
+            self.window?.makeKeyAndVisible()
+        } else {
+            // 사용자가 로그인되어 있지 않은 경우 로그인 뷰 컨트롤러를 보여줍니다.
+            print("첫 로그인 - 로그인뷰를 보여줍니다.")
+            // 사용자가 로그인하지 않은 경우
+            let loginViewController = LoginViewController()
+            let navigationController = UINavigationController(rootViewController: loginViewController)
+            window?.rootViewController = navigationController
+            self.window?.makeKeyAndVisible()
+        }
+        self.window?.makeKeyAndVisible()
     }
-
+    func changeRootViewController (_ vc: UIViewController, animated: Bool) {
+        guard let window = self.window else { return }
+        window.rootViewController = vc // 전환
+    }
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.

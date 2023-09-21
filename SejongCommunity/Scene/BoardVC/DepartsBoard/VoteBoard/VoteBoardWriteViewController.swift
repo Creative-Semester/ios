@@ -53,10 +53,17 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
     // 전역 변수로 선언
     var titleTextField: UITextField?
     var messageTextView: UITextView?
+    var imageString: String?
+    var addImage: UIImage?
+    var AddImageView = UIImageView()
+    // 로딩 인디케이터
+    var loadingIndicator: UIActivityIndicatorView!
     override func viewDidLoad(){
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
+        loadingIndicator = UIActivityIndicatorView(style: .gray)
+        loadingIndicator.center = self.view.center
         //게시판 제목과 글, 그림을 등록하기 위한 뷰
         let OpenWriteView = UIView()
         let WriteStackView = UIStackView()
@@ -84,12 +91,14 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         Message.layer.cornerRadius = 10
         Message.layer.masksToBounds = true
         
+        //이미지를 넣을 뷰
+        AddImageView = UIImageView()
         //게시물의 사진 업로드
         let UploadImage = UIButton()
         UploadImage.backgroundColor = #colorLiteral(red: 1, green: 0.869592011, blue: 0.9207738042, alpha: 1)
         //.action 아이콘 추가
         let iconImage = UIImage(systemName: "square.and.arrow.up")
-        UploadImage.setTitle("\tUpload Image\t\t\t\t\t\t\t", for: .normal)
+        UploadImage.setTitle("\tUpload Image\t\t\t\t\t\t", for: .normal)
         UploadImage.setTitleColor(.black, for: .normal)
         UploadImage.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         UploadImage.contentHorizontalAlignment = .left
@@ -98,6 +107,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         UploadImage.tintColor = .black
         UploadImage.setImage(iconImage, for: .normal)
         UploadImage.semanticContentAttribute = .forceRightToLeft
+        UploadImage.addTarget(self, action: #selector(UploadImageTapped), for: .touchUpInside)
         
         let UploadBtn = UIButton()
         UploadBtn.backgroundColor =  #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
@@ -112,6 +122,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         Spacing.backgroundColor = .gray
         WriteStackView.addArrangedSubview(Spacing)
         WriteStackView.addArrangedSubview(Message)
+        WriteStackView.addArrangedSubview(AddImageView)
         WriteStackView.addArrangedSubview(UploadImage)
         WriteStackView.addArrangedSubview(UploadBtn)
         OpenWriteView.addSubview(WriteStackView)
@@ -133,8 +144,13 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
             make.leading.trailing.equalToSuperview().inset(10)
             make.height.equalTo(250)
         }
-        UploadImage.snp.makeConstraints{ (make) in
+        AddImageView.snp.makeConstraints{ (make) in
             make.top.equalTo(Message.snp.bottom).offset(20)
+            make.height.equalTo(100)
+            make.width.equalTo(100)
+        }
+        UploadImage.snp.makeConstraints{ (make) in
+            make.top.equalTo(AddImageView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(60)
         }
@@ -214,10 +230,11 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         // 전송할 데이터 (텍스트 뷰와 필드의 내용)
         let titleText = titleTextField?.text ?? ""
         let messageText = messageTextView?.text ?? ""
+        let imageText = imageString ?? ""
                 
         print("전송 버튼이 클릭되었습니다. \(titleText), \(messageText)")
         if(titleText == ""){
-            if(messageText == ""){
+            if(messageText == "내용"){
                 //둘다 없을때
                 let alertController = UIAlertController(title: nil, message: "제목과 내용을 작성해 주세요.", preferredStyle: .alert)
                 let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
@@ -231,7 +248,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                 }
                 alertController.addAction(CancelController)
                 present(alertController, animated: true)}
-        }else if(messageText == ""){
+        }else if(messageText == "내용"){
             //게시글의 내용이 없을때 팝업
             let alertController = UIAlertController(title: nil, message: "내용을 작성해 주세요.", preferredStyle: .alert)
             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
@@ -239,6 +256,16 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
             alertController.addAction(CancelController)
             present(alertController, animated: true)
         }else{
+            //적절할때 업로드 완료 팝업
+            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
+            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                // OpenBoardViewController로 이동
+                if let voteViewController = self.navigationController?.viewControllers.first(where: { $0 is VoteViewController }) {
+                    self.navigationController?.popToViewController(voteViewController, animated: true)
+                }
+            }
+            alertController.addAction(CancelController)
+            present(alertController, animated: true)
             //MARK: JSON 통신
             let apiURLString = "https://example.com/api/upload"
             var request = URLRequest(url: URL(string: apiURLString)!)
@@ -246,7 +273,8 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
             //적절할때 통신
             let requestBody: [String: Any] = [
                 "title": titleText,
-                "message": messageText
+                "message": messageText,
+                "image": imageText
             ]
             // JSON 데이터를 HTTP 요청 바디에 설정
             
@@ -270,17 +298,55 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                 }
             }
             task.resume() // 요청 보내기
-            
-            //적절할때 업로드 완료 팝업
-            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
-            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
-                // OpenBoardViewController로 이동
-                if let voteViewController = self.navigationController?.viewControllers.first(where: { $0 is VoteViewController }) {
-                    self.navigationController?.popToViewController(voteViewController, animated: true)
-                }
-            }
-            alertController.addAction(CancelController)
-            present(alertController, animated: true)
         }
+    }
+}
+extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    // 이미지 업로드 메서드
+    @objc func UploadImageTapped() {
+        print("UploadImageTapped - called()")
+        // 로딩 인디케이터 추가
+        self.view.addSubview(loadingIndicator)
+        loadingIndicator.startAnimating()
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
+    }
+    // UIImagePickerControllerDelegate 메서드 - 이미지 선택 취소
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        loadingIndicator.stopAnimating()
+        loadingIndicator.removeFromSuperview()
+        
+        picker.dismiss(animated: true, completion: nil)
+    }
+    // UIImagePickerControllerDelegate 메서드 - 사진 선택 시 호출
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]){
+        loadingIndicator.stopAnimating()
+        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            print("imagePickerController - \(selectedImage)")
+            // 선택한 이미지를 업로드하거나 다른 처리를 수행
+            // 선택한 이미지를 어딘가에 저장하는 등 작업 수행
+//            imageString = convertImageToBase64(selectedImage)
+            addImage = selectedImage
+            AddImage()
+            if let imageString = convertImageToBase64(selectedImage) {
+                print("Base64 Image String: \(imageString)")
+            }
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    // 이미지를 String 형태로 서버 전송을 위한 변환 메서드
+    func convertImageToBase64(_ image: UIImage?) -> String? {
+        if let image = image, let imageData = image.jpegData(compressionQuality: 0.8){
+            let base64String = imageData.base64EncodedString()
+            return base64String
+        }
+        return nil
+    }
+    //AddImageView에 이미지 추가 메서드
+    func AddImage() {
+        AddImageView.image = addImage
+        AddImageView.contentMode = .scaleAspectFit
     }
 }

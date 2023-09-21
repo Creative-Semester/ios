@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 class CouncilRegisterViewController : UIViewController{
-    var tableView : UITableView!
     //이 뷰의 타이틀과 학생회 신청에 대한 설명을 나타내는 뷰
     let ExplainView : UIView = {
        let view = UIView()
@@ -19,13 +18,6 @@ class CouncilRegisterViewController : UIViewController{
         text.textAlignment = .center
         text.isEditable = false
         text.font = UIFont.boldSystemFont(ofSize: 15)
-        //타이틀
-        let title = UILabel()
-        title.backgroundColor = .white
-        title.text = "학생회 신청"
-        title.textColor =  #colorLiteral(red: 0.1660557687, green: 0.4608593583, blue: 0.6628261209, alpha: 1)
-        title.textAlignment = .center
-        title.font = UIFont.boldSystemFont(ofSize: 25)
         
         //StackView를 이용해 오토레이아웃 설정
         let StackView = UIStackView()
@@ -34,7 +26,6 @@ class CouncilRegisterViewController : UIViewController{
         StackView.distribution = .fill
         StackView.alignment = .fill
         StackView.backgroundColor = .white
-        StackView.addArrangedSubview(title)
         StackView.addArrangedSubview(text)
         view.addSubview(StackView)
         
@@ -42,12 +33,9 @@ class CouncilRegisterViewController : UIViewController{
         StackView.snp.makeConstraints{ (make) in
             make.top.bottom.leading.trailing.equalToSuperview().offset(0)
         }
-        title.snp.makeConstraints{(make) in
-//            make.top.equalToSuperview().offset(30)
-            make.leading.trailing.equalToSuperview().inset(0)
-        }
+        
         text.snp.makeConstraints{ (make) in
-            make.top.equalTo(title.snp.bottom).offset(20)
+            make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview().inset(0)
         }
         
@@ -152,7 +140,8 @@ class CouncilRegisterViewController : UIViewController{
         super.viewDidLoad()
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
-       
+        title = "학생회 신청"
+        
         let ScrollView = UIScrollView()
         ScrollView.isScrollEnabled = true
         ScrollView.showsHorizontalScrollIndicator = false

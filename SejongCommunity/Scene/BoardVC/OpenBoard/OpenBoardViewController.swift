@@ -13,6 +13,7 @@ struct Post {
     let title : String
     let content : String
     let image : UIImage?
+    let day : String
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource,UIScrollViewDelegate {
@@ -25,9 +26,9 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     
     var posts : [Post] = [
-        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!),
-        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil),
-        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!)
+        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!, day: "2023-09-19 19:44"),
+        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil, day: "2023-09-18 13:44"),
+        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!, day: "2023-09-17 12:44")
     ]
     override func viewDidLoad() {
 //        self.navigationItem.setHidesBackButton(true, animated: false)
@@ -97,6 +98,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
         cell.postImageView.image = post.image
+        cell.DayLabel.text = post.day
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -127,6 +129,9 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         // 서버에서 페이지와 페이지 크기를 기반으로 게시글 데이터를 가져옴
         // 결과는 completion 핸들러를 통해 반환
         // URLSession을 사용하여 데이터를 가져오는 경우
+        //token
+        var token : String = ""
+        token = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
         let url = URL(string: "https://example.com/api/posts?page=\(page)&pageSize=\(pageSize)")!
         URLSession.shared.dataTask(with: url) { (data, response, error) in
                 // 요청이 완료된 후 실행될 클로저

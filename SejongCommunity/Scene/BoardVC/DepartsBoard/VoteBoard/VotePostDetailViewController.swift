@@ -7,8 +7,18 @@
 
 import Foundation
 import UIKit
-
+struct VoteComment {
+    let comment : String
+}
+struct VoteUser: Codable {
+    let userId: String // 사용자 아이디에 맞는 속성을 추가
+    // 다른 사용자 정보 속성들도 추가할 수 있습니다
+}
 class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+    //현재 게시물의 작성자를 전역변수로 선언
+    var userIdOfAuthor : String = ""
+    //현재 로그인한 사용자의 사용자 ID
+    var currentUserId : String = ""
     //투표기능 변수
     var agreeCount = 5
     var disagreeCount = 2
@@ -29,20 +39,20 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
     // 좋아요 버튼
     private let GreatBtn = UIButton()
     // 댓글을 저장할 배열
-    let comments : [DepartComment] = [
-        DepartComment(comment: "그건 아니죠,,"),
-        DepartComment(comment: "아니 이걸?"),
-        DepartComment(comment: "ㄹㅇㅋㅋ"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "와우!! 핫게 가자"),
-        DepartComment(comment: "끝")
+    let comments : [VoteComment] = [
+        VoteComment(comment: "그건 아니죠,,"),
+        VoteComment(comment: "아니 이걸?"),
+        VoteComment(comment: "ㄹㅇㅋㅋ"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "와우!! 핫게 가자"),
+        VoteComment(comment: "끝")
     ]
     let post : VotePost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
@@ -209,7 +219,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
         view.backgroundColor = .white
         view.layer.borderWidth = 0.2
         //댓글 입력 창과 버튼을 추가
-        let commentField = UITextView()
+        let commentField = ExpandingTextView()
 //        commentField.placeholder = "댓글을 입력하세요"
         commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
         commentField.layer.cornerRadius = 10
@@ -221,8 +231,8 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
             make.top.equalToSuperview().offset(10)
             make.leading.equalToSuperview().offset(10)
             make.width.equalTo(self.view.frame.width / 1.4)
-            make.height.equalTo(self.view.frame.height / 18)
-            
+            make.height.greaterThanOrEqualTo(self.view.frame.height / 20) // 최소 높이
+            make.height.lessThanOrEqualTo(self.view.frame.height / 11) // 최대 높이
         }
         let CommentBtn = UIButton()
         CommentBtn.backgroundColor =  #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
@@ -237,7 +247,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
             make.top.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
             make.width.equalTo(self.view.frame.width / 5)
-            make.height.equalTo(self.view.frame.height / 18)
+            make.height.equalTo(self.view.frame.height / 20)
         }
         
         StackView.addArrangedSubview(DetailView)
@@ -247,7 +257,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
         self.view.addSubview(ScrollView)
         self.view.addSubview(view)
         view.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 9)
+            make.height.equalTo(self.view.frame.height / 7.5)
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview()
         }
@@ -375,24 +385,35 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
     }
 
     @objc func toolBtnTapped() {
-        let alertController = UIAlertController(title: "글 메뉴", message: nil, preferredStyle: .alert)
-        //메뉴 추가
-        //쪽지 보내기
-        let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
-            // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+        let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
+        getAuthorInfo() // 게시글 작성자 정보를 가져옴
+        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
+        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
+        
+        //게시글의 작성자와 현재 사용자가 같을때
+        if isMyPost {
+                    // 삭제
+            let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
+                self.PostDelete()
+                    }
+            alertController.addAction(deleteAction)
+        }else{ //게시글의 작성자와 현재 사용자가 다를때
+            //쪽지 보내기
+            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+            }
+            alertController.addAction(SendMessageController)
+            //신고
+            let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
+                
+            }
+            alertController.addAction(DeclarationController)
         }
-        alertController.addAction(SendMessageController)
-        //신고
-        let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
-            
-        }
-        alertController.addAction(DeclarationController)
         //취소
         let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
             
         }
         alertController.addAction(CancelController)
-        
         present(alertController, animated: true)
     }
     // MARK: - UITableViewDataSource
@@ -412,16 +433,29 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
     //댓글을 눌렀을때 신고하기 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        //쪽지 보내기
-        let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
-            // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+        getAuthorInfo() // 게시글 작성자 정보를 가져옴
+        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
+        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
+        
+        //게시글의 작성자와 현재 사용자가 같을때
+        if isMyPost {
+                    // 삭제
+            let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
+                self.CommentDelete()
+                    }
+            alertController.addAction(deleteAction)
+        }else{ //게시글의 작성자와 현재 사용자가 다를때
+            //쪽지 보내기
+            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+            }
+            alertController.addAction(SendMessageController)
+            //신고
+            let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
+                
+            }
+            alertController.addAction(DeclarationController)
         }
-        alertController.addAction(SendMessageController)
-        //신고
-        let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
-            
-        }
-        alertController.addAction(DeclarationController)
         //취소
         let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
             
@@ -438,4 +472,148 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
 //            }
         }
 }
+extension VotePostDetailViewController {
+    //게시물 작성자와 현재 사용자를 비교하는 함수
+    func checkIfCurrentIsAuthorOfPost(userIdOfAuthor: String, currentUserId: String) -> Bool {
+        print("checkIfCurrentIsAutorOfPost - called()")
+        //게시물 작성자와 현재 작성자를 판별
+        return userIdOfAuthor == currentUserId // 현재는 내 게시물로 가정 true 반환
+    }
+    //현재 게시물의 작성자, 사용자를 가져오는 메서드
+    // 현재 사용자 정보를 가져오는 메서드
+    func getCurrentUserInfo() {
+        print("getCurrentUserInfo - called()")
+        
+        // 현재 사용자의 사용자 ID 또는 다른 식별자를 사용하여 API 호출
+        let currentUserId = "현재 사용자의 사용자 ID" // 실제 사용자 ID 또는 식별자로 대체해야 합니다.
+        
+        guard let url = URL(string: "https://yourapi.com/userInfo/\(currentUserId)") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        // 인증 헤더 또는 토큰을 추가!!
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            if let data = data {
+                do {
+                    let user = try JSONDecoder().decode(User.self, from: data)
+                    self.currentUserId = user.userId
+                    // 여기서 현재 사용자 정보를 필요한 속성에 저장하거나 처리할 수 있습니다.
+                } catch {
+                    print("Error decoding current user data: \(error.localizedDescription)")
+                }
+            }
+        }
+        task.resume()
+    }
+    // 게시물의 작성자 정보를 가져오는 메서드
+    func getAuthorInfo() {
+        print("getAuthorInfo - called()")
+        
+        
+        guard let url = URL(string: "https://yourapi.com/userInfo/") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        // 인증 헤더 또는 토큰을 추가!!
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            if let data = data {
+                do {
+                    let user = try JSONDecoder().decode(User.self, from: data)
+                    self.userIdOfAuthor = user.userId
+                    // 게시물 작성자 정보를 필요한 속성에 저장, 처리 가능
+                } catch {
+                    print("Error decoding author data: \(error.localizedDescription)")
+                }
+            }
+        }
+        task.resume()
+    }
 
+    //게시글 삭제 메서드
+    func PostDelete() {
+        print("PostDelete - called()")
+        if checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) {
+            // 지금 임시로 삭제 팝업창 띄우기 > 수정 필요
+            // 게시글 삭제 / 댓글 삭제 구분 필요
+            let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                // OpenBoardViewController로 이동
+                if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is VoteViewController }) {
+                    self.navigationController?.popToViewController(openboardViewController, animated: true)
+                }
+            }
+            DeleteAlertController.addAction(CancelController)
+            self.present(DeleteAlertController, animated: true)
+            // 서버에 삭제 요청을 보내는 예시
+            guard let url = URL(string: "https://yourapi.com/deletePost/") else { return }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "DELETE"
+            // 인증 헤더 또는 토큰을 추가
+
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                    return
+                }
+                // 삭제가 성공하면 화면에서 업데이트 필요 >> OpenBoard로 이동해서 새로운 창 로딩 필요 >> 새로고침 필요
+//                let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+//                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+//                    // OpenBoardViewController로 이동
+//                    if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+//                        self.navigationController?.popToViewController(openboardViewController, animated: true)
+//                    }
+//                }
+//                DeleteAlertController.addAction(CancelController)
+//                self.present(DeleteAlertController, animated: true)
+            }
+            task.resume()
+        } else {
+            // 게시글 작성자가 아닌 경우 삭제 권한이 없음을 사용자에게 알릴기 >> 애초에 팝업창이 다르게 뜨도록 설정
+        }
+    }
+    //댓글 삭제 메서드
+    func CommentDelete() {
+        print("CommentDelete - called()")
+        if checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) {
+            // 지금 임시로 삭제 팝업창 띄우기 > 수정 필요
+            let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다.", preferredStyle: .alert)
+            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                //해당 게시글 페이지 재로드
+            }
+            DeleteAlertController.addAction(CancelController)
+            self.present(DeleteAlertController, animated: true)
+            // 서버에 삭제 요청을 보내는 예시
+            guard let url = URL(string: "https://yourapi.com/deletePost/") else { return }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "DELETE"
+            // 인증 헤더 또는 토큰을 추가
+
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                    return
+                }
+                // 삭제가 성공하면 화면에서 업데이트 필요 >> OpenBoard로 이동해서 새로운 창 로딩 필요 >> 새로고침 필요
+//                let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+//                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+//                    // OpenBoardViewController로 이동
+//                }
+//                DeleteAlertController.addAction(CancelController)
+//                self.present(DeleteAlertController, animated: true)
+            }
+            task.resume()
+        } else {
+            // 게시글 작성자가 아닌 경우 삭제 권한이 없음을 사용자에게 알릴기 >> 애초에 팝업창이 다르게 뜨도록 설정
+        }
+    }
+}
