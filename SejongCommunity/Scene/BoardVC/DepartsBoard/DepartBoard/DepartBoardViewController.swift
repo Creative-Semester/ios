@@ -16,6 +16,30 @@ struct DepartPost {
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class DepartBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+    private let CouncilButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle("공지사항", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .selected)
+        return button
+    }()
+    
+    private let VoteButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle("투표", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .selected)
+        
+        return button
+    }()
     //페이지 번호와 크기
     var currentPage = 1
     let pageSize = 20
@@ -87,10 +111,11 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         tableView.dataSource = self
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        // 탭 바의 높이만큼 상단 여백 추가
+        tableView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
         //UITableView에 셀 등록
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
-        view.addSubview(tableView)
-        
+        self.view.addSubview(tableView)
     }
     // MARK: - UITableViewDataSource
     //테이블 뷰의 데이터 소스 프로토콜을 구현
@@ -111,84 +136,19 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     //학생회 공지사항, 투표를 할 뷰를 나눌 탭바 메서드
     func setTabBarView() {
         //학생회 공지사항 게시글과, 투표글에 대해 뷰를 나눌 탭바설정
-        let TabView = UIView()
-        TabView.backgroundColor = .white
-        TabView.tintColor = .gray
-//        TabView.layer.borderWidth = 0.2
-        let TabStackView = UIStackView()
-        TabStackView.axis = .horizontal
-        TabStackView.alignment = .fill
-        TabStackView.distribution = .fill
-        TabStackView.spacing = 20
+        let stackView = UIStackView(arrangedSubviews: [CouncilButton, VoteButton])
         
-        //학생회 공지사항 뷰 버튼
-        let CouncilView = UIView()
-        let CouncilBtn = UIButton()
-        CouncilBtn.layer.cornerRadius = 20
-        CouncilBtn.layer.masksToBounds = true
-        CouncilBtn.setImage(UIImage(systemName: "quote.bubble.fill"), for: .normal)
-        CouncilBtn.tintColor = .black
-        CouncilBtn.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
-        let CouncilLabel = UILabel()
-        CouncilLabel.text = "공지사항"
-        CouncilLabel.textAlignment = .center
-        CouncilLabel.textColor = .black
-        CouncilLabel.font = UIFont.boldSystemFont(ofSize: 10)
-        CouncilView.addSubview(CouncilBtn)
-        CouncilView.addSubview(CouncilLabel)
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+        stackView.backgroundColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
         
-        //투표 뷰 버튼
-        let VoteView = UIView()
-        let VoteBtn = UIButton()
-        VoteBtn.layer.cornerRadius = 20
-        VoteBtn.layer.masksToBounds = true
-        VoteBtn.setImage(UIImage(systemName: "slider.horizontal.3"), for: .normal)
-        VoteBtn.tintColor = .black
-        VoteBtn.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
-        let VoteLabel = UILabel()
-        VoteLabel.text = "투표"
-        VoteLabel.textAlignment = .center
-        VoteLabel.font = UIFont.boldSystemFont(ofSize: 10)
-        VoteView.addSubview(VoteBtn)
-        VoteView.addSubview(VoteLabel)
-        TabStackView.addArrangedSubview(CouncilView)
-        TabStackView.addArrangedSubview(VoteView)
-        TabView.addSubview(TabStackView)
-        self.view.addSubview(TabView)
+        view.addSubview(stackView)
         
-        TabView.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 8)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.bottom.equalToSuperview().offset(0)
-        }
-        TabStackView.snp.makeConstraints{ (make) in
-            make.top.bottom.trailing.leading.equalToSuperview().inset(0)
-        }
-        CouncilView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(0)
-            make.leading.equalToSuperview().offset(10)
-            make.width.equalToSuperview().dividedBy(2)
-        }
-        CouncilBtn.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(20)
-            make.leading.trailing.equalToSuperview().inset(10)
-        }
-        CouncilLabel.snp.makeConstraints{ (make) in
-            make.top.equalTo(CouncilBtn.snp.bottom).offset(3)
-            make.leading.trailing.equalToSuperview().inset(40)
-        }
-        VoteView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(0)
-            make.trailing.equalToSuperview().offset(10)
-            make.width.equalToSuperview().dividedBy(2)
-        }
-        VoteBtn.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(18)
-            make.leading.trailing.equalToSuperview().inset(10)
-        }
-        VoteLabel.snp.makeConstraints{ (make) in
-            make.top.equalTo(VoteBtn.snp.bottom).offset(3)
-            make.leading.trailing.equalToSuperview().inset(40)
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
         }
     }
     //공지사항 버튼을 눌렀을때 액션
@@ -221,25 +181,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     //글쓰기 버튼을 누르면 글작성 뷰로 이동시킬 메서드
     @objc func WriteBtnTappend() {
         navigationController?.pushViewController(DepartOpenWriteViewController(), animated: true)
-    }
-    @objc func SearchBtnTapped() {
-        let alertController = UIAlertController(title: "검색", message: nil, preferredStyle: .alert)
-        // 검색어를 입력 받을 텍스트 필드 추가
-        alertController.addTextField() { (textField) in
-            textField.placeholder = "검색어를 입력하세요"
-        }
-                // '취소' 버튼 추가
-                let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-                alertController.addAction(cancelAction)
-
-                // '검색' 버튼 추가
-                let searchAction = UIAlertAction(title: "검색", style: .default) { (_) in
-                    // '검색' 버튼을 눌렀을 때의 동작을 구현 (예: 검색 기능 실행)
-                }
-                alertController.addAction(searchAction)
-
-                // 팝업 표시
-                present(alertController, animated: true, completion: nil)
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그

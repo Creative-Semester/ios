@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-
+import SwiftKeychainWrapper
 class AuthenticationManager {
     // 사용자 정보 및 토큰을 저장하는 UserDefaults 키
     private static let kAuthTokenKey = "AuthToken"
@@ -15,15 +15,15 @@ class AuthenticationManager {
     private static let serverResponseCode = 0
     static func saveAuthToken(token: String, refresh: String){
         print("AuthenticationManager.saveAuthToken - called()")
-        UserDefaults.standard.set(token, forKey: kAuthTokenKey)
-        UserDefaults.standard.set(refresh, forKey: krefreshTokenKey)
+        KeychainWrapper.standard.set(token, forKey: kAuthTokenKey)
+        KeychainWrapper.standard.set(refresh, forKey: krefreshTokenKey)
     }
     
     //현재 로그인 상태 확인
     static func isUserLoggedIn() -> Bool {
         print("AuthenticationManager.isUserLoggedIn - called()")
         // UserDefaults에서 저장된 토큰을 가져옵니다.
-            if let token = UserDefaults.standard.string(forKey: kAuthTokenKey) {
+            if let token = KeychainWrapper.standard.string(forKey: kAuthTokenKey) {
                 // 토큰이 있을 경우, 토큰이 유효한지 검사합니다.
                 return isTokenValid(token, serverResponseCode)
             }
@@ -39,7 +39,8 @@ class AuthenticationManager {
     }
     static func logoutUser() {
         print("AuthenticationManager.logoutUser - called()")
-        UserDefaults.standard.removeObject(forKey: kAuthTokenKey)
+        KeychainWrapper.standard.removeObject(forKey: kAuthTokenKey)
+        KeychainWrapper.standard.removeObject(forKey: krefreshTokenKey)
         // 예: 로그인 화면을 다시 표시
         let loginViewController = LoginViewController()
         let navigationController = UINavigationController(rootViewController: loginViewController)

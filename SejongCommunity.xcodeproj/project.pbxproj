@@ -23,6 +23,7 @@
 		E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E472375D2AB83DA5003BD82B /* WebViewController.swift */; };
 		E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237602AB972DE003BD82B /* MyWriteViewController.swift */; };
 		E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237622ABC0823003BD82B /* NetworkManager.swift */; };
+		E4B1E7522ABD769A00CD4DE2 /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */; };
 		E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */; };
 		E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = E4D466592AB1B7DA003E5DD9 /* FSCalendar */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
@@ -108,6 +109,7 @@
 			files = (
 				3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */,
 				E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */,
+				E4B1E7522ABD769A00CD4DE2 /* SwiftKeychainWrapper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +316,7 @@
 			name = SejongCommunity;
 			packageProductDependencies = (
 				E4D466592AB1B7DA003E5DD9 /* FSCalendar */,
+				E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */,
 			);
 			productName = SejongCommunity;
 			productReference = F124650C2A67BAB500037D8C /* SejongCommunity.app */;
@@ -345,6 +348,7 @@
 			mainGroup = F12465032A67BAB500037D8C;
 			packageReferences = (
 				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
 			);
 			productRefGroup = F124650D2A67BAB500037D8C /* Products */;
 			projectDirPath = "";
@@ -666,6 +670,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jrendel/SwiftKeychainWrapper.git";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
 		E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
@@ -677,6 +689,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;
+			productName = SwiftKeychainWrapper;
+		};
 		E4D466592AB1B7DA003E5DD9 /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */;

@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 class LoginViewController : UIViewController {
+    // 보여지는 버튼 플래그
+    var showflag = 0
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated) // 백 버튼 숨기기
@@ -187,13 +189,25 @@ extension LoginViewController{
         passwordText.backgroundColor = .white
         passwordText.textAlignment = .center
         passwordText.placeholder = "Passward"
-        passwordText.layer.borderWidth = 0.1
+//        passwordText.layer.borderWidth = 0.1
         passwordText.layer.cornerRadius = 20
         passwordText.layer.masksToBounds = true
+        passwordText.isSecureTextEntry = true
 
         // 아이디와 비밀번호 입력 필드를 TextView에 추가
         TextView.addArrangedSubview(idText)
-        TextView.addArrangedSubview(passwordText)
+        // 버튼을 누르면 가려진 텍스트가 보여짐
+        let miniTextView = UIView()
+        miniTextView.backgroundColor = .white
+        miniTextView.layer.borderWidth = 0.1
+        miniTextView.layer.cornerRadius = 20
+        let showpassward = UIButton()
+        showpassward.setImage(UIImage(systemName: "lock"), for: .normal)
+        showpassward.tintColor = .black
+        showpassward.addTarget(self, action: #selector(showpasswardTapped), for: .touchUpInside)
+        miniTextView.addSubview(passwordText)
+        miniTextView.addSubview(showpassward)
+        TextView.addArrangedSubview(miniTextView)
         let TextSpacing = UIView()
         TextSpacing.backgroundColor = .white
         TextView.addArrangedSubview(TextSpacing)
@@ -203,9 +217,19 @@ extension LoginViewController{
             make.top.equalToSuperview().offset(0)
             make.height.equalTo(50)
         }
-        passwordText.snp.makeConstraints{ (make) in
+        miniTextView.snp.makeConstraints{ (make) in
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(50)
+        }
+        passwordText.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(15)
+            make.width.equalTo(miniTextView.snp.width).dividedBy(1.5)
+            make.leading.equalToSuperview().offset(55)
+        }
+        showpassward.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(15)
+            make.trailing.equalToSuperview().offset(-0)
+            make.width.equalTo(miniTextView.snp.width).dividedBy(4)
         }
         TextSpacing.snp.makeConstraints{ (make) in
             make.leading.trailing.equalToSuperview().inset(0)
@@ -251,6 +275,17 @@ extension LoginViewController{
         }
         SecondLabel.snp.makeConstraints{ (make) in
             make.trailing.leading.equalToSuperview().inset(20)
+        }
+    }
+    // 버튼을 누르면 비밀번호가 보임
+    // 버튼을 여러번 클릭했을때 셀 flag
+    @objc func showpasswardTapped() {
+        if(showflag == 1) {
+            passwordText.isSecureTextEntry = false
+            showflag = 0
+        }else if(showflag == 0){
+            passwordText.isSecureTextEntry = true
+            showflag = 1
         }
     }
 }
