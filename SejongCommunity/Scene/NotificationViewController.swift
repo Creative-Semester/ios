@@ -10,6 +10,15 @@ import UIKit
 import SnapKit
 
 class NotificationViewController : UIViewController {
+    override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            //부모로 이동했을때 탭바를 다시 켬
+            if isMovingFromParent {
+                print("Back 버튼 클릭됨")
+                tabBarController?.tabBar.isHidden = false
+                navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+            }
+        }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white

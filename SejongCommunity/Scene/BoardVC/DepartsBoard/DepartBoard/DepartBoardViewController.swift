@@ -20,11 +20,9 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         let button = UIButton()
         
         button.setTitle("공지사항", for: .normal)
-        button.setTitleColor(.black, for: .normal)
         button.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .selected)
+        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .normal)
         return button
     }()
     
@@ -35,8 +33,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         button.setTitleColor(.black, for: .normal)
         button.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .selected)
         
         return button
     }()
