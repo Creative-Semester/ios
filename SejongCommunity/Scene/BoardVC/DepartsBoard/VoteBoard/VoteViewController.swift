@@ -38,7 +38,7 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
         return button
     }()
     //페이지 번호와 크기
-    var currentPage = 1
+    var currentPage = 0
     let pageSize = 20
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     //게시글을 저장시킬 테이블 뷰 생성
@@ -60,14 +60,11 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
         setupTableView()
         //글쓰기 버튼을 상단 바에 추가
         let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
-        //새로 고침 버튼 상단 바에 추가
-        let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(updatePage))
         // 우측 바 버튼 아이템 배열에 추가
-        navigationItem.rightBarButtonItems = [refreshButton, addButton]
+        navigationItem.rightBarButtonItems = [addButton]
         // 로딩 인디케이터 뷰 초기 설정
         activityIndicator.color = .gray
         activityIndicator.center = view.center
-        view.addSubview(activityIndicator)
         
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
@@ -220,9 +217,11 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
     var lastContentOffsetY : CGFloat = 0
     var isScrollingDown = false
     var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
+    var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = scrollView.contentOffset.y
         let screenHeight = scrollView.bounds.size.height
+        let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
 
         if contentOffsetY >= 0 {
             isScrollingDown = true
@@ -233,19 +232,30 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
         if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
             if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
                 loadNextPageCalled = true // 호출되었다고 표시
+                self.view.addSubview(activityIndicator)
+                activityIndicator.startAnimating() // 로딩 인디케이터 시작
                 loadNextPage()
             }
-        } else if !isScrollingDown && contentOffsetY == 0 {            loadNextPageCalled = false // 상단으로 스크롤될 때 호출되지 않았다고 표시
+        } else if !isScrollingDown && contentOffsetY < threshold {
+            if !updatePageCalled {
+                updatePageCalled = true
+                self.view.addSubview(activityIndicator)
+                activityIndicator.startAnimating() // 로딩 인디케이터 시작
+                updatePage()
+            }
         }
     }
-
     //새로운 페이지 새로고침
     @objc func updatePage() {
         print("updatePage() - called")
-        currentPage = 1 //처음 페이지부터 다시 시작
+        currentPage = 0 //처음 페이지부터 다시 시작
         isLoading = false
         //스크롤을 감지해서 인디케이터가 시작되면
-//        activityIndicator.startAnimating() // 로딩 인디케이터 시작
+        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
+        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    self.activityIndicator.stopAnimating()
+                }
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
             guard let self = self else { return }
@@ -276,7 +286,11 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
         currentPage += 1
         isLoading = true
         //스크롤을 감지해서 인디케이터가 시작되면
-//        activityIndicator.startAnimating() // 로딩 인디케이터 시작
+        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
+        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    self.activityIndicator.stopAnimating()
+                }
 
         fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
             guard let self = self else { return }
