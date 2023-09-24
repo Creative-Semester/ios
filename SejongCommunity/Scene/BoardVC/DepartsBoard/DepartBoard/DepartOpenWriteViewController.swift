@@ -62,7 +62,8 @@ class DepartOpenWriteViewController : UIViewController, UITextViewDelegate {
         self.view.backgroundColor = .white
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         navigationController?.navigationBar.tintColor = .red
-        loadingIndicator = UIActivityIndicatorView(style: .gray)
+        loadingIndicator = UIActivityIndicatorView(style: .large)
+        loadingIndicator.color = .gray
         loadingIndicator.center = self.view.center
         //게시판 제목과 글, 그림을 등록하기 위한 뷰
         let OpenWriteView = UIView()

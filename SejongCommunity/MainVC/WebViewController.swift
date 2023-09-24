@@ -20,7 +20,8 @@ class WebViewController : UIViewController, WKNavigationDelegate {
         webView.navigationDelegate = self
         self.view.addSubview(webView)
         // 로딩 인디케이터 생성
-        loadingIndicator = UIActivityIndicatorView(style: .gray)
+        loadingIndicator = UIActivityIndicatorView(style: .large)
+        loadingIndicator.color = .gray
         loadingIndicator.center = self.view.center
         self.view.addSubview(loadingIndicator)
         if let url = URL(string: "https://do.sejong.ac.kr/ko/program/all/list/all/2"){
