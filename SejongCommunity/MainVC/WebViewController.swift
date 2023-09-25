@@ -32,6 +32,9 @@ class WebViewController : UIViewController, WKNavigationDelegate {
             webView.load(request)
         }
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
     // 웹 페이지 로딩이 시작될 때 호출되는 메서드
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         // 로딩 화면 표시

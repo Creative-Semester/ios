@@ -20,12 +20,14 @@ class ProfessorBoardViewController: UIViewController {
         
         return collectionView
     }()
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         title = "교수 게시판"
-        
+        self.navigationController?.navigationBar.tintColor = .red
         professorCollecionView.register(ProfessorCollectionViewCell.self, forCellWithReuseIdentifier: "ProfessorCollectionViewCell")
         professorCollecionView.delegate = self
         professorCollecionView.dataSource = self
