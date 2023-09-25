@@ -11,44 +11,18 @@ import SnapKit
 class PledgeBoardViewController: UIViewController {
     
     private var isEditingMode: Bool = false
+    private let menuItems = ["복지행사", "문화행사", "학술행사", "건강행사", "아무거나"]
     
-    private let welfareButton: UIButton = {
-        let button = UIButton()
+    private let menuCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 14, bottom: 0, right: 14)
+        layout.scrollDirection = .horizontal
         
-        button.setTitle("복지행사", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(pledgeMenuButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .selected)
-
-        return button
-    }()
-    
-    private let cultureButton: UIButton = {
-        let button = UIButton()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
+        collectionView.showsHorizontalScrollIndicator = false
         
-        button.setTitle("문화행사", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(pledgeMenuButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .selected)
-        
-        return button
-    }()
-    //scholarship
-    private let scholarshipButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("학술행사", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(pledgeMenuButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(.black, for: .normal)
-        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .selected)
-        
-        return button
+        return collectionView
     }()
     
     private let pledgeTitleLabel: UILabel = {
@@ -57,7 +31,7 @@ class PledgeBoardViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
-        label.text = "복지행사 공약"
+        label.text = ""
         label.numberOfLines = 1
 
         return label
@@ -83,13 +57,34 @@ class PledgeBoardViewController: UIViewController {
         
         self.title = "공약전체보기"
         
+        menuCollectionView.dataSource = self
+        menuCollectionView.delegate = self
+        menuCollectionView.register(PledgeBoardMenuCollectionViewCell.self, forCellWithReuseIdentifier: "PledgeBoardMenuCollectionViewCell")
+        
+        pledgeTitleLabel.text = menuItems[0] + " 공약"
+        
         pledgeTableView.dataSource = self
         pledgeTableView.delegate = self
         pledgeTableView.register(PledgeTableViewCell.self, forCellReuseIdentifier: "PledgeTableViewCell")
         
-        setupUI()
+        setupLayout()
     }
-
+    
+    func setupLayout() {
+        view.addSubview(menuCollectionView)
+        menuCollectionView.snp.makeConstraints{ make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(35)
+        }
+        
+        view.addSubview(pledgeTableView)
+        pledgeTableView.snp.makeConstraints{ make in
+            make.top.equalTo(menuCollectionView.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
+    }
 }
 
 extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
@@ -131,9 +126,24 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
             // 선택된 셀의 레이아웃을 업데이트
             cell.setup()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = UIColor.white
         
-        // 선택된 셀에 대한 추가 작업을 수행
-        // 예를 들어, 다음 뷰 컨트롤러로 이동하거나 상세 정보를 표시하는 등의 작업
+        headerView.addSubview(pledgeTitleLabel)
+        pledgeTitleLabel.snp.makeConstraints{ make in
+            make.leading.equalTo(headerView.snp.leading).offset(16)
+            make.centerY.equalTo(headerView.snp.centerY)
+        }
+        
+        return headerView
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        //헤더 높이 뷰
+        return 40
     }
     
     //편집모드일때만 cell클릭할수있도록 변경
@@ -142,6 +152,54 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
             return indexPath
         } else {
             return nil
+        }
+    }
+}
+
+extension PledgeBoardViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return menuItems.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PledgeBoardMenuCollectionViewCell", for: indexPath) as! PledgeBoardMenuCollectionViewCell
+        
+        cell.configure(with: menuItems[indexPath.item])
+        
+        return cell
+    }
+    
+    // 처음에 첫번째 cell이 클릭된 상태로 표시하기 위해서 설정했습니다.
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .left)
+            cell.contentView.backgroundColor = UIColor(red: 1, green: 0.788, blue: 0.788, alpha: 1)
+        }
+    }
+}
+
+extension PledgeBoardViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 70, height: 35)
+    }
+    
+    // 셀 선택 시 호출되는 메서드
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        pledgeTitleLabel.text = menuItems[indexPath.item] + " 공약"
+        // 선택한 셀의 색상을 변경
+        if let selectedCell = collectionView.cellForItem(at: indexPath) {
+            selectedCell.layer.cornerRadius = 15
+            selectedCell.contentView.backgroundColor = UIColor(red: 1, green: 0.788, blue: 0.788, alpha: 1)
+        }
+    }
+    
+    // 셀 선택 해제 시 호출되는 메서드
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        // 선택 해제된 셀의 색상을 원래대로 변경
+        if let deselectedCell = collectionView.cellForItem(at: indexPath) {
+            deselectedCell.contentView.backgroundColor = UIColor(red: 1, green: 0.788, blue: 0.788, alpha: 0.3)
+            deselectedCell.layer.cornerRadius = 15
         }
     }
 }
@@ -160,38 +218,6 @@ private extension PledgeBoardViewController {
         navigationItem.rightBarButtonItem?.setTitleTextAttributes([.foregroundColor: textColor], for: .normal)
     }
     
-    private func setupUI() {
-        let stackView = UIStackView(arrangedSubviews: [welfareButton, cultureButton, scholarshipButton])
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .center
-        stackView.backgroundColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        
-        view.addSubview(stackView)
-        
-        stackView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
-        }
-        
-        view.addSubview(pledgeTitleLabel)
-        
-        pledgeTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(stackView.snp.bottom).offset(20)
-            make.leading.equalTo(view.snp.leading).offset(20)
-        }
-        
-        view.addSubview(pledgeTableView)
-        
-        pledgeTableView.snp.makeConstraints { make in
-            make.top.equalTo(pledgeTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-        }
-        
-        welfareButton.isSelected = true
-    }
     
     @objc func editButtonTapped() {
         isEditingMode.toggle()
@@ -201,23 +227,5 @@ private extension PledgeBoardViewController {
         pledgeTableView.reloadData()
     }
     
-    @objc func pledgeMenuButtonTapped(_ sender: UIButton) {
-        // 모든 버튼의 선택 상태를 초기화
-        welfareButton.isSelected = false
-        cultureButton.isSelected = false
-        scholarshipButton.isSelected = false
-        
-        // 현재 클릭한 버튼의 선택 상태를 true로 설정
-        sender.isSelected = true
-        
-        if sender == welfareButton {
-            pledgeTitleLabel.text = "복지행사 공약"
-        } else if sender == cultureButton {
-            pledgeTitleLabel.text = "문화행사 공약"
-        } else if sender == scholarshipButton {
-            pledgeTitleLabel.text = "학술행사 공약"
-        }
-        
-        pledgeTableView.reloadData()
-    }
+    
 }
