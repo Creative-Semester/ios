@@ -51,6 +51,7 @@
 		F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */; };
 		F1E547962AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547952AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift */; };
 		F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */; };
+		F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = F1E5479A2AC2B27E00671182 /* DGCharts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -109,6 +110,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */,
+				F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */,
 				E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -317,6 +319,7 @@
 			name = SejongCommunity;
 			packageProductDependencies = (
 				E4D466592AB1B7DA003E5DD9 /* FSCalendar */,
+				F1E5479A2AC2B27E00671182 /* DGCharts */,
 			);
 			productName = SejongCommunity;
 			productReference = F124650C2A67BAB500037D8C /* SejongCommunity.app */;
@@ -348,6 +351,7 @@
 			mainGroup = F12465032A67BAB500037D8C;
 			packageReferences = (
 				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */,
 			);
 			productRefGroup = F124650D2A67BAB500037D8C /* Products */;
 			projectDirPath = "";
@@ -678,6 +682,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -685,6 +697,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */;
 			productName = FSCalendar;
+		};
+		F1E5479A2AC2B27E00671182 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
