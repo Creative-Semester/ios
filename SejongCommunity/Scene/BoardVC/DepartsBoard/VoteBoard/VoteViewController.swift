@@ -52,9 +52,16 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
         self.navigationItem.setHidesBackButton(true, animated: false)
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         let closeIcon = UIImage(systemName: "chevron.backward")
-        let MainBackButton = UIBarButtonItem(image: closeIcon, style: .plain, target: self, action: #selector(MainBackButtonTapped))
+        let MainBackBtnLabel = UIButton()
+        MainBackBtnLabel.setTitle(" 메인페이지", for: .normal)
+        MainBackBtnLabel.setTitleColor(.red, for: .normal)
+        MainBackBtnLabel.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        MainBackBtnLabel.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        MainBackBtnLabel.addTarget(self, action: #selector(MainBackButtonTapped), for: .touchUpInside)
+        MainBackBtnLabel.tintColor = .red
+        let MainLabel = UIBarButtonItem(customView: MainBackBtnLabel)
+        self.navigationItem.leftBarButtonItems = [MainLabel]
         self.navigationController?.navigationBar.tintColor = .red
-        navigationItem.leftBarButtonItem = MainBackButton
         title = "투표"
         self.view.backgroundColor = .white
         setupTableView()
@@ -89,6 +96,7 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
     //메인으로 돌아갈 백 버튼
     @objc func MainBackButtonTapped() {
         if let mainViewController = navigationController?.viewControllers.first(where: { $0 is MainViewController }) {
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
             navigationController?.popToViewController(mainViewController, animated: true)
         }
 

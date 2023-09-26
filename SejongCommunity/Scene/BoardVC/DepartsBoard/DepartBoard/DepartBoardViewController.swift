@@ -51,9 +51,16 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         self.navigationItem.setHidesBackButton(true, animated: false)
         let closeIcon = UIImage(systemName: "chevron.backward")
-        let MainBackButton = UIBarButtonItem(image: closeIcon, style: .plain, target: self, action: #selector(MainBackButtonTapped))
-        self.navigationController?.navigationBar.tintColor = .red
-        navigationItem.leftBarButtonItem = MainBackButton
+        let MainBackBtnLabel = UIButton()
+        MainBackBtnLabel.setTitle(" 메인페이지", for: .normal)
+        MainBackBtnLabel.setTitleColor(.red, for: .normal)
+        MainBackBtnLabel.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        MainBackBtnLabel.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        MainBackBtnLabel.addTarget(self, action: #selector(MainBackButtonTapped), for: .touchUpInside)
+        MainBackBtnLabel.tintColor = .red
+        let MainLabel = UIBarButtonItem(customView: MainBackBtnLabel)
+        self.navigationItem.leftBarButtonItems = [MainLabel]
+        
         self.navigationController?.navigationBar.tintColor = .red
         title = "학생회 공지사항"
         setupTableView()
@@ -61,9 +68,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
         // 우측 바 버튼 아이템 배열에 추가
         navigationItem.rightBarButtonItems = [addButton]
-        //게시글을 검색하는 버튼을 생성
-//        let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(SearchBtnTapped))
-//        navigationItem.rightBarButtonItem = searchButton
         // 로딩 인디케이터 뷰 초기 설정
         activityIndicator.color = .gray
         activityIndicator.center = view.center
@@ -92,6 +96,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     //메인으로 돌아갈 백 버튼
     @objc func MainBackButtonTapped() {
         if let mainViewController = navigationController?.viewControllers.first(where: { $0 is MainViewController }) {
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
             navigationController?.popToViewController(mainViewController, animated: true)
         }
         //메인으로 이동했을때 탭바를 다시 켬

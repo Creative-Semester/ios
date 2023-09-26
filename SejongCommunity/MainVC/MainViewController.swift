@@ -31,7 +31,8 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         let Notificationtitle = UIImageView()
         Notificationtitle.image = UIImage(systemName: "megaphone")
         Notificationtitle.backgroundColor = .white
-        Notificationtitle.tintColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+        Notificationtitle.tintColor = #colorLiteral(red: 0.8549019694, green: 0.250980407, blue: 0.4784313738, alpha: 1)
+        Notificationtitle.backgroundColor = #colorLiteral(red: 0.9629544616, green: 0.9693544507, blue: 0.9692414403, alpha: 1)
         view.addSubview(Notificationtitle)
         
         //뷰 안에 공지사항을 알리는 레이블 추가
@@ -50,8 +51,8 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         //Snapkit을 이용해 오토레이아웃 설정
         Notificationtitle.snp.makeConstraints{ (make) in
             make.top.bottom.equalToSuperview().inset(15)
-            make.leading.equalToSuperview().offset(10)
-            make.width.equalTo(20)
+            make.leading.equalToSuperview().offset(15)
+            make.width.equalTo(23)
         }
         Notification.snp.makeConstraints{ (make) in
             make.top.bottom.equalToSuperview().inset(0)
@@ -81,48 +82,39 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         let Openimage = UIImage(named: "icon1")
         OpenBoardBtn.setImage(Openimage, for: .normal)
         OpenBoardBtn.contentMode = .scaleAspectFit
-//        OpenBoardBtn.tintColor = UIColor(red: 252/255.0, green: 230/255.0, blue: 186/255.0, alpha: 1.0)
-//        OpenBoardBtn.backgroundColor = UIColor(red: 252/255.0, green: 230/255.0, blue: 186/255.0, alpha: 1.0)
         OpenBoardBtn.addTarget(self, action: #selector(OpenBoardBtnTapped), for: .touchUpInside)
         OpenBoardBtn.backgroundColor = .white
-//        OpenBoardBtn.setImage(UIImage(systemName: "doc.text"), for: .normal)
         
         // 학생회 공지사항/투표 버튼 생성
         let DepartBoardBtn = UIButton()
         let Departimage = UIImage(named: "icon2")
         DepartBoardBtn.setImage(Departimage, for: .normal)
         DepartBoardBtn.contentMode = .scaleAspectFit
-//        DepartBoardBtn.tintColor = UIColor(red: 0xCA / 255.0, green: 0xFF / 255.0, blue: 0xC9 / 255.0, alpha: 1.0)
-//        DepartBoardBtn.backgroundColor = UIColor(red: 0xCA / 255.0, green: 0xFF / 255.0, blue: 0xC9 / 255.0, alpha: 1.0)
         DepartBoardBtn.layer.cornerRadius = 30
         DepartBoardBtn.layer.masksToBounds = true
         DepartBoardBtn.addTarget(self, action: #selector(DepartBoardBtnTapped), for: .touchUpInside)
         DepartBoardBtn.backgroundColor = .white
-//        DepartBoardBtn.setImage(UIImage(systemName: "bell.fill"), for: .normal)
+        
         // 교수게시판 버튼 생성
         let ClassBoardBtn = UIButton()
         let Classimage = UIImage(named: "icon3")
         ClassBoardBtn.setImage(Classimage, for: .normal)
         ClassBoardBtn.contentMode = .scaleAspectFit
-//        ClassBoardBtn.tintColor = UIColor(red: 0xD9 / 255.0, green: 0xE6 / 255.0, blue: 0xFF / 255.0, alpha: 1.0)
-//        ClassBoardBtn.backgroundColor = UIColor(red: 0xD9 / 255.0, green: 0xE6 / 255.0, blue: 0xFF / 255.0, alpha: 1.0)
         ClassBoardBtn.layer.cornerRadius = 30
         ClassBoardBtn.layer.masksToBounds = true
         ClassBoardBtn.addTarget(self, action: #selector(ClassBoardBtnTapped), for: .touchUpInside)
         ClassBoardBtn.backgroundColor = .white
-//        ClassBoardBtn.setImage(UIImage(systemName: "folder.badge.person.crop"), for: .normal)
+        
         // 학생회 버튼 생성
         let CouncilBoardBtn = UIButton()
         let Councilimage = UIImage(named: "icon4")
         CouncilBoardBtn.setImage(Councilimage, for: .normal)
         CouncilBoardBtn.contentMode = .scaleAspectFit
-//        CouncilBoardBtn.tintColor = UIColor(red: 1.0, green: 0.8275, blue: 0.9843, alpha: 1.0)
-//        CouncilBoardBtn.backgroundColor = UIColor(red: 1.0, green: 0.8275, blue: 0.9843, alpha: 1.0)
         CouncilBoardBtn.layer.cornerRadius = 30
         CouncilBoardBtn.layer.masksToBounds = true
         CouncilBoardBtn.addTarget(self, action: #selector(CouncilBoardBtnTapped), for: .touchUpInside)
         CouncilBoardBtn.backgroundColor = .white
-//        CouncilBoardBtn.setImage(UIImage(systemName: "person"), for: .normal)
+        
         //전체 스택뷰
         let AllStackView = UIStackView()
         AllStackView.axis = .vertical
@@ -222,7 +214,7 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        let image = UIImage(named: "OnlyLogo")
+        let image = UIImage(named: "SideLogo")
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         let View = UIView()
@@ -232,16 +224,18 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         let logoBarItem = UIBarButtonItem(customView: View)
         self.navigationItem.leftBarButtonItem = logoBarItem
         self.navigationController?.isNavigationBarHidden = false
-        NotificationView.addTarget(self, action: #selector(NotificationBtnTapped), for: .touchUpInside)
-        let NotiBarItem = UIBarButtonItem(customView: NotificationView)
         let AlertView = UIButton()
-        AlertView.setImage(UIImage(systemName: "bell"), for: .normal)
+        AlertView.setImage(UIImage(systemName: "bell.fill"), for: .normal)
         AlertView.tintColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
         AlertView.addTarget(self, action: #selector(AlertBtnTapped), for: .touchUpInside)
+        AlertView.snp.makeConstraints{(make) in
+            make.height.equalTo(40)
+            make.width.equalTo(60)
+        }
         let AlertBarItem = UIBarButtonItem(customView: AlertView)
-        self.navigationItem.rightBarButtonItems = [AlertBarItem, NotiBarItem]
+        self.navigationItem.rightBarButtonItem = AlertBarItem
         View.snp.makeConstraints{ (make) in
-            make.width.equalTo(40)
+            make.width.equalTo(120)
             make.height.equalTo(40)
         }
         imageView.snp.makeConstraints{ (make) in
@@ -256,6 +250,7 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         CalenderView.setImage(UIImage(named: self.imageNames[self.currentImageIndex]), for: .normal)
         CalenderView.layer.masksToBounds = true
         CalenderView.layer.cornerRadius = 10
+        CalenderView.layer.borderColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         
         // 시작할 때 이미지 설정
         updateImage()
@@ -297,6 +292,7 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         cvtext.snp.makeConstraints{ (make) in
             make.leading.equalTo(cvimage.snp.trailing).offset(5)
         }
+        StackView.addArrangedSubview(NotificationView)
         StackView.addArrangedSubview(cv)
         StackView.addArrangedSubview(CalenderView)
         StackView.addArrangedSubview(BoardView)
@@ -315,8 +311,13 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
             make.bottom.equalToSuperview().offset(-3)
             make.top.equalToSuperview().offset(0)
         }
-        cv.snp.makeConstraints{ (make) in
+        NotificationView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(15)
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.height.equalTo(50)
+        }
+        cv.snp.makeConstraints{ (make) in
+            make.top.equalTo(NotificationView.snp.bottom).offset(15)
             make.leading.equalToSuperview().offset(10)
             make.height.equalTo(30)
         }
