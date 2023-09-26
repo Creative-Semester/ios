@@ -224,19 +224,9 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         let logoBarItem = UIBarButtonItem(customView: View)
         self.navigationItem.leftBarButtonItem = logoBarItem
         self.navigationController?.isNavigationBarHidden = false
-        let AlertView = UIButton()
-        AlertView.setImage(UIImage(systemName: "bell.fill"), for: .normal)
-        AlertView.tintColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
-        AlertView.addTarget(self, action: #selector(AlertBtnTapped), for: .touchUpInside)
-        AlertView.snp.makeConstraints{(make) in
-            make.height.equalTo(40)
-            make.width.equalTo(60)
-        }
-        let AlertBarItem = UIBarButtonItem(customView: AlertView)
-        self.navigationItem.rightBarButtonItem = AlertBarItem
         View.snp.makeConstraints{ (make) in
-            make.width.equalTo(120)
-            make.height.equalTo(40)
+            make.width.equalTo(150)
+            make.height.equalTo(80)
         }
         imageView.snp.makeConstraints{ (make) in
             make.edges.equalToSuperview()
@@ -312,13 +302,13 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
             make.top.equalToSuperview().offset(0)
         }
         NotificationView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(15)
+            make.top.equalToSuperview().offset(5)
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(50)
         }
         cv.snp.makeConstraints{ (make) in
             make.top.equalTo(NotificationView.snp.bottom).offset(15)
-            make.leading.equalToSuperview().offset(10)
+            make.leading.equalToSuperview().offset(0)
             make.height.equalTo(30)
         }
         CalenderView.snp.makeConstraints{ (make) in
