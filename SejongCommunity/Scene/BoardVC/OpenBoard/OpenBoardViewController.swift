@@ -19,7 +19,6 @@ struct Post {
 class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource,UIScrollViewDelegate {
     //페이지 번호와 크기
     var currentPage = 0
-    let pageSize = 20
     
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
@@ -45,7 +44,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         activityIndicator.center = view.center
         
         // 처음에 초기 데이터를 불러옴
-        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+        fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
                 
                 if let newPosts = newPosts {
@@ -122,14 +121,12 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
-    func fetchPosts(page: Int, pageSize: Int, completion: @escaping ([Post]?, Error?) -> Void){
+    func fetchPosts(page: Int, completion: @escaping ([Post]?, Error?) -> Void){
         // 서버에서 페이지와 페이지 크기를 기반으로 게시글 데이터를 가져옴
         // 결과는 completion 핸들러를 통해 반환
         // URLSession을 사용하여 데이터를 가져오는 경우
-        //token
-        var token : String = ""
-        token = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
-        let url = URL(string: "https://example.com/api/posts?page=\(page)&pageSize=\(pageSize)")!
+        let url = URL(string: "https://example.com/api/posts?page=\(page)")!
+        //토큰을 추가해야함.
         URLSession.shared.dataTask(with: url) { (data, response, error) in
                 // 요청이 완료된 후 실행될 클로저
                 // 에러 처리
@@ -198,7 +195,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
                     self.activityIndicator.stopAnimating()
                 }
         // 서버에서 다음 페이지의 데이터를 가져옴
-        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+        fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
             // 로딩 인디케이터 멈춤
 //            DispatchQueue.main.async {
@@ -233,7 +230,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
                     self.activityIndicator.stopAnimating()
                 }
 
-        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+        fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
             // 로딩 인디케이터 멈춤
 //            DispatchQueue.main.async {

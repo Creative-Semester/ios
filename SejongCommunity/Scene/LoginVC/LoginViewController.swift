@@ -95,7 +95,6 @@ class LoginViewController : UIViewController {
         let password = passwordText.text ?? "" //비밀번호 가져오기
         print("LoginBtnTapped - Called \(id), \(password)")
         // 이후 서버와 통신하기 위한 URL 설정
-//        let urlString = "https://example.com/login" // 서버의 로그인 API URL로 변경해야 합니다.
         let urlString = "http://ime-locker.shop:8081/api/auth/login?id=\(id)&pw=\(password)"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리

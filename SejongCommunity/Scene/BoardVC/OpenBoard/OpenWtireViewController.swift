@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SnapKit
+import SwiftKeychainWrapper
 
 class OpenWriteViewController : UIViewController, UITextViewDelegate {
     var tableView = UITableView()
@@ -54,9 +55,14 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
     // 전역 변수로 선언
     var titleTextField: UITextField?
     var messageTextView: UITextView?
-    var imageString: String?
+    var imageString: [String : Any]?
     var addImage: UIImage?
-    var AddImageView = UIImageView()
+    // 이미지를 5개로 제한
+    var AddImageView: [UIImageView] = Array(repeating: UIImageView(), count: 5)
+    var imageStack = UIStackView()
+    var AddImageScrolling = UIScrollView()
+    var imageframe : CGFloat = 0
+    var imageNum = 0
     // 로딩 인디케이터
     var loadingIndicator: UIActivityIndicatorView!
     override func viewDidLoad(){
@@ -95,8 +101,6 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
         Message.layer.cornerRadius = 10
         Message.layer.masksToBounds = true
         
-        //이미지를 넣을 뷰
-        AddImageView = UIImageView()
         //게시물의 사진 업로드
         let UploadImage = UIButton()
         UploadImage.backgroundColor = #colorLiteral(red: 1, green: 0.869592011, blue: 0.9207738042, alpha: 1)
@@ -126,7 +130,17 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
         Spacing.backgroundColor = .gray
         WriteStackView.addArrangedSubview(Spacing)
         WriteStackView.addArrangedSubview(Message)
-        WriteStackView.addArrangedSubview(AddImageView)
+        AddImageScrolling = UIScrollView()
+        AddImageScrolling.backgroundColor = .white
+        AddImageScrolling.isScrollEnabled = true
+        imageStack = UIStackView()
+        imageStack.backgroundColor = .white
+        imageStack.distribution = .fill
+        imageStack.axis = .horizontal
+        imageStack.backgroundColor = .white
+        imageStack.spacing = 10
+        AddImageScrolling.addSubview(imageStack)
+        WriteStackView.addArrangedSubview(AddImageScrolling)
         WriteStackView.addArrangedSubview(UploadImage)
         WriteStackView.addArrangedSubview(UploadBtn)
         OpenWriteView.addSubview(WriteStackView)
@@ -148,13 +162,17 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             make.leading.trailing.equalToSuperview().inset(10)
             make.height.equalTo(200)
         }
-        AddImageView.snp.makeConstraints{ (make) in
+        AddImageScrolling.snp.makeConstraints{ (make) in
             make.top.equalTo(Message.snp.bottom).offset(20)
             make.height.equalTo(100)
-            make.width.equalTo(100)
+            make.leading.trailing.equalToSuperview().inset(0)
+        }
+        imageStack.snp.makeConstraints{ (make) in
+            make.edges.equalTo(AddImageScrolling)
+            make.width.equalTo(AddImageScrolling.frame.width)
         }
         UploadImage.snp.makeConstraints{ (make) in
-            make.top.equalTo(AddImageView.snp.bottom).offset(20)
+            make.top.equalTo(imageStack.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(60)
         }
@@ -231,7 +249,7 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
         // 전송할 데이터 (텍스트 뷰와 필드의 내용)
         let titleText = titleTextField?.text ?? ""
         let messageText = messageTextView?.text ?? ""
-        let imageText = imageString ?? ""
+        let imageText = imageString //[String : Any] 형태로 바꿔주기
                 
         print("UploadBtnTapped() - \(titleText), \(messageText)")
         if(titleText == ""){
@@ -269,10 +287,8 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             alertController.addAction(CancelController)
             present(alertController, animated: true)
             // 나중에 순서 바꾸기, 통신이 완료되면 >> 업로드 완료 게시
-            var token : String = ""
-            token = UserDefaults.standard.string(forKey: "AuthToken") ?? ""
             //MARK: JSON 통신
-            let urlString = "http://15.164.161.53:8082/api/v1/boards?name=\(token)&boardType=Free"
+            let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Free"
             guard let url = URL(string: urlString) else {
                     // 유효하지 않은 URL 처리
                     return
@@ -292,6 +308,14 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             }
             // HTTP 요성 헤더 설정(필요에 따라 추가)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            if let token = KeychainWrapper.standard.string(forKey: "AuthToken") {
+                //키체인에 저장된 토큰값이 있을때
+                print("토큰 값 : \(token)")
+                // 통신 인증. AccesToken
+                request.setValue(token, forHTTPHeaderField: "Authorization")
+            }else{
+                print("토큰 값이 없습니다.")
+            }
             
             // URLSession을 사용하여 서버와 통신
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -314,13 +338,23 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
     // 이미지 업로드 메서드
     @objc func UploadImageTapped() {
         print("UploadImageTapped - called()")
-        // 로딩 인디케이터 추가
-        self.view.addSubview(loadingIndicator)
-        loadingIndicator.startAnimating()
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
+        if(imageNum >= 5){
+            // 최대 5장으로 제한! Alert
+            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드할 수 있습니다!", message: nil, preferredStyle: .alert)
+            let OkAction = UIAlertAction(title: "확인", style: .default) { (_) in
+                //확인 액션
+            }
+            Alert.addAction(OkAction)
+            present(Alert, animated: true)
+        }else{
+            // 로딩 인디케이터 추가
+            self.view.addSubview(loadingIndicator)
+            loadingIndicator.startAnimating()
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = .photoLibrary
+            present(imagePicker, animated: true, completion: nil)
+        }
     }
     // UIImagePickerControllerDelegate 메서드 - 이미지 선택 취소
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -354,7 +388,84 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
     }
     //AddImageView에 이미지 추가 메서드
     func AddImage() {
-        AddImageView.image = addImage
-        AddImageView.contentMode = .scaleAspectFit
+        if imageNum < AddImageView.count {
+            AddImageView[imageNum] = UIImageView(image: addImage)
+            // 이미지뷰와 삭제 버튼을 포함하는 뷰 생성
+            let imageContainerView = UIView()
+                    
+            // 이미지뷰 생성 및 설정
+            let imageView = AddImageView[imageNum]
+            imageView.contentMode = .scaleAspectFit
+            imageView.clipsToBounds = true
+            // 삭제 버튼 생성 및 설정
+            let deleteButton = UIButton(type: .system)
+            deleteButton.setTitle("Delete", for: .normal)
+            deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
+            
+            // 이미지뷰와 삭제 버튼에 인덱스 값을 저장
+            imageView.tag = imageNum
+            deleteButton.tag = imageNum
+            
+            // 이미지뷰와 삭제 버튼을 뷰에 추가
+            imageContainerView.addSubview(imageView)
+            imageContainerView.addSubview(deleteButton)
+            
+            imageView.snp.makeConstraints { (make) in
+                make.width.equalTo(70)
+                make.height.equalTo(70)
+            }
+            // 삭제 버튼의 크기와 위치 설정
+            deleteButton.snp.makeConstraints { (make) in
+                make.width.equalTo(70)
+                make.height.equalTo(30)
+                make.top.equalTo(imageView.snp.bottom).offset(0)
+            }
+            imageContainerView.snp.makeConstraints{(make) in
+                make.width.equalTo(70)
+                make.height.equalTo(70)
+            }
+            print("이미지 프레임 입니다. \(imageframe)")
+            // 이미지 스택에 뷰 추가
+            imageStack.addArrangedSubview(imageContainerView)
+            // 이미지뷰를 추가할 때마다 imageStack의 width 제약을 업데이트합니다.
+            //사진은 최대 5장 까지만!!
+            imageStack.snp.updateConstraints { (make) in
+                make.width.equalTo(70 + imageframe)
+            }
+            imageNum += 1
+            imageframe += 70
+            self.addImage = nil
+        }else{
+            // 이미지 뷰를 추가할 배열 요소가 없을 경우에 대한 처리
+            print("이미지를 추가할 배열 요소가 부족합니다. \(imageNum)")
+        }
+    }
+    // 삭제 메서드
+    @objc func deleteImage(_ sender: UIButton) {
+        let indexToDelete = sender.tag
+        print("삭제되는 이미지의 인덱스 입니다! \(indexToDelete)")
+        if indexToDelete >= 0 && indexToDelete < AddImageView.count {
+            // 이미지뷰와 삭제 버튼을 포함하는 뷰를 가져옴
+            if let imageContainerView = imageStack.arrangedSubviews[indexToDelete] as? UIView {
+                // 이미지뷰와 삭제 버튼을 삭제
+                imageContainerView.removeFromSuperview()
+                
+                // 이미지뷰 배열과 이미지 스택에서 제거
+                AddImageView.remove(at: indexToDelete)
+                imageStack.removeArrangedSubview(imageContainerView)
+                imageNum -= 1
+                imageframe -= 70
+                print("삭제되는 이미지 숫자 입니다! - \(imageNum)")
+                // 이미지 스택의 너비 업데이트
+                updateImageStackWidth()
+            }else{
+                print("삭제할 이미지가 존재하지 않습니다. 인덱스: \(indexToDelete)")
+            }
+        }
+    }
+    func updateImageStackWidth() {
+        imageStack.snp.updateConstraints{ (make) in
+            make.width.equalTo(imageframe)
+        }
     }
 }
