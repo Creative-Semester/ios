@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 import SnapKit
 import SwiftKeychainWrapper
+import Alamofire
+
 class DepartOpenWriteViewController : UIViewController, UITextViewDelegate {
     var tableView = UITableView()
     //Textview의 placeholder
@@ -246,7 +248,6 @@ class DepartOpenWriteViewController : UIViewController, UITextViewDelegate {
         // 전송할 데이터 (텍스트 뷰와 필드의 내용)
         let titleText = titleTextField?.text ?? ""
         let messageText = messageTextView?.text ?? ""
-        let imageText = imageString //[String : Any] 형태로 바꿔주기
                 
         print("UploadBtnTapped() - \(titleText), \(messageText)")
         if(titleText == ""){
@@ -284,6 +285,9 @@ class DepartOpenWriteViewController : UIViewController, UITextViewDelegate {
             alertController.addAction(CancelController)
             present(alertController, animated: true)
             // 나중에 순서 바꾸기, 통신이 완료되면 >> 업로드 완료 게시
+            //MARK: image 통신
+            // 이미지 배열을 서버로 업로드
+            uploadImagesToServer(images: AddImageView.compactMap { $0.image })
             //MARK: JSON 통신
             let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Free"
             guard let url = URL(string: urlString) else {
@@ -295,8 +299,7 @@ class DepartOpenWriteViewController : UIViewController, UITextViewDelegate {
             //적절할때 통신
             let requestBody: [String: Any] = [
                 "title": titleText,
-                "content": messageText,
-                "image": imageText
+                "content": messageText
             ]
             // JSON 데이터를 HTTP 요청 바디에 설정
             
@@ -492,6 +495,29 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
     func updateImageStackWidth() {
         imageStack.snp.updateConstraints{ (make) in
             make.width.equalTo(imageframe)
+        }
+    }
+    func uploadImagesToServer(images: [UIImage]){
+        let uploadURLString = "http://15.164.161.53:8082"
+        print("이미지를 서버로 보내봅시다 \(images)")
+        // Alamofire 사용. 업로드 이미지들을 서버로 전송
+        AF.upload(multipartFormData: { multipartFormData in
+            for (index, image) in images.enumerated(){
+                if let imageData = image.jpegData(compressionQuality: 0.8){
+                    multipartFormData.append(imageData, withName: "image\(index)", fileName: "image\(index).jpg", mimeType: "image/jpeg")
+                }
+            }
+        }, to: uploadURLString, method: .post, headers: nil)
+        .response { response in
+            // 업로드 완료 후의 응답 처리
+            switch response.result {
+            case .success(let data):
+                print("업로드 성공: \(data)")
+                // 업로드 성공 후의 처리
+            case .failure(let error):
+                print("업로드 실패: \(error)")
+                // 업로드 실패 시의 처리
+            }
         }
     }
 }
