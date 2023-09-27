@@ -373,7 +373,7 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
             addImage = selectedImage
             AddImage()
             if let imageString = convertImageToBase64(selectedImage) {
-                print("Base64 Image String: \(imageString)")
+//                print("Base64 Image String: \(imageString)")
             }
         }
         picker.dismiss(animated: true, completion: nil)
@@ -388,7 +388,13 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
     }
     //AddImageView에 이미지 추가 메서드
     func AddImage() {
-        if imageNum < AddImageView.count {
+        if imageNum == 0 {
+            AddImageView = Array(repeating: UIImageView(), count: 5)
+        }else if(imageNum > 0 && imageNum == AddImageView.count){
+            AddImageView = Array(repeating: UIImageView(), count: 5)
+        }
+        if imageNum >= 0 && imageNum < AddImageView.count {
+            print("이미지를 추가합니다. AddimageView : \(AddImageView.count), imageNum : \(imageNum)")
             AddImageView[imageNum] = UIImageView(image: addImage)
             // 이미지뷰와 삭제 버튼을 포함하는 뷰 생성
             let imageContainerView = UIView()
@@ -399,7 +405,9 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
             imageView.clipsToBounds = true
             // 삭제 버튼 생성 및 설정
             let deleteButton = UIButton(type: .system)
+            deleteButton.backgroundColor = #colorLiteral(red: 0.9230724573, green: 0.9292072654, blue: 0.9290989041, alpha: 1)
             deleteButton.setTitle("Delete", for: .normal)
+            deleteButton.setTitleColor( #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1), for: .normal)
             deleteButton.addTarget(self, action: #selector(deleteImage(_:)), for: .touchUpInside)
             
             // 이미지뷰와 삭제 버튼에 인덱스 값을 저장
@@ -410,19 +418,23 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
             imageContainerView.addSubview(imageView)
             imageContainerView.addSubview(deleteButton)
             
+            AddImageView[imageNum].snp.makeConstraints{ (make) in
+                make.width.equalTo(100)
+                make.height.equalTo(100)
+            }
             imageView.snp.makeConstraints { (make) in
-                make.width.equalTo(70)
-                make.height.equalTo(70)
+                make.width.equalTo(100)
+                make.height.equalTo(75)
             }
             // 삭제 버튼의 크기와 위치 설정
             deleteButton.snp.makeConstraints { (make) in
-                make.width.equalTo(70)
-                make.height.equalTo(30)
-                make.top.equalTo(imageView.snp.bottom).offset(0)
+                make.width.equalTo(100)
+                make.height.equalTo(20)
+                make.top.equalTo(imageView.snp.bottom).offset(5)
             }
             imageContainerView.snp.makeConstraints{(make) in
-                make.width.equalTo(70)
-                make.height.equalTo(70)
+                make.width.equalTo(100)
+                make.height.equalTo(100)
             }
             print("이미지 프레임 입니다. \(imageframe)")
             // 이미지 스택에 뷰 추가
@@ -430,20 +442,21 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
             // 이미지뷰를 추가할 때마다 imageStack의 width 제약을 업데이트합니다.
             //사진은 최대 5장 까지만!!
             imageStack.snp.updateConstraints { (make) in
-                make.width.equalTo(70 + imageframe)
+                make.width.equalTo(100 + imageframe)
             }
             imageNum += 1
-            imageframe += 70
+            imageframe += 120
             self.addImage = nil
         }else{
             // 이미지 뷰를 추가할 배열 요소가 없을 경우에 대한 처리
-            print("이미지를 추가할 배열 요소가 부족합니다. \(imageNum)")
+            print("이미지를 추가할 배열 요소가 부족합니다. \(imageNum), \(AddImageView.count)")
         }
     }
     // 삭제 메서드
     @objc func deleteImage(_ sender: UIButton) {
         let indexToDelete = sender.tag
-        print("삭제되는 이미지의 인덱스 입니다! \(indexToDelete)")
+        print("\(indexToDelete+1)번째 이미지가 삭제되었습니다.")
+        AddImageView = Array(repeating: UIImageView(), count: imageNum)
         if indexToDelete >= 0 && indexToDelete < AddImageView.count {
             // 이미지뷰와 삭제 버튼을 포함하는 뷰를 가져옴
             if let imageContainerView = imageStack.arrangedSubviews[indexToDelete] as? UIView {
@@ -454,10 +467,26 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
                 AddImageView.remove(at: indexToDelete)
                 imageStack.removeArrangedSubview(imageContainerView)
                 imageNum -= 1
-                imageframe -= 70
-                print("삭제되는 이미지 숫자 입니다! - \(imageNum)")
+                imageframe -= 120
+                print("남은 이미지 개수입니다 - \(imageNum)개")
                 // 이미지 스택의 너비 업데이트
                 updateImageStackWidth()
+                //AddImageView = Array(repeating: UIImageView(), count: 5)
+                // 삭제된 이미지 뒤의 이미지들의 인덱스를 업데이트
+                print("이미지 갯수 \(AddImageView.count)")
+                // 이미지와 버튼의 태그 업데이트
+                for i in 0..<AddImageView.count {
+                    if let imageContainerView = imageStack.arrangedSubviews[i] as? UIView {
+                        if let imageView = imageContainerView.subviews.compactMap({ $0 as? UIImageView }).first,
+                            let deleteButton = imageContainerView.subviews.compactMap({ $0 as? UIButton }).first {
+                                imageView.tag = i
+                                deleteButton.tag = i
+                            }
+                        }
+                    }
+                for i in (0..<AddImageView.count){
+                    print("현재 인덱스 번호입니다. \(i)\n")
+                }
             }else{
                 print("삭제할 이미지가 존재하지 않습니다. 인덱스: \(indexToDelete)")
             }
