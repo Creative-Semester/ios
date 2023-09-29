@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import SwiftKeychainWrapper
 import Alamofire
+import PhotosUI
 
 class OpenWriteViewController : UIViewController, UITextViewDelegate {
     var tableView = UITableView()
@@ -374,19 +375,8 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
             // 선택한 이미지를 어딘가에 저장하는 등 작업 수행
             addImage = selectedImage
             AddImage()
-//            if let imageString = convertImageToBase64(selectedImage) {
-//                print("Base64 Image String: \(imageString)")
-//            }
         }
         picker.dismiss(animated: true, completion: nil)
-    }
-    // 이미지를 String 형태로 서버 전송을 위한 변환 메서드
-    func convertImageToBase64(_ image: UIImage?) -> String? {
-        if let image = image, let imageData = image.jpegData(compressionQuality: 0.8){
-            let base64String = imageData.base64EncodedString()
-            return base64String
-        }
-        return nil
     }
     //AddImageView에 이미지 추가 메서드
     func AddImage() {

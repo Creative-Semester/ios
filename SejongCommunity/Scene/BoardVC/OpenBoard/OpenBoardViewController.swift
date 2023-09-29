@@ -8,11 +8,12 @@
 import Foundation
 import UIKit
 import SnapKit
+import Kingfisher //url - > image 변환 라이브러리
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
 struct Post {
     let title : String
     let content : String
-    let image : UIImage?
+    let imageUrls : [String] // 이미지 URL을 배열로 저장
     let day : String
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
@@ -23,14 +24,39 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
-    
     var posts : [Post] = [
-        Post(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!, day: "2023-09-19 19:44"),
-        Post(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil, day: "2023-09-18 13:44"),
-        Post(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!, day: "2023-09-17 12:44")
+        Post(title: "첫 번째 게시물 제목",
+             content: "첫 번째 게시물 내용",
+             imageUrls: [
+                "https://example.com/image1-1.jpg",
+                "https://example.com/image1-2.jpg",
+                "https://example.com/image1-3.jpg",
+                "https://example.com/image1-4.jpg",
+                "https://example.com/image1-5.jpg"
+            ],
+             day: "2023-09-19 19:44"),
+        Post(title: "두 번째 게시물 제목",
+             content: "두 번째 게시물 내용",
+             imageUrls: [
+                "https://example.com/image2-1.jpg",
+                "https://example.com/image2-2.jpg",
+                "https://example.com/image2-3.jpg",
+                "https://example.com/image2-4.jpg",
+                "https://example.com/image2-5.jpg"
+            ],
+             day: "2023-09-19 19:44"),
+        Post(title: "세 번째 게시물 제목",
+             content: "세 번째 게시물 내용",
+             imageUrls: [
+                "https://example.com/image3-1.jpg",
+                "https://example.com/image3-2.jpg",
+                "https://example.com/image3-3.jpg",
+                "https://example.com/image3-4.jpg",
+                "https://example.com/image3-5.jpg"
+            ],
+             day: "2023-09-19 19:44")
     ]
     override func viewDidLoad() {
-//        self.navigationItem.setHidesBackButton(true, animated: false)
         self.navigationController?.navigationBar.tintColor = .red
         title = "자유게시판"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
@@ -61,11 +87,6 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
                     print("Error fetching initial data: \(error.localizedDescription)")
                 }
             }
-        
-        //게시글을 검색하는 버튼을 생성
-//        let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(SearchBtnTapped))
-
-//        navigationItem.rightBarButtonItem = searchButton
     }
     //테이블뷰를 설정하는 메서드
     func setupTableView() {
@@ -78,7 +99,6 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         //UITableView에 셀 등록
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
-        
     }
     
     // MARK: - UITableViewDataSource
@@ -93,8 +113,16 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         let post = posts[indexPath.row]
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
-        cell.postImageView.image = post.image
         cell.DayLabel.text = post.day
+        
+        //MARK: - URL to Image Conversion
+        // 첫 번째 이미지 URL 가져오기
+        if let firstImageUrl = post.imageUrls.first, let imageUrl = URL(string: firstImageUrl) {
+            // KingFisher를 사용하여 이미지 로드 및 표시
+            print("첫 번째 이미지를 가져옵니다. - \(firstImageUrl)")
+            print("첫 번째 이미지를 post 합니다. \(imageUrl)")
+            cell.postImageView.kf.setImage(with: imageUrl)
+        }
         return cell
     }
     // MARK: - UITableViewDelegate

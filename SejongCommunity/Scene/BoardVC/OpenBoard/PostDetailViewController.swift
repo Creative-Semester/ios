@@ -7,9 +7,14 @@
 
 import Foundation
 import UIKit
+import SnapKit
+import Kingfisher //url - > image 변환 라이브러리
+//게시글의 구조체 정의(게시물을 정보를 담기 위함)
 //댓글 창
-struct Comment {
-    let comment : String
+struct Comment : Codable{
+    let id : Int // 댓글 고유 ID
+    let comment : String // 댓글 내용
+    let userId : String // 댓글 작성자 ID
 }
 struct User: Codable {
     let userId: String // 사용자 아이디에 맞는 속성을 추가
@@ -24,17 +29,17 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     //현재 로그인한 사용자의 사용자 ID
     var currentUserId : String = ""
     // 댓글을 저장할 배열
-    let comments : [Comment] = [
-        Comment(comment: "첫 번째 댓글입니다"),
-        Comment(comment: "두 번째 댓글입니다"),
-        Comment(comment: "세 번째 댓글입니다"),
-        Comment(comment: "네 번째 댓글입니다"),
-        Comment(comment: "5 번째 댓글입니다"),
-        Comment(comment: "6 번째 댓글입니다"),
-        Comment(comment: "7 번째 댓글입니다"),
-        Comment(comment: "8 번째 댓글입니다"),
-        Comment(comment: "9 번째 댓글입니다"),
-        Comment(comment: "10 번째 댓글입니다")
+    var comments : [Comment] = [
+        Comment(id:1,comment: "첫 번째 댓글입니다", userId: "1"),
+        Comment(id:2,comment: "두 번째 댓글입니다", userId: "2"),
+        Comment(id:3,comment: "세 번째 댓글입니다", userId: "3"),
+        Comment(id:4,comment: "네 번째 댓글입니다", userId: "4"),
+        Comment(id:5,comment: "5 번째 댓글입니다", userId: "5"),
+        Comment(id:6,comment: "6 번째 댓글입니다", userId: "6"),
+        Comment(id:7,comment: "7 번째 댓글입니다", userId: "7"),
+        Comment(id:8,comment: "8 번째 댓글입니다", userId: "8"),
+        Comment(id:9,comment: "9 번째 댓글입니다", userId: "9"),
+        Comment(id:10,comment: "10 번째 댓글입니다", userId: "10")
     ]
     let post : Post
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
@@ -82,6 +87,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         let iconImage = UIImage(systemName: "message")
         CommentBtn.setImage(iconImage, for: .normal)
         CommentBtn.tintColor = .black
+        CommentBtn.addTarget(self, action: #selector(CommentBtnTapped), for: .touchUpInside)
         vview.addSubview(CommentBtn)
         //SnapKit을 이용한 오토레이아웃 설정
         CommentBtn.snp.makeConstraints{ (make) in
@@ -126,22 +132,42 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.height.equalTo(40)
         }
         //이미지를 넣을 뷰
+        let ImageStackView = UIStackView()
+        ImageStackView.spacing = 10
+        ImageStackView.axis = .vertical
+        ImageStackView.distribution = .fill
+        ImageStackView.backgroundColor = .white
         let ImageView = UIImageView()
-        print("post.image가 nil인가? : \(post.image)")
-        if(post.image == nil) {
+        print("post.image가 nil인가? : \(String(describing: post.imageUrls.first))")
+        if(post.imageUrls.first == nil) {
             print("post.image가 nil인데 화면의 크기의 조정이 필요합니다.")
         }else{
-            ImageView.image = post.image
-            ImageView.contentMode = .scaleAspectFit
-            ImageView.backgroundColor = .white
-            DetailView.addSubview(ImageView)
-            //Snapkit을 이용한 오토레이아웃
-            ImageView.snp.makeConstraints{ (make) in
+            // 게시글의 이미지 URL 배열에서 이미지를 가져와 처리
+            for imageUrlStsring in post.imageUrls {
+                if let imageUrl = URL(string: imageUrlStsring){
+                    print("이미지들 Url 입니다. - \(imageUrl)")
+                    // Kingfisher를 사용하여 이미지를 다운로드하고 처리
+                    let imageView = UIImageView()
+                    imageView.kf.setImage(with: imageUrl)
+                    
+                    imageView.contentMode = .scaleAspectFit
+                    imageView.backgroundColor = .white
+                    
+                    // 이미지 뷰를 스택뷰에 추가
+                    ImageStackView.addArrangedSubview(imageView)
+                    // 이미지 뷰에 오토레이아웃 설정
+                    ImageView.snp.makeConstraints{ (make) in
+                        make.height.equalTo(200)
+                    }
+                }
+            }
+            DetailView.addSubview(ImageStackView)
+            // 오토레이아웃 설정
+            ImageStackView.snp.makeConstraints { (make) in
                 make.top.equalTo(DetailLabel.snp.bottom).offset(10)
                 make.trailing.equalToSuperview().offset(-40)
                 make.leading.equalToSuperview().offset(30)
-                make.height.equalTo(200)
-            }
+                    }
         }
         //게시물의 댓글을 나열 할 뷰
         let CommentTableView = UITableView()
@@ -167,11 +193,11 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         }
         StackView.snp.makeConstraints{ (make) in
 //            make.height.equalTo(CommentTableView.frame.height)
-            if(post.image == nil){
+            if(post.imageUrls.first == nil){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
             }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageView.frame.height + CGFloat((comments.count + 4) * 100))
+                make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + CGFloat((comments.count + 4) * 100))
             }
             make.width.equalTo(ScrollView.snp.width)
             make.bottom.equalToSuperview().offset(-0)
@@ -179,11 +205,11 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            if(post.image == nil){
+            if(post.imageUrls.first == nil){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + 100)
             }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageView.frame.height + 300)
+                make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + 300)
             }
             make.leading.equalToSuperview().offset(20)
         }
@@ -218,11 +244,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                                 make.height.greaterThanOrEqualTo(self.view.frame.height / 21) // 최소 높이
                                 make.height.lessThanOrEqualTo(self.view.frame.height / 11) // 최대 높이
                             }
-//                vview.snp.makeConstraints{ (make) in
-//                    make.height.equalTo(newSize.height + 30)
-//                    make.leading.trailing.equalToSuperview().inset(0)
-//                    make.bottom.equalToSuperview()
-//                }
             }else{
                 commentField.selectedRange = NSMakeRange(commentField.text.count, 0)
                 commentField.scrollRangeToVisible(commentField.selectedRange)
@@ -236,11 +257,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                                     make.height.equalTo(newSize.height)
                                 }
                 }
-//                vview.snp.makeConstraints{ (make) in
-//                    make.height.equalTo(newSize.height + 30)
-//                    make.leading.trailing.equalToSuperview().inset(0)
-//                    make.bottom.equalToSuperview()
-//                }
             }
         }
     }
@@ -256,11 +272,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.width.equalTo(self.view.frame.width / 1.4)
             make.height.equalTo(self.view.frame.height / 21) // 최소 높이
         }
-//        vview.snp.makeConstraints{ (make) in
-//            make.height.equalTo(self.view.frame.height / 9)
-//            make.leading.trailing.equalToSuperview().inset(0)
-//            make.bottom.equalToSuperview()
-//        }
     }
 
     private func adjustCommentView(insets: UIEdgeInsets) {
@@ -271,7 +282,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     }
 
     @objc func toolBtnTapped() {
-        let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
+        let alertController = UIAlertController(title: "게시글 메뉴", message: nil, preferredStyle: .alert)
         getAuthorInfo() // 게시글 작성자 정보를 가져옴
         getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
         let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
@@ -375,6 +386,41 @@ class ExpandingTextView: UITextView {
     }
 }
 extension PostDetailViewController {
+    //댓글 작성 메서드
+    @objc func CommentBtnTapped() {
+        guard let commentText = commentField.text, !commentText.isEmpty else{
+            return // 댓글 내용이 비어 있으면 아무 작업도 하지 않음
+        }
+        // 서버 API 엔드포인트 및 요청 생성
+        let apiUrl = URL(string: "https://yourapi.com/addComment")
+        var request = URLRequest(url: apiUrl!)
+        request.httpMethod = "POST"
+        
+        // 댓글 데이터 모델 생성
+        let newComment = Comment(id: 1, comment: commentText, userId: currentUserId) // ID는 서버에서 생성 또는 할당
+        // 댓글 데이터를 JSON으로 인코딩, 바디에 추가
+        do {
+            let jsonData = try JSONEncoder().encode(newComment)
+        } catch {
+            print("Error encoding comment data: \(error.localizedDescription)")
+            return
+        }
+        //서버로 요청 보내기
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error encoding comment data: \(error.localizedDescription)")
+                return
+            }
+            // 서버 응답 처리, 댓글 추가 성공
+            // 로컬 댓글 데이터 모델에도 댓글 추가
+            let addedComment = newComment // 실제로는 서버에서 할당된 ID 등을 업데이트 해야 함
+            self.comments.append(addedComment)
+            // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
+            DispatchQueue.main.async {
+                self.CommentTableView.reloadData()
+            }
+        }.resume()
+    }
     //게시물 작성자와 현재 사용자를 비교하는 함수
     func checkIfCurrentIsAuthorOfPost(userIdOfAuthor: String, currentUserId: String) -> Bool {
         print("checkIfCurrentIsAutorOfPost - called()")
