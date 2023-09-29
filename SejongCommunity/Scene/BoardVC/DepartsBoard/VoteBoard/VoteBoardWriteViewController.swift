@@ -54,10 +54,10 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         return view
     }()
     // 전역 변수로 선언
-    var titleTextField: UITextField?
-    var messageTextView: UITextView?
-    var imageString: [String : Any]?
-    var addImage: UIImage?
+    var titleTextField: UITextField? //제목
+    var messageTextView: UITextView? //내용
+    var addImage: UIImage? //뷰에 추가할 이미지
+    var imageInfoArray: [[String: String]] = [] //이미지 이름, 이미지 url
     // 이미지를 5개로 제한
     var AddImageView: [UIImageView] = Array(repeating: UIImageView(), count: 5)
     var imageStack = UIStackView()
@@ -286,7 +286,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
             present(alertController, animated: true)
             // 나중에 순서 바꾸기, 통신이 완료되면 >> 업로드 완료 게시
             //MARK: image 통신
-            // 이미지 배열을 서버로 업로드
+            // 이미지 배열을 서버로 업로드, 바디에 들어갈 imageInfoArray 업데이트
             uploadImagesToServer(images: AddImageView.compactMap { $0.image })
             //MARK: JSON 통신
             let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Free"
@@ -297,9 +297,12 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             //적절할때 통신
+            //적절할때 통신
             let requestBody: [String: Any] = [
-                "title": titleText,
-                "content": messageText
+                "content": messageText, //내용
+                "deadLine":"",//자유게시판은 투표글이 아님. 데드라인 없음.
+                "image": imageInfoArray, //이미지 이름, 이미지 Url이 있는 배열들
+                "title": titleText //제목
             ]
             // JSON 데이터를 HTTP 요청 바디에 설정
             
@@ -514,6 +517,17 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
             case .success(let data):
                 print("업로드 성공: \(data)")
                 // 업로드 성공 후의 처리
+                if let responseData = try? JSONSerialization.jsonObject(with: data ?? Data()) as? [String: Any] {
+                            // responseData를 사용하여 필요한 작업을 수행
+                            if let imageInfoArrayResponse = responseData["imageInfoArray"] as? [[String: String]] {
+                                // 이미지 정보 배열을 가져와서 사용
+                                self.imageInfoArray = imageInfoArrayResponse
+                            } else {
+                                print("imageInfoArray를 찾을 수 없습니다.")
+                            }
+                        } else {
+                            print("JSON 파싱 오류")
+                        }
             case .failure(let error):
                 print("업로드 실패: \(error)")
                 // 업로드 실패 시의 처리
