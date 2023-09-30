@@ -52,6 +52,8 @@
 		F1E547962AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547952AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift */; };
 		F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */; };
 		F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = F1E5479A2AC2B27E00671182 /* DGCharts */; };
+		F1E5479D2AC8502D00671182 /* MyChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */; };
+		F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +104,8 @@
 		F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorReviewTableViewCell.swift; sourceTree = "<group>"; };
 		F1E547952AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteOfficeDetailsViewController.swift; sourceTree = "<group>"; };
 		F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeBoardMenuCollectionViewCell.swift; sourceTree = "<group>"; };
+		F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChattingTableViewCell.swift; sourceTree = "<group>"; };
+		F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourChattingTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +286,8 @@
 				F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */,
 				F1E547442A9373B300671182 /* ChatTableViewCell.swift */,
 				F1E547462A937B8000671182 /* ChatRoomViewController.swift */,
+				F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */,
+				F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -449,6 +455,7 @@
 				E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */,
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
+				F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */,
 				F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */,
@@ -460,6 +467,7 @@
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,
 				E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */,
+				F1E5479D2AC8502D00671182 /* MyChattingTableViewCell.swift in Sources */,
 				F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
