@@ -81,6 +81,7 @@ class ChatRoomViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         setupLayout()
+        setupNavigation()
         setupKeyboardDismissRecognizer()
     }
     
@@ -92,6 +93,57 @@ class ChatRoomViewController: UIViewController {
         //메모리 누수 방지를 위해 키보드 관찰을 해제합니다.
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    func setupNavigation() {
+        let editButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(showPopup))
+            navigationItem.rightBarButtonItem = editButton
+    }
+    
+    @objc func showPopup() {
+        let alertController = UIAlertController(title: "채팅방 신고", message: nil, preferredStyle: .actionSheet)
+        
+        let reportAction = UIAlertAction(title: "신고", style: .destructive) { (action) in
+            let confirmAlertController = UIAlertController(title: "해당유저를 신고합니다.", message: "신고 후 해당 내용 검토 후 조치됩니다.", preferredStyle: .alert)
+            
+            let confirmReportActionAction = UIAlertAction(title: "신고", style: .destructive) { (_) in
+                let alertController = UIAlertController(
+                    title: "신고 완료",
+                    message: "신고가 성공적으로 완료되었습니다.",
+                    preferredStyle: .alert
+                )
+                
+                let okAction = UIAlertAction(
+                    title: "확인",
+                    style: .default,
+                    handler: nil
+                )
+                
+                alertController.addAction(okAction)
+                
+                // 현재 화면의 ViewController에서 UIAlertController를 표시
+                self.present(alertController, animated: true, completion: nil)
+                // 채팅방 신고 로직 구현
+                // 여기에 신고 통신 코드 추가하기.
+            }
+            
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            
+            confirmAlertController.addAction(confirmReportActionAction)
+            confirmAlertController.addAction(cancelAction)
+            
+            self.present(confirmAlertController, animated: true, completion: nil)
+        }
+        
+        // "삭제" 버튼의 글자에 색상 설정
+        reportAction.setValue(UIColor.systemRed, forKey: "titleTextColor")
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     //화면의 다른 곳을 클릭했을 때 키보드가 내려가게 합니다.
