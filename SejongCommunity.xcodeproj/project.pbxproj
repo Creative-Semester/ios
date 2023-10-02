@@ -54,6 +54,8 @@
 		F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = F1E5479A2AC2B27E00671182 /* DGCharts */; };
 		F1E5479D2AC8502D00671182 /* MyChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */; };
 		F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */; };
+		F1E547A22ACABED300671182 /* sampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A12ACABED300671182 /* sampleModel.swift */; };
+		F1E547A52ACABEF700671182 /* sampleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A42ACABEF700671182 /* sampleService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +108,8 @@
 		F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeBoardMenuCollectionViewCell.swift; sourceTree = "<group>"; };
 		F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChattingTableViewCell.swift; sourceTree = "<group>"; };
 		F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourChattingTableViewCell.swift; sourceTree = "<group>"; };
+		F1E547A12ACABED300671182 /* sampleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sampleModel.swift; sourceTree = "<group>"; };
+		F1E547A42ACABEF700671182 /* sampleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sampleService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +236,8 @@
 		F124650E2A67BAB500037D8C /* SejongCommunity */ = {
 			isa = PBXGroup;
 			children = (
+				F1E547A02ACABEBA00671182 /* Model */,
+				F1E547A32ACABEDA00671182 /* Service */,
 				F1E547382A84C2CA00671182 /* Scene */,
 				F124650F2A67BAB500037D8C /* AppDelegate.swift */,
 				F12465112A67BAB500037D8C /* SceneDelegate.swift */,
@@ -303,6 +309,22 @@
 				F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */,
 			);
 			path = ProfessorBoard;
+			sourceTree = "<group>";
+		};
+		F1E547A02ACABEBA00671182 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F1E547A12ACABED300671182 /* sampleModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		F1E547A32ACABEDA00671182 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				F1E547A42ACABEF700671182 /* sampleService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -436,6 +458,7 @@
 				E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */,
 				E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */,
 				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
+				F1E547A22ACABED300671182 /* sampleModel.swift in Sources */,
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
 				E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */,
@@ -455,6 +478,7 @@
 				E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */,
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
+				F1E547A52ACABEF700671182 /* sampleService.swift in Sources */,
 				F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */,
