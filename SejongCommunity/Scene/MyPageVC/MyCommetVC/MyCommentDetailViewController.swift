@@ -1,8 +1,8 @@
 //
-//  PostDetailViewController.swift
+//  MyCommentDetailViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/07/30.
+//  Created by 정성윤 on 2023/10/03.
 //
 
 import Foundation
@@ -11,17 +11,17 @@ import SnapKit
 import Kingfisher //url - > image 변환 라이브러리
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
 //댓글 창
-struct Comment : Codable{
+struct MyComment : Codable{
     let id : Int // 댓글 고유 ID
     let comment : String // 댓글 내용
     let userId : String // 댓글 작성자 ID
 }
-struct User: Codable {
+struct MyCommentUser: Codable {
     let userId: String // 사용자 아이디에 맞는 속성을 추가
     // 다른 사용자 정보 속성들도 추가할 수 있습니다
 }
 //게시물의 상세 내용을 보여주는 UIViewController
-class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
+class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
     var CommentTableView = UITableView()
     private let GreatBtn = UIButton()
     //현재 게시물의 작성자를 전역변수로 선언
@@ -29,21 +29,21 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     //현재 로그인한 사용자의 사용자 ID
     var currentUserId : String = ""
     // 댓글을 저장할 배열
-    var comments : [Comment] = [
-        Comment(id:1,comment: "첫 번째 댓글입니다", userId: "1"),
-        Comment(id:2,comment: "두 번째 댓글입니다", userId: "2"),
-        Comment(id:3,comment: "세 번째 댓글입니다", userId: "3"),
-        Comment(id:4,comment: "네 번째 댓글입니다", userId: "4"),
-        Comment(id:5,comment: "5 번째 댓글입니다", userId: "5"),
-        Comment(id:6,comment: "6 번째 댓글입니다", userId: "6"),
-        Comment(id:7,comment: "7 번째 댓글입니다", userId: "7"),
-        Comment(id:8,comment: "8 번째 댓글입니다", userId: "8"),
-        Comment(id:9,comment: "9 번째 댓글입니다", userId: "9"),
-        Comment(id:10,comment: "10 번째 댓글입니다", userId: "10")
+    var comments : [MyComment] = [
+        MyComment(id:1,comment: "첫 번째 댓글입니다", userId: "1"),
+        MyComment(id:2,comment: "두 번째 댓글입니다", userId: "2"),
+        MyComment(id:3,comment: "세 번째 댓글입니다", userId: "3"),
+        MyComment(id:4,comment: "네 번째 댓글입니다", userId: "4"),
+        MyComment(id:5,comment: "5 번째 댓글입니다", userId: "5"),
+        MyComment(id:6,comment: "6 번째 댓글입니다", userId: "6"),
+        MyComment(id:7,comment: "7 번째 댓글입니다", userId: "7"),
+        MyComment(id:8,comment: "8 번째 댓글입니다", userId: "8"),
+        MyComment(id:9,comment: "9 번째 댓글입니다", userId: "9"),
+        MyComment(id:10,comment: "10 번째 댓글입니다", userId: "10")
     ]
-    let post : Post
+    let post : MyCommentPost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
-    init(post: Post) {
+    init(post: MyCommentPost) {
         self.post = post
         super.init(nibName: nil, bundle: nil)
     }
@@ -369,23 +369,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             }
         }
 }
-//UITextView 서브클래스 정의
-class ExpandingTextView: UITextView {
-    //UITextView의 내용의 크기, 텍스트가 입력 될때마다 내용 크기가 변경
-    override var contentSize: CGSize {
-        //변경 감지를 위해 didSet
-        didSet {
-            invalidateIntrinsicContentSize()
-        }
-    }
-    //UIView의 내용의 크기 : 다른 레이아웃 구성요소, 해당 뷰의 적절한 크기를 알려줌
-    override var intrinsicContentSize: CGSize {
-        //noIntrinsicMetric 텍스트 뷰의 폭이 무제한, 높이는 내용에 따라 자동 조절
-        let size = CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
-        return size
-    }
-}
-extension PostDetailViewController {
+extension MyCommentDetailViewController {
     //댓글 작성 메서드
     @objc func CommentBtnTapped() {
         print("CommentBtnTapped - called()")
@@ -398,7 +382,7 @@ extension PostDetailViewController {
         request.httpMethod = "POST"
         
         // 댓글 데이터 모델 생성
-        let newComment = Comment(id: 1, comment: commentText, userId: currentUserId) // ID는 서버에서 생성 또는 할당
+        let newComment = MyComment(id: 1, comment: commentText, userId: currentUserId) // ID는 서버에서 생성 또는 할당
         // 댓글 데이터를 JSON으로 인코딩, 바디에 추가
         do {
             let jsonData = try JSONEncoder().encode(newComment)

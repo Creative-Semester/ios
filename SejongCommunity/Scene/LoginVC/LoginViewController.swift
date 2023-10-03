@@ -95,14 +95,20 @@ class LoginViewController : UIViewController {
         let password = passwordText.text ?? "" //비밀번호 가져오기
         print("LoginBtnTapped - Called \(id), \(password)")
         // 이후 서버와 통신하기 위한 URL 설정
-        let urlString = "http://ime-locker.shop:8081/api/auth/login?id=\(id)&pw=\(password)"
+        let urlString = "http://15.164.161.53:8082/api/v1/auth/login"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return
             }
-        
+        let requestBody : [String : Any] = [
+            "id" : id,
+            "pw" : password
+        ]
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
+            request.httpBody = jsonData
+        }
         do {
                 // HTTP 요청 헤더 설정 (Content-Type: application/json)
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -129,11 +135,10 @@ class LoginViewController : UIViewController {
                                 // 예: 로그인 성공 또는 실패 처리
                                 if let result = jsonResponse["result"] as? [String: Any],
                                    let accessToken = result["accessToken"] as? String,
-                                   let refreshToken = result["refreshToken"] as? String,
-                                   let serverResponseCode = jsonResponse["status"] as? Int {
+                                   let refreshToken = result["refreshToken"] as? String {
                                     print("검사들어갑니다")
-                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken), 서버응답코드 - \(serverResponseCode)")
-                                    if AuthenticationManager.isTokenValid(accessToken, serverResponseCode){
+                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
+                                    if AuthenticationManager.isTokenValid(){
                                         //토큰이 유효한 경우
                                         // 토큰 저장
                                         AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
