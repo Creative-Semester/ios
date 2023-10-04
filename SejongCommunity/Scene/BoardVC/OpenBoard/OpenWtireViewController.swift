@@ -291,6 +291,7 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             //MARK: image 통신
             // 이미지 배열을 서버로 업로드, 바디에 들어갈 imageInfoArray 업데이트
             uploadImagesToServer(images: AddImageView.compactMap { $0.image })
+            print("추가된 이미지 배열입니다. \(imageInfoArray)")
             //MARK: JSON 통신
             let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Free?isVote=false"
             guard let url = URL(string: urlString) else {
@@ -492,37 +493,66 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
         }
     }
     func uploadImagesToServer(images: [UIImage]){
-        let uploadURLString = "http://15.164.161.53:8082"
+        let uploadURLString = "http://15.164.161.53:8082/api/v1/image"
         print("이미지를 서버로 보내봅시다 \(images)")
-        // Alamofire 사용. 업로드 이미지들을 서버로 전송
-        AF.upload(multipartFormData: { multipartFormData in
-            for (index, image) in images.enumerated(){
-                if let imageData = image.jpegData(compressionQuality: 0.8){
-                    multipartFormData.append(imageData, withName: "image\(index)", fileName: "image\(index).jpg", mimeType: "image/jpeg")
+        //액세스 토큰 헤더에 추가
+        if let accesToken = KeychainWrapper.standard.string(forKey: "AuthToken") {
+            let headers: HTTPHeaders = [
+                "Content-Type" : "multipart/form-data",
+                "Authorization" : "\(accesToken)"
+            ]
+            // Alamofire 사용. 업로드 이미지들을 서버로 전송
+            AF.upload(multipartFormData: { multipartFormData in
+                for (index, image) in images.enumerated(){
+                    if let imageData = image.jpegData(compressionQuality: 0.8){
+                        let imageName = "image\(index).jpg"
+                        // 내용을 추가하기 전에 로그에 출력
+                        print("Adding image with name: \(imageName)")
+                        multipartFormData.append(imageData, withName: "image\(index)", fileName: "image\(index).jpg", mimeType: "image/jpeg") //이미지 서버필드이름 물어보기.
+                        
+                    }
+                }
+            }, to: uploadURLString, method: .post, headers: headers)
+            .response { response in
+                // 업로드 완료 후의 응답 처리
+                switch response.result {
+                case .success(let data):
+                    if let data {
+                        print("업로드 성공: \(data)")
+                    }else{}
+                    // 업로드 성공 후의 처리
+                    //imageName, imageUrl
+                    if let data = data {
+                        do {
+                            if let responseData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] {
+                                // JSON 파싱 성공
+                                if let result = responseData["result"] as? [String: Any],
+                                    let imageName = result["imageName"] as? String,
+                                    let imageUrl = result["imageUrl"] as? String {
+                                    // imageName과 imageUrl을 사용
+                                    let imageInfo = ["imageName": imageName, "imageUrl": imageUrl]
+                                    self.imageInfoArray.append(imageInfo)
+                                } else {
+                                    print("imageName 또는 imageUrl을 찾을 수 없습니다.")
+                                }
+                            } else {
+                                print("JSON 파싱 실패")
+                            }
+                        } catch {
+                            print("JSON 파싱 오류: \(error)")
+                        }
+                    } else {
+                        // data가 nil일 때 처리할 내용을 여기에 작성하세요.
+                        print("데이터가 nil입니다.")
+                    }
+                case .failure(let error):
+                    print("업로드 실패: \(error)")
+                    // 업로드 실패 시의 처리
                 }
             }
-        }, to: uploadURLString, method: .post, headers: nil)
-        .response { response in
-            // 업로드 완료 후의 응답 처리
-            switch response.result {
-            case .success(let data):
-                print("업로드 성공: \(data)")
-                // 업로드 성공 후의 처리
-                if let responseData = try? JSONSerialization.jsonObject(with: data ?? Data()) as? [String: Any] {
-                            // responseData를 사용하여 필요한 작업을 수행
-                            if let imageInfoArrayResponse = responseData["imageInfoArray"] as? [[String: String]] {
-                                // 이미지 정보 배열을 가져와서 사용
-                                self.imageInfoArray = imageInfoArrayResponse
-                            } else {
-                                print("imageInfoArray를 찾을 수 없습니다.")
-                            }
-                        } else {
-                            print("JSON 파싱 오류")
-                        }
-            case .failure(let error):
-                print("업로드 실패: \(error)")
-                // 업로드 실패 시의 처리
-            }
+        }else{
+            //액세스토큰 유효처리. 재발급
+            if AuthenticationManager.isTokenValid() {}else {}
         }
     }
 }
