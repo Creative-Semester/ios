@@ -290,10 +290,20 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             // 나중에 순서 바꾸기, 통신이 완료되면 >> 업로드 완료 게시
             //MARK: image 통신
             // 이미지 배열을 서버로 업로드, 바디에 들어갈 imageInfoArray 업데이트
-            uploadImagesToServer(images: AddImageView.compactMap { $0.image })
-            print("추가된 이미지 배열입니다. \(imageInfoArray)")
+            print("이미지를 첨부하지 않습니까? - \(AddImageView[0].image)")
+            if AddImageView[0].image != nil { //첫 번째 이미지가 비어있지 않을때
+                uploadImagesToServer(images: AddImageView.compactMap { $0.image })
+                print("추가된 이미지 배열입니다. \(imageInfoArray)")
+            }else{ //이미지를 업로드 하지 않는다면
+                imageInfoArray = [
+                    [
+                        "imageName" : "",
+                        "imageUrl" : ""
+                    ]
+                ]
+            }
             //MARK: JSON 통신
-            let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Free?isVote=false"
+            let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Free&isVote=false"
             guard let url = URL(string: urlString) else {
                     // 유효하지 않은 URL 처리
                     return
@@ -302,11 +312,11 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             request.httpMethod = "POST"
             //적절할때 통신
             let requestBody: [String: Any] = [
-                "content": messageText, //내용
-                "deadLine":"",//자유게시판은 투표글이 아님. 데드라인 없음.
+                "content": messageText, //내용 //자유게시판은 투표글이 아님. 데드라인 없음.
                 "image": imageInfoArray, //이미지 이름, 이미지 Url이 있는 배열들
                 "title": titleText //제목
             ]
+            print("바디 값입니다. - \(requestBody)")
             // JSON 데이터를 HTTP 요청 바디에 설정
             
             if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
@@ -314,14 +324,8 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             }
             // HTTP 요성 헤더 설정(필요에 따라 추가)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            if let token = KeychainWrapper.standard.string(forKey: "AuthToken") {
-                //키체인에 저장된 토큰값이 있을때
-                print("토큰 값 : \(token)")
-                // 통신 인증. AccesToken
-                request.setValue(token, forHTTPHeaderField: "Authorization")
-            }else{
-                print("토큰 값이 없습니다.")
-            }
+            let token = KeychainWrapper.standard.string(forKey: "AuthToken")
+            request.setValue(token, forHTTPHeaderField: "accessToken")
             
             // URLSession을 사용하여 서버와 통신
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in

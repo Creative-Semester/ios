@@ -254,6 +254,7 @@ class MypageViewController: UIViewController{
                 "accessToken" : acToken,
                 "refreshToken" : rfToken
             ]
+            print("accessToken : \(acToken), refreshToken : \(rfToken)")
             if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
                 request.httpBody = jsonData
             }

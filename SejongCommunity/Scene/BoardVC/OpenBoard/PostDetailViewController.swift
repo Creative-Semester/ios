@@ -138,13 +138,13 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         ImageStackView.distribution = .fill
         ImageStackView.backgroundColor = .white
         let ImageView = UIImageView()
-        print("post.image가 nil인가? : \(String(describing: post.imageUrls.first))")
-        if(post.imageUrls.first == nil) {
+        print("post.image가 nil인가? : \(String(describing: post.images.imageUrl.isEmpty))") //수정필요
+        if(post.images.imageUrl.isEmpty) { //수정필요
             print("post.image가 nil인데 화면의 크기의 조정이 필요합니다.")
         }else{
             // 게시글의 이미지 URL 배열에서 이미지를 가져와 처리
-            for imageUrlStsring in post.imageUrls {
-                if let imageUrl = URL(string: imageUrlStsring){
+            for imageUrlStsring in post.images.imageUrl {//수정필요
+                if let imageUrl = URL(string: imageUrlStsring as? String ?? ""){
                     print("이미지들 Url 입니다. - \(imageUrl)")
                     // Kingfisher를 사용하여 이미지를 다운로드하고 처리
                     let imageView = UIImageView()
@@ -193,7 +193,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         }
         StackView.snp.makeConstraints{ (make) in
 //            make.height.equalTo(CommentTableView.frame.height)
-            if(post.imageUrls.first == nil){
+            if(post.images.imageUrl.isEmpty){ // 수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
             }else{
@@ -205,7 +205,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            if(post.imageUrls.first == nil){
+            if(post.images.imageUrl.isEmpty){ //수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + 100)
             }else{
@@ -386,6 +386,41 @@ class ExpandingTextView: UITextView {
     }
 }
 extension PostDetailViewController {
+    //게시글 상세 조회 -> ismine일 경우에 처리해야함.
+    @objc func BoardDetailShow() {
+        
+    }
+    //댓글 조회 메서드
+    @objc func CommentLoad() {
+        print("CommentLoad - called()")
+        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment")
+        var request = URLRequest(url: apiUrl!)
+        request.httpMethod = "GET"
+        // 댓글 데이터 모델 생성
+        let newComment = Comment(id: 1, comment: "", userId: currentUserId) // ID는 서버에서 생성 또는 할당
+        // 댓글 데이터를 JSON으로 인코딩, 바디에 추가
+        do {
+            let jsonData = try JSONEncoder().encode(newComment)
+        } catch {
+            print("Error encoding comment data: \(error.localizedDescription)")
+            return
+        }
+        //서버로 요청 보내기
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error encoding comment data: \(error.localizedDescription)")
+                return
+            }
+            // 서버 응답 처리, 댓글 추가 성공
+            // 로컬 댓글 데이터 모델에도 댓글 추가
+            let addedComment = newComment // 실제로는 서버에서 할당된 ID 등을 업데이트 해야 함
+            self.comments.append(addedComment)
+            // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
+            DispatchQueue.main.async {
+                self.CommentTableView.reloadData()
+            }
+        }.resume()
+    }
     //댓글 작성 메서드
     @objc func CommentBtnTapped() {
         print("CommentBtnTapped - called()")
@@ -393,10 +428,15 @@ extension PostDetailViewController {
             return // 댓글 내용이 비어 있으면 아무 작업도 하지 않음
         }
         // 서버 API 엔드포인트 및 요청 생성
-        let apiUrl = URL(string: "https://yourapi.com/addComment")
+        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "POST"
-        
+        let body : [String : Any] = [
+            "text" : commentText
+        ]
+        if let jsonData = try? JSONSerialization.data(withJSONObject: body, options: []){
+            request.httpBody = jsonData
+        }
         // 댓글 데이터 모델 생성
         let newComment = Comment(id: 1, comment: commentText, userId: currentUserId) // ID는 서버에서 생성 또는 할당
         // 댓글 데이터를 JSON으로 인코딩, 바디에 추가

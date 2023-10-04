@@ -31,28 +31,27 @@ class AuthenticationManager {
     static func isTokenValid() -> Bool {
         print("isTokenValid - called()")
         var Expiration = ""
+        var isValid = true
         //코드가 만료되었는지 확인 -> 리프레시 재발급
         var urlString = "http://15.164.161.53:8082/api/v1/auth/reissue"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return false
             }
-        if let acToken = KeychainWrapper.standard.string(forKey: "AuthToken"), let rfToken = KeychainWrapper.standard.string(forKey: "refreshToken"){
-//            let requestBody : [String : Any] = [
-//                "accessToken" : acToken,
-//                "refreshToken" : rfToken
-//            ]
-//            if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
-//                request.httpBody = jsonData
-//            }
-            urlString = "http://15.164.161.53:8082/api/v1/auth/reissue?accessToken=\(acToken)&refreshToken=\(rfToken)"
-        }
+        let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
+        let rfToken = KeychainWrapper.standard.string(forKey: "refreshToken")
+        let requestBody : [String : Any] = [
+            "accessToken" : acToken,
+            "refreshToken" : rfToken
+        ]
         var request = URLRequest(url: url)
+        if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
+            request.httpBody = jsonData
+        }
         request.httpMethod = "POST"
         
         // HTTP 요청 헤더 설정 (Content-Type: application/json)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         request.setValue(acToken, forHTTPHeaderField: "Authorization")
         //URLSession을 사용하여 서버와 통신
         let task = URLSession.shared.dataTask(with: request) { (data, response,error) in
@@ -63,32 +62,34 @@ class AuthenticationManager {
                     //서버로부터 받은 JSON 데이터 처리
                     print("Response JSON: \(responseJSON)")
                     //토큰이 만료 되었는지 확인
-                    if let serverResponseCode = responseJSON["status"] as? String{
+                    print("토큰 유효성 검사 메서드에서의 status - \(responseJSON["status"]), code - \(responseJSON["code"]),  result - \(responseJSON["result"])")
+                    if let serverResponseCode = responseJSON["code"] as? String{
                         Expiration = serverResponseCode
                         print("토큰 유효성 검사 : \(Expiration)")
                     }else{
-                        print("토큰 재발행 에러1 - Invalid JSON response")
+                        print("토큰 유효성 검사 에러 - Invalid JSON response")
                     }
-                    //토큰이 만료되었다면, 새로운 토큰을 받아서 저장해야함.
-                    if Expiration != "L003" {
+                    //리프레시 토큰이 살아있다면, 새로운 토큰을 받아서 저장해야함.
+                    if Expiration != "L003"{
                         if let result = responseJSON["result"] as? [String: Any],
                             let accessToken = result["accessToken"] as? String,
                             let refreshToken = result["refreshToken"] as? String{
                             
-                                print("토큰이 유효하지 않아 새로운 토큰을 발급받고 저장합니다. accessToken :  \(accessToken), refreshToken : \(refreshToken)")
+                                print("refreshToken이 만료되지 않았습니다. 새로운 토큰을 발급받고 저장합니다. accessToken :  \(accessToken), refreshToken : \(refreshToken)")
                                 saveAuthToken(token: accessToken, refresh: refreshToken)
+                        }else{
+                            print("토큰 재발행 에러 - Invalid JSON response")
                         }
-                        else{
-                            print("토큰 재발행 에러2 - Invalid JSON response")
-                        }
-                    }else{
-                        print("Invalid JSON response")
+                    }else{ //리프레시 토큰이 죽었다면 로그아웃 시켜야함. 로그인이 false(L003)
+                        isValid = false
                     }
+                }else{
+                    print("reissue - 통신 에러")
                 }
             }
         }
         task.resume() //요청 보내기
-        return true
+        return isValid
     }
     static func logoutUser() {
         print("AuthenticationManager.logoutUser - called()")

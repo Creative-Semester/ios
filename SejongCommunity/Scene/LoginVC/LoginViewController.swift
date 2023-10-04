@@ -138,22 +138,15 @@ class LoginViewController : UIViewController {
                                    let refreshToken = result["refreshToken"] as? String {
                                     print("검사들어갑니다")
                                     print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
-                                    if AuthenticationManager.isTokenValid(){
-                                        //토큰이 유효한 경우
-                                        // 토큰 저장
-                                        AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
-                                        DispatchQueue.main.async {
-                                            let mainTabBarController = MainTabBarController()
-                                            mainTabBarController.setRootViewController()
-                                            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(mainTabBarController, animated: true)
-                                            if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                                sceneDeleagate.window?.makeKeyAndVisible()
-                                            }
+                                    // 토큰 저장
+                                    AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
+                                    DispatchQueue.main.async {
+                                        let mainTabBarController = MainTabBarController()
+                                        mainTabBarController.setRootViewController()
+                                        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(mainTabBarController, animated: true)
+                                        if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                                            sceneDeleagate.window?.makeKeyAndVisible()
                                         }
-                                    }else{
-                                        //토큰이 유효하지 않은 경우
-                                        // 로그아웃
-                                        AuthenticationManager.logoutUser()
                                     }
                                 }
                             } else {
