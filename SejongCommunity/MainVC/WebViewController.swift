@@ -20,7 +20,8 @@ class WebViewController : UIViewController, WKNavigationDelegate {
         webView.navigationDelegate = self
         self.view.addSubview(webView)
         // 로딩 인디케이터 생성
-        loadingIndicator = UIActivityIndicatorView(style: .gray)
+        loadingIndicator = UIActivityIndicatorView(style: .large)
+        loadingIndicator.color = .gray
         loadingIndicator.center = self.view.center
         self.view.addSubview(loadingIndicator)
         if let url = URL(string: "https://do.sejong.ac.kr/ko/program/all/list/all/2"){
@@ -30,6 +31,9 @@ class WebViewController : UIViewController, WKNavigationDelegate {
             let request = URLRequest(url:url)
             webView.load(request)
         }
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
     // 웹 페이지 로딩이 시작될 때 호출되는 메서드
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {

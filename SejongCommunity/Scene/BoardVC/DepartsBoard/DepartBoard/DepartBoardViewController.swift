@@ -16,9 +16,28 @@ struct DepartPost {
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class DepartBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+    private let CouncilButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle("공지사항", for: .normal)
+        button.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .normal)
+        return button
+    }()
+    
+    private let VoteButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle("투표", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        
+        return button
+    }()
     //페이지 번호와 크기
-    var currentPage = 1
-    let pageSize = 20
+    var currentPage = 0
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
@@ -31,28 +50,29 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         self.navigationItem.setHidesBackButton(true, animated: false)
         let closeIcon = UIImage(systemName: "chevron.backward")
-        let MainBackButton = UIBarButtonItem(image: closeIcon, style: .plain, target: self, action: #selector(MainBackButtonTapped))
-        self.navigationController?.navigationBar.tintColor = .red
-        navigationItem.leftBarButtonItem = MainBackButton
+        let MainBackBtnLabel = UIButton()
+        MainBackBtnLabel.setTitle(" 메인페이지", for: .normal)
+        MainBackBtnLabel.setTitleColor(.red, for: .normal)
+        MainBackBtnLabel.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        MainBackBtnLabel.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        MainBackBtnLabel.addTarget(self, action: #selector(MainBackButtonTapped), for: .touchUpInside)
+        MainBackBtnLabel.tintColor = .red
+        let MainLabel = UIBarButtonItem(customView: MainBackBtnLabel)
+        self.navigationItem.leftBarButtonItems = [MainLabel]
+        
         self.navigationController?.navigationBar.tintColor = .red
         title = "학생회 공지사항"
         setupTableView()
         //글쓰기 버튼을 상단 바에 추가
         let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
-        //새로 고침 버튼 상단 바에 추가
-        let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(updatePage))
         // 우측 바 버튼 아이템 배열에 추가
-        navigationItem.rightBarButtonItems = [refreshButton, addButton]
-        //게시글을 검색하는 버튼을 생성
-//        let searchButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(SearchBtnTapped))
-//        navigationItem.rightBarButtonItem = searchButton
+        navigationItem.rightBarButtonItems = [addButton]
         // 로딩 인디케이터 뷰 초기 설정
         activityIndicator.color = .gray
         activityIndicator.center = view.center
-        view.addSubview(activityIndicator)
         
         // 처음에 초기 데이터를 불러옴
-        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+        fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
                 
                 if let newPosts = newPosts {
@@ -75,6 +95,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     //메인으로 돌아갈 백 버튼
     @objc func MainBackButtonTapped() {
         if let mainViewController = navigationController?.viewControllers.first(where: { $0 is MainViewController }) {
+            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
             navigationController?.popToViewController(mainViewController, animated: true)
         }
         //메인으로 이동했을때 탭바를 다시 켬
@@ -87,10 +108,11 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         tableView.dataSource = self
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
+        // 탭 바의 높이만큼 상단 여백 추가
+        tableView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
         //UITableView에 셀 등록
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
-        view.addSubview(tableView)
-        
+        self.view.addSubview(tableView)
     }
     // MARK: - UITableViewDataSource
     //테이블 뷰의 데이터 소스 프로토콜을 구현
@@ -111,84 +133,19 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     //학생회 공지사항, 투표를 할 뷰를 나눌 탭바 메서드
     func setTabBarView() {
         //학생회 공지사항 게시글과, 투표글에 대해 뷰를 나눌 탭바설정
-        let TabView = UIView()
-        TabView.backgroundColor = .white
-        TabView.tintColor = .gray
-//        TabView.layer.borderWidth = 0.2
-        let TabStackView = UIStackView()
-        TabStackView.axis = .horizontal
-        TabStackView.alignment = .fill
-        TabStackView.distribution = .fill
-        TabStackView.spacing = 20
+        let stackView = UIStackView(arrangedSubviews: [CouncilButton, VoteButton])
         
-        //학생회 공지사항 뷰 버튼
-        let CouncilView = UIView()
-        let CouncilBtn = UIButton()
-        CouncilBtn.layer.cornerRadius = 20
-        CouncilBtn.layer.masksToBounds = true
-        CouncilBtn.setImage(UIImage(systemName: "quote.bubble.fill"), for: .normal)
-        CouncilBtn.tintColor = .black
-        CouncilBtn.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
-        let CouncilLabel = UILabel()
-        CouncilLabel.text = "공지사항"
-        CouncilLabel.textAlignment = .center
-        CouncilLabel.textColor = .black
-        CouncilLabel.font = UIFont.boldSystemFont(ofSize: 10)
-        CouncilView.addSubview(CouncilBtn)
-        CouncilView.addSubview(CouncilLabel)
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+        stackView.backgroundColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
         
-        //투표 뷰 버튼
-        let VoteView = UIView()
-        let VoteBtn = UIButton()
-        VoteBtn.layer.cornerRadius = 20
-        VoteBtn.layer.masksToBounds = true
-        VoteBtn.setImage(UIImage(systemName: "slider.horizontal.3"), for: .normal)
-        VoteBtn.tintColor = .black
-        VoteBtn.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
-        let VoteLabel = UILabel()
-        VoteLabel.text = "투표"
-        VoteLabel.textAlignment = .center
-        VoteLabel.font = UIFont.boldSystemFont(ofSize: 10)
-        VoteView.addSubview(VoteBtn)
-        VoteView.addSubview(VoteLabel)
-        TabStackView.addArrangedSubview(CouncilView)
-        TabStackView.addArrangedSubview(VoteView)
-        TabView.addSubview(TabStackView)
-        self.view.addSubview(TabView)
+        view.addSubview(stackView)
         
-        TabView.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 8)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.bottom.equalToSuperview().offset(0)
-        }
-        TabStackView.snp.makeConstraints{ (make) in
-            make.top.bottom.trailing.leading.equalToSuperview().inset(0)
-        }
-        CouncilView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(0)
-            make.leading.equalToSuperview().offset(10)
-            make.width.equalToSuperview().dividedBy(2)
-        }
-        CouncilBtn.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(20)
-            make.leading.trailing.equalToSuperview().inset(10)
-        }
-        CouncilLabel.snp.makeConstraints{ (make) in
-            make.top.equalTo(CouncilBtn.snp.bottom).offset(3)
-            make.leading.trailing.equalToSuperview().inset(40)
-        }
-        VoteView.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(0)
-            make.trailing.equalToSuperview().offset(10)
-            make.width.equalToSuperview().dividedBy(2)
-        }
-        VoteBtn.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(18)
-            make.leading.trailing.equalToSuperview().inset(10)
-        }
-        VoteLabel.snp.makeConstraints{ (make) in
-            make.top.equalTo(VoteBtn.snp.bottom).offset(3)
-            make.leading.trailing.equalToSuperview().inset(40)
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
         }
     }
     //공지사항 버튼을 눌렀을때 액션
@@ -222,32 +179,13 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     @objc func WriteBtnTappend() {
         navigationController?.pushViewController(DepartOpenWriteViewController(), animated: true)
     }
-    @objc func SearchBtnTapped() {
-        let alertController = UIAlertController(title: "검색", message: nil, preferredStyle: .alert)
-        // 검색어를 입력 받을 텍스트 필드 추가
-        alertController.addTextField() { (textField) in
-            textField.placeholder = "검색어를 입력하세요"
-        }
-                // '취소' 버튼 추가
-                let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-                alertController.addAction(cancelAction)
-
-                // '검색' 버튼 추가
-                let searchAction = UIAlertAction(title: "검색", style: .default) { (_) in
-                    // '검색' 버튼을 눌렀을 때의 동작을 구현 (예: 검색 기능 실행)
-                }
-                alertController.addAction(searchAction)
-
-                // 팝업 표시
-                present(alertController, animated: true, completion: nil)
-    }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
-    func fetchPosts(page: Int, pageSize: Int, completion: @escaping ([DepartPost]?, Error?) -> Void){
+    func fetchPosts(page: Int, completion: @escaping ([DepartPost]?, Error?) -> Void){
         // 서버에서 페이지와 페이지 크기를 기반으로 게시글 데이터를 가져옴
         // 결과는 completion 핸들러를 통해 반환
         // URLSession을 사용하여 데이터를 가져오는 경우
-        let url = URL(string: "https://example.com/api/posts?page=\(page)&pageSize=\(pageSize)")!
+        let url = URL(string: "https://example.com/api/posts?page=\(page)")!
         URLSession.shared.dataTask(with: url) { (data, response, error) in
                 // 요청이 완료된 후 실행될 클로저
                 // 에러 처리
@@ -276,9 +214,11 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     var lastContentOffsetY : CGFloat = 0
     var isScrollingDown = false
     var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
+    var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = scrollView.contentOffset.y
         let screenHeight = scrollView.bounds.size.height
+        let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
 
         if contentOffsetY >= 0 {
             isScrollingDown = true
@@ -289,21 +229,34 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
             if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
                 loadNextPageCalled = true // 호출되었다고 표시
+                self.view.addSubview(activityIndicator)
+                activityIndicator.startAnimating()
                 loadNextPage()
             }
-        } else if !isScrollingDown && contentOffsetY == 0 {            loadNextPageCalled = false // 상단으로 스크롤될 때 호출되지 않았다고 표시
+        } else if !isScrollingDown && contentOffsetY < threshold {
+            if !updatePageCalled {
+                updatePageCalled = true
+                self.view.addSubview(activityIndicator)
+                activityIndicator.startAnimating()
+                updatePage()
+            }
         }
     }
 
     //새로운 페이지 새로고침
     @objc func updatePage() {
         print("updatePage() - called")
-        currentPage = 1 //처음 페이지부터 다시 시작
+        currentPage = 0 //처음 페이지부터 다시 시작
         isLoading = false
         //스크롤을 감지해서 인디케이터가 시작되면
-//        activityIndicator.startAnimating() // 로딩 인디케이터 시작
+        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
+        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    self.activityIndicator.stopAnimating()
+                }
+        
         // 서버에서 다음 페이지의 데이터를 가져옴
-        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+        fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
             // 로딩 인디케이터 멈춤
 //            DispatchQueue.main.async {
@@ -332,9 +285,13 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         currentPage += 1
         isLoading = true
         //스크롤을 감지해서 인디케이터가 시작되면
-//        activityIndicator.startAnimating() // 로딩 인디케이터 시작
+        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
+        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    self.activityIndicator.stopAnimating()
+                }
 
-        fetchPosts(page: currentPage, pageSize: pageSize) { [weak self] (newPosts, error) in
+        fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
             // 로딩 인디케이터 멈춤
 //            DispatchQueue.main.async {

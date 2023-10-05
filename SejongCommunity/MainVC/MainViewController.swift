@@ -17,30 +17,28 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
             // 다시 탭 바를 표시
             tabBarController?.tabBar.isHidden = false
         }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.isNavigationBarHidden = false
+    }
     var tableView : UITableView!
     //공지사항을 알리는 뷰를 생성
-    var NotificationView : UIView = {
-        let view = UIView()
+    var NotificationView : UIButton = {
+        let view = UIButton()
         //뷰의 배경색을 하얀색으로 설정
-        view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        
-        let spaceView = UIView()
+        view.backgroundColor = #colorLiteral(red: 0.9629544616, green: 0.9693544507, blue: 0.9692414403, alpha: 1)
         //뷰 안에 레이블 추가(제목)
-        let Notificationtitle = UILabel()
-        Notificationtitle.text = "공지사항"
-        Notificationtitle.textAlignment = .center
-        Notificationtitle.backgroundColor = #colorLiteral(red: 0.9865735173, green: 0.7143028378, blue: 0.7033815384, alpha: 1)
-        Notificationtitle.textColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
-        Notificationtitle.font = UIFont(name: "Bold", size: 20)
-        //레이블을 둥글게 하기
-        Notificationtitle.layer.cornerRadius = 10
-        Notificationtitle.layer.masksToBounds = true
+        let Notificationtitle = UIImageView()
+        Notificationtitle.image = UIImage(systemName: "megaphone")
+        Notificationtitle.backgroundColor = .white
+        Notificationtitle.tintColor = #colorLiteral(red: 0.8549019694, green: 0.250980407, blue: 0.4784313738, alpha: 1)
+        Notificationtitle.backgroundColor = #colorLiteral(red: 0.9629544616, green: 0.9693544507, blue: 0.9692414403, alpha: 1)
         view.addSubview(Notificationtitle)
         
         //뷰 안에 공지사항을 알리는 레이블 추가
         let Notification = UIButton()
-        Notification.setTitle("앱 점검 공지 매주 목요일...", for: .normal)
-        Notification.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        Notification.setTitle("앱 점검 공지 매주 목요일 13시 ~ 15시...", for: .normal)
+        Notification.backgroundColor = #colorLiteral(red: 0.9629544616, green: 0.9693544507, blue: 0.9692414403, alpha: 1)
         Notification.setTitleColor(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1), for: .normal)
         Notification.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         Notification.addTarget(self, action: #selector(NotificationBtnTapped), for: .touchUpInside)
@@ -52,14 +50,14 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         
         //Snapkit을 이용해 오토레이아웃 설정
         Notificationtitle.snp.makeConstraints{ (make) in
-            make.top.bottom.equalToSuperview().inset(10)
-            make.leading.equalToSuperview().offset(10)
-            make.width.equalTo(view.snp.width).dividedBy(3)
+            make.top.bottom.equalToSuperview().inset(15)
+            make.leading.equalToSuperview().offset(15)
+            make.width.equalTo(23)
         }
         Notification.snp.makeConstraints{ (make) in
             make.top.bottom.equalToSuperview().inset(0)
-            make.width.equalTo(view.snp.width).dividedBy(2)
-            make.leading.equalTo(Notificationtitle.snp.trailing).offset(15)
+            make.width.equalTo(view.snp.width).dividedBy(1.2)
+            make.leading.equalTo(Notificationtitle.snp.trailing).offset(10)
         }
         
         
@@ -68,7 +66,7 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
     // 현재 표시 중인 이미지의 인덱스를 추적하기 위한 변수를 추가합니다.
     var currentImageIndex = 0
     // 이미지 파일 이름 배열
-    let imageNames = ["Image1", "Image2", "image3"]
+    let imageNames = ["Image1", "Image2", "image3", "image4"]
     // 타이머
     var slideshowTimer: Timer?
     // 웹 뷰 생성
@@ -79,51 +77,43 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         view.backgroundColor = .white
         // 자유게시판 버튼 생성
         let OpenBoardBtn = UIButton()
-        OpenBoardBtn.layer.cornerRadius = 10
+        OpenBoardBtn.layer.cornerRadius = 30
         OpenBoardBtn.layer.masksToBounds = true
         let Openimage = UIImage(named: "icon1")
         OpenBoardBtn.setImage(Openimage, for: .normal)
         OpenBoardBtn.contentMode = .scaleAspectFit
-        OpenBoardBtn.tintColor = UIColor(red: 252/255.0, green: 230/255.0, blue: 186/255.0, alpha: 1.0)
-        OpenBoardBtn.backgroundColor = UIColor(red: 252/255.0, green: 230/255.0, blue: 186/255.0, alpha: 1.0)
         OpenBoardBtn.addTarget(self, action: #selector(OpenBoardBtnTapped), for: .touchUpInside)
-
+        OpenBoardBtn.backgroundColor = .white
         
         // 학생회 공지사항/투표 버튼 생성
         let DepartBoardBtn = UIButton()
         let Departimage = UIImage(named: "icon2")
         DepartBoardBtn.setImage(Departimage, for: .normal)
         DepartBoardBtn.contentMode = .scaleAspectFit
-        DepartBoardBtn.tintColor = UIColor(red: 0xCA / 255.0, green: 0xFF / 255.0, blue: 0xC9 / 255.0, alpha: 1.0)
-        DepartBoardBtn.backgroundColor = UIColor(red: 0xCA / 255.0, green: 0xFF / 255.0, blue: 0xC9 / 255.0, alpha: 1.0)
-        DepartBoardBtn.layer.cornerRadius = 10
+        DepartBoardBtn.layer.cornerRadius = 30
         DepartBoardBtn.layer.masksToBounds = true
         DepartBoardBtn.addTarget(self, action: #selector(DepartBoardBtnTapped), for: .touchUpInside)
-
+        DepartBoardBtn.backgroundColor = .white
         
         // 교수게시판 버튼 생성
         let ClassBoardBtn = UIButton()
         let Classimage = UIImage(named: "icon3")
         ClassBoardBtn.setImage(Classimage, for: .normal)
         ClassBoardBtn.contentMode = .scaleAspectFit
-        ClassBoardBtn.tintColor = UIColor(red: 0xD9 / 255.0, green: 0xE6 / 255.0, blue: 0xFF / 255.0, alpha: 1.0)
-        ClassBoardBtn.backgroundColor = UIColor(red: 0xD9 / 255.0, green: 0xE6 / 255.0, blue: 0xFF / 255.0, alpha: 1.0)
-        ClassBoardBtn.layer.cornerRadius = 10
+        ClassBoardBtn.layer.cornerRadius = 30
         ClassBoardBtn.layer.masksToBounds = true
         ClassBoardBtn.addTarget(self, action: #selector(ClassBoardBtnTapped), for: .touchUpInside)
-
+        ClassBoardBtn.backgroundColor = .white
         
         // 학생회 버튼 생성
         let CouncilBoardBtn = UIButton()
         let Councilimage = UIImage(named: "icon4")
         CouncilBoardBtn.setImage(Councilimage, for: .normal)
         CouncilBoardBtn.contentMode = .scaleAspectFit
-        CouncilBoardBtn.tintColor = UIColor(red: 1.0, green: 0.8275, blue: 0.9843, alpha: 1.0)
-        CouncilBoardBtn.backgroundColor = UIColor(red: 1.0, green: 0.8275, blue: 0.9843, alpha: 1.0)
-        CouncilBoardBtn.layer.cornerRadius = 10
+        CouncilBoardBtn.layer.cornerRadius = 30
         CouncilBoardBtn.layer.masksToBounds = true
         CouncilBoardBtn.addTarget(self, action: #selector(CouncilBoardBtnTapped), for: .touchUpInside)
-
+        CouncilBoardBtn.backgroundColor = .white
         
         //전체 스택뷰
         let AllStackView = UIStackView()
@@ -199,7 +189,7 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
             make.height.equalTo(view.snp.width).dividedBy(4).inset(7.5)
         }
         StackView2.snp.makeConstraints{ (make) in
-            make.top.equalTo(CouncilBoardBtn.snp.bottom).offset(5)
+            make.top.equalTo(CouncilBoardBtn.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
         }
         OpenBoardLabel.snp.makeConstraints{(make) in
@@ -233,10 +223,10 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         self.navigationController?.navigationBar.barTintColor = .white
         let logoBarItem = UIBarButtonItem(customView: View)
         self.navigationItem.leftBarButtonItem = logoBarItem
-        
+        self.navigationController?.isNavigationBarHidden = false
         View.snp.makeConstraints{ (make) in
             make.width.equalTo(150)
-            make.height.equalTo(60)
+            make.height.equalTo(80)
         }
         imageView.snp.makeConstraints{ (make) in
             make.edges.equalToSuperview()
@@ -245,12 +235,12 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white] 
         //뷰의 배경색 설정
         CalenderView = UIButton()
-        CalenderView.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        CalenderView.backgroundColor = .white
         CalenderView.addTarget(self, action: #selector(WebViewBtnTapped), for: .touchUpInside)
-        // 뷰를 둥글게
-        CalenderView.layer.cornerRadius = 10
-        CalenderView.layer.masksToBounds = true
         CalenderView.setImage(UIImage(named: self.imageNames[self.currentImageIndex]), for: .normal)
+        CalenderView.layer.masksToBounds = true
+        CalenderView.layer.cornerRadius = 10
+        CalenderView.layer.borderColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         
         // 시작할 때 이미지 설정
         updateImage()
@@ -268,20 +258,32 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
         StackView.distribution = .fill
         StackView.backgroundColor = .white
         StackView.spacing = 20
-//        let BoardSummary = UIView()
-//        BoardSummary.backgroundColor = .white
-//        BoardSummary.layer.cornerRadius = 10
-//        BoardSummary.layer.masksToBounds = true
-//        BoardSummary.layer.borderWidth = 0.2
         let BoardSummary = FSCalendar()
         BoardSummary.delegate = self
         BoardSummary.dataSource = self
-        BoardSummary.backgroundColor = .clear // 캘린더 뷰의 배경색 설정
+        BoardSummary.backgroundColor = .white// 캘린더 뷰의 배경색 설정
         BoardSummary.appearance.titleDefaultColor = .black // 달력의 평일 날짜 색
         BoardSummary.appearance.titleWeekendColor = .red // 달력의 토일 날짜 색
         BoardSummary.appearance.headerTitleColor = .systemRed // 년도, 월의 색
         BoardSummary.appearance.weekdayTextColor = .orange // 요일 글자 색
+        let cv = UIView()
+        let cvimage = UIImageView(image : UIImage(systemName: "pencil.tip.crop.circle"))
+        cvimage.tintColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+        let cvtext = UILabel()
+        cvtext.text = "두드림"
+        cvtext.textColor = .black
+        cvtext.textAlignment = .left
+        cvtext.font = UIFont.boldSystemFont(ofSize: 18)
+        cv.addSubview(cvimage)
+        cv.addSubview(cvtext)
+        cvimage.snp.makeConstraints{ (make) in
+            make.leading.equalToSuperview().offset(0)
+        }
+        cvtext.snp.makeConstraints{ (make) in
+            make.leading.equalTo(cvimage.snp.trailing).offset(5)
+        }
         StackView.addArrangedSubview(NotificationView)
+        StackView.addArrangedSubview(cv)
         StackView.addArrangedSubview(CalenderView)
         StackView.addArrangedSubview(BoardView)
         StackView.addArrangedSubview(BoardSummary)
@@ -294,28 +296,36 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
             make.trailing.leading.equalToSuperview().inset(20)
         }
         StackView.snp.makeConstraints{ (make) in
-            make.height.equalTo(ScrollView.snp.height)
             make.width.equalTo(ScrollView.snp.width)
+            make.height.equalTo(ScrollView.snp.height)
             make.bottom.equalToSuperview().offset(-3)
             make.top.equalToSuperview().offset(0)
         }
         NotificationView.snp.makeConstraints{ (make) in
-            make.height.equalTo(StackView.snp.height).dividedBy(12)
+            make.top.equalToSuperview().offset(5)
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.height.equalTo(50)
+        }
+        cv.snp.makeConstraints{ (make) in
+            make.top.equalTo(NotificationView.snp.bottom).offset(15)
+            make.leading.equalToSuperview().offset(0)
+            make.height.equalTo(30)
         }
         CalenderView.snp.makeConstraints{ (make) in
-            make.top.equalTo(NotificationView.snp.bottom).offset(20)
+            make.top.equalTo(cv.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(0)
-            make.height.equalTo(StackView.snp.height).dividedBy(3.5)
+            make.height.equalTo(StackView.snp.height).dividedBy(3.2)
         }
         BoardView.snp.makeConstraints{ (make) in
-            make.top.equalTo(CalenderView.snp.bottom).offset(20)
+            make.top.equalTo(CalenderView.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalToSuperview().dividedBy(7)
         }
         BoardSummary.snp.makeConstraints{ (make) in
-            make.top.equalTo(BoardView.snp.bottom).offset(20)
-            make.height.equalTo(view.frame.height / 3.5)
+            make.top.equalTo(BoardView.snp.bottom).offset(10)
+//            make.height.equalTo(view.frame.height / 4)
             make.bottom.equalToSuperview().offset(-10)
+            make.leading.trailing.equalToSuperview().inset(0)
         }
     }
     // 이미지 변경 메서드
@@ -367,5 +377,8 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
     }
     @objc func NotificationBtnTapped() {
         self.navigationController?.pushViewController(NotificationViewController(), animated: true)
+    }
+    @objc func AlertBtnTapped() {
+        print("AlertBtnTapped - called()")
     }
 }

@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // 사용자가 로그인되어 있지 않은 경우 로그인 뷰 컨트롤러를 보여줍니다.
             print("첫 로그인 - 로그인뷰를 보여줍니다.")
             // 사용자가 로그인하지 않은 경우
-            let loginViewController = LoginViewController()
+            let loginViewController = LoginIntroViewController()
             let navigationController = UINavigationController(rootViewController: loginViewController)
             window?.rootViewController = navigationController
             self.window?.makeKeyAndVisible()

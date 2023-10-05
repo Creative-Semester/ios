@@ -39,15 +39,57 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    // 댓글창 입력 전역변수
+    var commentField = ExpandingTextView()
+    var vview = UIView()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         title = post.title
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
+        vview = UIView()
+        vview.backgroundColor = .white
+        vview.layer.borderWidth = 0.2
         
+        //댓글 입력 창과 버튼을 추가
+        commentField = ExpandingTextView()
+        commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
+        commentField.layer.cornerRadius = 10
+        commentField.layer.masksToBounds = true
+        commentField.font = UIFont.boldSystemFont(ofSize: 17)
+        //Snapkit을 이용한 오토레이아웃
+        vview.addSubview(commentField)
+        commentField.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(10)
+            make.leading.equalToSuperview().offset(10)
+            make.width.equalTo(self.view.frame.width / 1.4)
+            make.height.greaterThanOrEqualTo(self.view.frame.height / 21) // 최소 높이
+            make.height.lessThanOrEqualTo(self.view.frame.height / 11) // 최대 높이
+        }
+        let CommentBtn = UIButton()
+        CommentBtn.backgroundColor =  #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
+        CommentBtn.layer.cornerRadius = 10
+        CommentBtn.layer.masksToBounds = true
+        let iconImage = UIImage(systemName: "message")
+        CommentBtn.setImage(iconImage, for: .normal)
+        CommentBtn.tintColor = .black
+        vview.addSubview(CommentBtn)
+        //SnapKit을 이용한 오토레이아웃 설정
+        CommentBtn.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
+            make.width.equalTo(self.view.frame.width / 5)
+            make.height.equalTo(self.view.frame.height / 20)
+        }
+        self.view.addSubview(vview)
+        vview.snp.makeConstraints{ (make) in
+            make.height.equalTo(self.view.frame.height / 9)
+            make.leading.trailing.equalToSuperview().inset(0)
+            make.bottom.equalToSuperview()
+        }
         setupView()
         setupTapGesture()
     }
@@ -104,52 +146,11 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         CommentTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         CommentTableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.borderWidth = 0.2
-        
-        //댓글 입력 창과 버튼을 추가
-        let commentField = ExpandingTextView()
-//        commentField.placeholder = "댓글을 입력하세요"
-        commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        commentField.layer.cornerRadius = 10
-        commentField.layer.masksToBounds = true
-        commentField.font = UIFont.boldSystemFont(ofSize: 17)
-        //Snapkit을 이용한 오토레이아웃
-        view.addSubview(commentField)
-        commentField.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(10)
-            make.leading.equalToSuperview().offset(10)
-            make.width.equalTo(self.view.frame.width / 1.4)
-            make.height.greaterThanOrEqualTo(self.view.frame.height / 20) // 최소 높이
-            make.height.lessThanOrEqualTo(self.view.frame.height / 11) // 최대 높이
-        }
-        let CommentBtn = UIButton()
-        CommentBtn.backgroundColor =  #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
-        CommentBtn.layer.cornerRadius = 10
-        CommentBtn.layer.masksToBounds = true
-        let iconImage = UIImage(systemName: "message")
-        CommentBtn.setImage(iconImage, for: .normal)
-        CommentBtn.tintColor = .black
-        view.addSubview(CommentBtn)
-        //SnapKit을 이용한 오토레이아웃 설정
-        CommentBtn.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(10)
-            make.trailing.equalToSuperview().offset(-10)
-            make.width.equalTo(self.view.frame.width / 5)
-            make.height.equalTo(self.view.frame.height / 20)
-        }
         
         StackView.addArrangedSubview(DetailView)
         StackView.addArrangedSubview(CommentTableView)
         ScrollView.addSubview(StackView)
         self.view.addSubview(ScrollView)
-        self.view.addSubview(view)
-        view.snp.makeConstraints{ (make) in
-            make.height.equalTo(self.view.frame.height / 7.5)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.bottom.equalToSuperview()
-        }
         //SnapKit을 이용한 오토레이아웃 설정
         ScrollView.snp.makeConstraints{ (make) in
             make.bottom.equalToSuperview().offset(-self.view.frame.height / 8.5)
@@ -199,11 +200,59 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
             adjustCommentView(insets: contentInsets)
+            let newSize = commentField.sizeThatFits(CGSize(width: commentField.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+            let size = CGSize(width: commentField.frame.size.width, height: self.view.frame.height / 11)
+            if(commentField.text.isEmpty){
+                commentField.snp.remakeConstraints { (make) in
+                                make.top.equalToSuperview().offset(10)
+                                make.leading.equalToSuperview().offset(10)
+                                make.width.equalTo(self.view.frame.width / 1.4)
+                                make.height.greaterThanOrEqualTo(self.view.frame.height / 21) // 최소 높이
+                                make.height.lessThanOrEqualTo(self.view.frame.height / 11) // 최대 높이
+                            }
+//                vview.snp.makeConstraints{ (make) in
+//                    make.height.equalTo(newSize.height + 30)
+//                    make.leading.trailing.equalToSuperview().inset(0)
+//                    make.bottom.equalToSuperview()
+//                }
+            }else{
+                commentField.selectedRange = NSMakeRange(commentField.text.count, 0)
+                commentField.scrollRangeToVisible(commentField.selectedRange)
+                commentField.snp.remakeConstraints { (make) in
+                                make.top.equalToSuperview().offset(10)
+                                make.leading.equalToSuperview().offset(10)
+                                make.width.equalTo(self.view.frame.width / 1.4)
+                                if(newSize.height > size.height){
+                                    make.height.equalTo(self.view.frame.height / 11)
+                                }else{
+                                    make.height.equalTo(newSize.height)
+                                }
+                }
+//                vview.snp.makeConstraints{ (make) in
+//                    make.height.equalTo(newSize.height + 30)
+//                    make.leading.trailing.equalToSuperview().inset(0)
+//                    make.bottom.equalToSuperview()
+//                }
+            }
         }
     }
+
     @objc private func keyboardWillHide(_ notification: Notification) {
         let contentInsets = UIEdgeInsets.zero
         adjustCommentView(insets: contentInsets)
+        commentField.selectedRange = NSMakeRange(0, 0)
+        commentField.scrollRangeToVisible(commentField.selectedRange)
+        commentField.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(10)
+            make.leading.equalToSuperview().offset(10)
+            make.width.equalTo(self.view.frame.width / 1.4)
+            make.height.equalTo(self.view.frame.height / 21) // 최소 높이
+        }
+//        vview.snp.makeConstraints{ (make) in
+//            make.height.equalTo(self.view.frame.height / 9)
+//            make.leading.trailing.equalToSuperview().inset(0)
+//            make.bottom.equalToSuperview()
+//        }
     }
 
     private func adjustCommentView(insets: UIEdgeInsets) {
@@ -215,12 +264,9 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
 
     @objc func toolBtnTapped() {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        getAuthorInfo() // 게시글 작성자 정보를 가져옴
-        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
-        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
         
         //게시글의 작성자와 현재 사용자가 같을때
-        if isMyPost {
+        if true {
                     // 삭제
             let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
                 self.PostDelete()
@@ -262,12 +308,9 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
     //댓글을 눌렀을때 신고하기 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        getAuthorInfo() // 게시글 작성자 정보를 가져옴
-        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
-        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
         
         //게시글의 작성자와 현재 사용자가 같을때
-        if isMyPost {
+        if true {
                     // 삭제
             let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
                 self.CommentDelete()
@@ -307,63 +350,6 @@ extension DepartPostDetailViewController {
         print("checkIfCurrentIsAutorOfPost - called()")
         //게시물 작성자와 현재 작성자를 판별
         return userIdOfAuthor == currentUserId // 현재는 내 게시물로 가정 true 반환
-    }
-    //현재 게시물의 작성자, 사용자를 가져오는 메서드
-    // 현재 사용자 정보를 가져오는 메서드
-    func getCurrentUserInfo() {
-        print("getCurrentUserInfo - called()")
-        
-        // 현재 사용자의 사용자 ID 또는 다른 식별자를 사용하여 API 호출
-        let currentUserId = "현재 사용자의 사용자 ID" // 실제 사용자 ID 또는 식별자로 대체해야 합니다.
-        
-        guard let url = URL(string: "https://yourapi.com/userInfo/\(currentUserId)") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        // 인증 헤더 또는 토큰을 추가!!
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-            if let data = data {
-                do {
-                    let user = try JSONDecoder().decode(User.self, from: data)
-                    self.currentUserId = user.userId
-                    // 여기서 현재 사용자 정보를 필요한 속성에 저장하거나 처리할 수 있습니다.
-                } catch {
-                    print("Error decoding current user data: \(error.localizedDescription)")
-                }
-            }
-        }
-        task.resume()
-    }
-    // 게시물의 작성자 정보를 가져오는 메서드
-    func getAuthorInfo() {
-        print("getAuthorInfo - called()")
-        
-        
-        guard let url = URL(string: "https://yourapi.com/userInfo/") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        // 인증 헤더 또는 토큰을 추가!!
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-            if let data = data {
-                do {
-                    let user = try JSONDecoder().decode(User.self, from: data)
-                    self.userIdOfAuthor = user.userId
-                    // 게시물 작성자 정보를 필요한 속성에 저장, 처리 가능
-                } catch {
-                    print("Error decoding author data: \(error.localizedDescription)")
-                }
-            }
-        }
-        task.resume()
     }
 
     //게시글 삭제 메서드
