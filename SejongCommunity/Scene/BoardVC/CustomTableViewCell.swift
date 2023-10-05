@@ -88,6 +88,7 @@ class CustomTableViewCell: UITableViewCell{
             make.top.equalTo(titleLabel.snp.bottom).offset((5))
             make.leading.equalToSuperview().offset(20)
             make.width.equalTo(AllStackView.snp.width).dividedBy(1.5)
+            make.height.equalTo(30)
         }
         DayLabel.snp.makeConstraints{ (make) in
             make.top.equalTo(commentLabel.snp.bottom).offset((15))

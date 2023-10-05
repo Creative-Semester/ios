@@ -292,9 +292,9 @@ class CouncilBoardViewController : UIViewController {
         super.viewWillAppear(animated)
         self.title = "학생회"
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.tintColor = .red
         self.view.backgroundColor = .white
         
         pledgeButton.addTarget(self, action: #selector(pledgeButtonTabbed), for: .touchUpInside)

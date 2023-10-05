@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SwiftKeychainWrapper
 class MypageViewController: UIViewController{
     //학생의 정보(이름, 과)
     let Studenttitle = UILabel()
@@ -35,6 +36,7 @@ class MypageViewController: UIViewController{
         MyComentBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         MyComentBtn.layer.cornerRadius = 30
         MyComentBtn.layer.masksToBounds = true
+        MyComentBtn.addTarget(self, action: #selector(MyComentBtnTapped), for: .touchUpInside)
         
         //학생회 신청 페이지로 넘어갈 버튼
         let CouncilRegisterBtn = UIButton()
@@ -227,6 +229,9 @@ class MypageViewController: UIViewController{
     @objc func MyWriteBtnTapped() {
         self.navigationController?.pushViewController(MyWriteViewController(), animated: true)
     }
+    @objc func MyComentBtnTapped() {
+        self.navigationController?.pushViewController(MyCommentViewController(), animated: true)
+    }
     //학생회 신청 버튼 메서드
     @objc func CouncilRegisterTapped() {
         self.navigationController?
@@ -234,9 +239,51 @@ class MypageViewController: UIViewController{
     }
     //로그아웃 버튼 메서드
     @objc func LogoutBtnTapped() {
-        //로그아웃 처리 메서드 추가
+        //로그아웃시 서버에 로그아웃 시키겠다는 통신을 해야함.
+        let urlString = "http://15.164.161.53:8082/api/v1/auth/logout"
+        //유효하지 않은 Url 처리
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        //URLSession을 이용해 통신
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        if let acToken = KeychainWrapper.standard.string(forKey: "AuthToken"), let rfToken = KeychainWrapper.standard.string(forKey: "refreshToken"){
+            let requestBody : [String : Any] = [
+                "accessToken" : acToken,
+                "refreshToken" : rfToken
+            ]
+            print("accessToken : \(acToken), refreshToken : \(rfToken)")
+            if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
+                request.httpBody = jsonData
+            }
+        }
+        // HTTP 헤더 요청 설정
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        // 인증 토큰 설정
+        if let token = KeychainWrapper.standard.string(forKey: "AuthToken"){
+            //키체인에 저장된 토큰 값이 있을때
+            print("토큰 값 : \(token)")
+            request.setValue(token, forHTTPHeaderField: "Authorization")
+        }else{
+            //키체인에 저장된 토큰 값이 없을때
+            print("토큰 값이 없습니다.")
+        }
+        //URLSession을 사용하여 서버와 통신
+        let task = URLSession.shared.dataTask(with: request) { (data, response,error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+            } else if let data = data {
+                if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+                    //서버로부터 받은 JSON 데이터 처리
+                    print("Response JSON: \(responseJSON)")
+                    print("로그아웃에 성공했습니다.")
+                }
+            }
+        }
+        task.resume() //요청 보내기
+        //로그아웃 처리 메서드 추가. 키체인으로 저장된 토큰 삭제
         AuthenticationManager.logoutUser()
-        //로그인 페이지로 이동(임시)
-//        navigationController?.pushViewController(LoginIntroViewController(), animated: false)
     }
 }

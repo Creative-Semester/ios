@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 class LoginViewController : UIViewController {
+    // 보여지는 버튼 플래그
+    var showflag = 0
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated) // 백 버튼 숨기기
@@ -93,15 +95,20 @@ class LoginViewController : UIViewController {
         let password = passwordText.text ?? "" //비밀번호 가져오기
         print("LoginBtnTapped - Called \(id), \(password)")
         // 이후 서버와 통신하기 위한 URL 설정
-//        let urlString = "https://example.com/login" // 서버의 로그인 API URL로 변경해야 합니다.
-        let urlString = "http://ime-locker.shop:8081/api/auth/login?id=\(id)&pw=\(password)"
+        let urlString = "http://15.164.161.53:8082/api/v1/auth/login"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return
             }
-        
+        let requestBody : [String : Any] = [
+            "id" : id,
+            "pw" : password
+        ]
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
+            request.httpBody = jsonData
+        }
         do {
                 // HTTP 요청 헤더 설정 (Content-Type: application/json)
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -128,26 +135,18 @@ class LoginViewController : UIViewController {
                                 // 예: 로그인 성공 또는 실패 처리
                                 if let result = jsonResponse["result"] as? [String: Any],
                                    let accessToken = result["accessToken"] as? String,
-                                   let refreshToken = result["refreshToken"] as? String,
-                                   let serverResponseCode = jsonResponse["status"] as? Int {
+                                   let refreshToken = result["refreshToken"] as? String {
                                     print("검사들어갑니다")
-                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken), 서버응답코드 - \(serverResponseCode)")
-                                    if AuthenticationManager.isTokenValid(accessToken, serverResponseCode){
-                                        //토큰이 유효한 경우
-                                        // 토큰 저장
-                                        AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
-                                        DispatchQueue.main.async {
-                                            let mainTabBarController = MainTabBarController()
-                                            mainTabBarController.setRootViewController()
-                                            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(mainTabBarController, animated: true)
-                                            if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                                sceneDeleagate.window?.makeKeyAndVisible()
-                                            }
+                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
+                                    // 토큰 저장
+                                    AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
+                                    DispatchQueue.main.async {
+                                        let mainTabBarController = MainTabBarController()
+                                        mainTabBarController.setRootViewController()
+                                        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(mainTabBarController, animated: true)
+                                        if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                                            sceneDeleagate.window?.makeKeyAndVisible()
                                         }
-                                    }else{
-                                        //토큰이 유효하지 않은 경우
-                                        // 로그아웃
-                                        AuthenticationManager.logoutUser()
                                     }
                                 }
                             } else {
@@ -187,13 +186,25 @@ extension LoginViewController{
         passwordText.backgroundColor = .white
         passwordText.textAlignment = .center
         passwordText.placeholder = "Passward"
-        passwordText.layer.borderWidth = 0.1
+//        passwordText.layer.borderWidth = 0.1
         passwordText.layer.cornerRadius = 20
         passwordText.layer.masksToBounds = true
+        passwordText.isSecureTextEntry = true
 
         // 아이디와 비밀번호 입력 필드를 TextView에 추가
         TextView.addArrangedSubview(idText)
-        TextView.addArrangedSubview(passwordText)
+        // 버튼을 누르면 가려진 텍스트가 보여짐
+        let miniTextView = UIView()
+        miniTextView.backgroundColor = .white
+        miniTextView.layer.borderWidth = 0.1
+        miniTextView.layer.cornerRadius = 20
+        let showpassward = UIButton()
+        showpassward.setImage(UIImage(systemName: "lock"), for: .normal)
+        showpassward.tintColor = .black
+        showpassward.addTarget(self, action: #selector(showpasswardTapped), for: .touchUpInside)
+        miniTextView.addSubview(passwordText)
+        miniTextView.addSubview(showpassward)
+        TextView.addArrangedSubview(miniTextView)
         let TextSpacing = UIView()
         TextSpacing.backgroundColor = .white
         TextView.addArrangedSubview(TextSpacing)
@@ -203,9 +214,19 @@ extension LoginViewController{
             make.top.equalToSuperview().offset(0)
             make.height.equalTo(50)
         }
-        passwordText.snp.makeConstraints{ (make) in
+        miniTextView.snp.makeConstraints{ (make) in
             make.leading.trailing.equalToSuperview().inset(0)
             make.height.equalTo(50)
+        }
+        passwordText.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(15)
+            make.width.equalTo(miniTextView.snp.width).dividedBy(1.5)
+            make.leading.equalToSuperview().offset(55)
+        }
+        showpassward.snp.makeConstraints{ (make) in
+            make.top.equalToSuperview().offset(15)
+            make.trailing.equalToSuperview().offset(-0)
+            make.width.equalTo(miniTextView.snp.width).dividedBy(4)
         }
         TextSpacing.snp.makeConstraints{ (make) in
             make.leading.trailing.equalToSuperview().inset(0)
@@ -251,6 +272,17 @@ extension LoginViewController{
         }
         SecondLabel.snp.makeConstraints{ (make) in
             make.trailing.leading.equalToSuperview().inset(20)
+        }
+    }
+    // 버튼을 누르면 비밀번호가 보임
+    // 버튼을 여러번 클릭했을때 셀 flag
+    @objc func showpasswardTapped() {
+        if(showflag == 1) {
+            passwordText.isSecureTextEntry = false
+            showflag = 0
+        }else if(showflag == 0){
+            passwordText.isSecureTextEntry = true
+            showflag = 1
         }
     }
 }

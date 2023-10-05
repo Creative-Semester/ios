@@ -1,84 +1,75 @@
 //
-//  VoteViewController.swift
+//  MyCommentViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/08/30.
+//  Created by 정성윤 on 2023/09/30.
 //
 
 import Foundation
 import UIKit
 import SnapKit
+import Kingfisher //url - > image 변환 라이브러리
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
-struct VotePost {
+struct MyCommentPost {
     let title : String
     let content : String
-    let image : UIImage?
+    let imageUrls : [String] // 이미지 URL을 배열로 저장
     let day : String
 }
-//UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
-class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource  {
-    private let CouncilButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("공지사항", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        return button
-    }()
-    
-    private let VoteButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("투표", for: .normal)
-        button.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for:  .normal)
-        
-        return button
-    }()
+class MyCommentViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     //페이지 번호와 크기
     var currentPage = 0
-    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
-    //게시글을 저장시킬 테이블 뷰 생성
+    //내가 쓴 글에 대해서 보여줄 TableView 전역 선언
     let tableView = UITableView()
-    var voteposts : [VotePost] = [
-        VotePost(title: "박정곤 학생의 교내 추방 투표", content: "박정곤 학생의 교내 추방 투표입니다.", image: nil, day: "2023-09-18 12:44"),
-        VotePost(title: "박정곤 학생 집들이 찬반 투표", content: "박정곤 학생 집들이 찬반 투표입니다.", image: nil, day: "2023-09-17 19:20"),
-        VotePost(title: "박정곤 학생 피파 잘한다 찬반 투표", content: "박정곤 학생 피파 잘한다 찬반 투표입니다.", image: nil, day: "2023-09-14 19:01")
+    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
+    var posts : [MyCommentPost] = [
+        MyCommentPost(title: "첫 번째 게시물 제목",
+             content: "첫 번째 게시물 내용",
+             imageUrls: [
+                "https://example.com/image1-1.jpg",
+                "https://example.com/image1-2.jpg",
+                "https://example.com/image1-3.jpg",
+                "https://example.com/image1-4.jpg",
+                "https://example.com/image1-5.jpg"
+            ],
+             day: "2023-09-19 19:44"),
+        MyCommentPost(title: "두 번째 게시물 제목",
+             content: "두 번째 게시물 내용",
+             imageUrls: [
+                "https://example.com/image2-1.jpg",
+                "https://example.com/image2-2.jpg",
+                "https://example.com/image2-3.jpg",
+                "https://example.com/image2-4.jpg",
+                "https://example.com/image2-5.jpg"
+            ],
+             day: "2023-09-19 19:44"),
+        MyCommentPost(title: "세 번째 게시물 제목",
+             content: "세 번째 게시물 내용",
+             imageUrls: [
+                "https://example.com/image3-1.jpg",
+                "https://example.com/image3-2.jpg",
+                "https://example.com/image3-3.jpg",
+                "https://example.com/image3-4.jpg",
+                "https://example.com/image3-5.jpg"
+            ],
+             day: "2023-09-19 19:44")
     ]
     override func viewDidLoad() {
-        self.navigationItem.setHidesBackButton(true, animated: false)
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-        let closeIcon = UIImage(systemName: "chevron.backward")
-        let MainBackBtnLabel = UIButton()
-        MainBackBtnLabel.setTitle(" 메인페이지", for: .normal)
-        MainBackBtnLabel.setTitleColor(.red, for: .normal)
-        MainBackBtnLabel.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        MainBackBtnLabel.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        MainBackBtnLabel.addTarget(self, action: #selector(MainBackButtonTapped), for: .touchUpInside)
-        MainBackBtnLabel.tintColor = .red
-        let MainLabel = UIBarButtonItem(customView: MainBackBtnLabel)
-        self.navigationItem.leftBarButtonItems = [MainLabel]
-        self.navigationController?.navigationBar.tintColor = .red
-        title = "투표"
+        super .viewDidLoad()
         self.view.backgroundColor = .white
-        setupTableView()
-        //글쓰기 버튼을 상단 바에 추가
-        let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
-        // 우측 바 버튼 아이템 배열에 추가
-        navigationItem.rightBarButtonItems = [addButton]
+        navigationController?.navigationBar.tintColor = .red
+        title = "댓글 단 글"
         // 로딩 인디케이터 뷰 초기 설정
         activityIndicator.color = .gray
         activityIndicator.center = view.center
-        
+        setupTableView()
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
                 
                 if let newPosts = newPosts {
                     // 초기 데이터를 posts 배열에 추가
-                    self.voteposts += newPosts
+                    self.posts += newPosts
                     
                     // 테이블 뷰 갱신
                     DispatchQueue.main.async {
@@ -90,81 +81,40 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
                     print("Error fetching initial data: \(error.localizedDescription)")
                 }
             }
-        setTabBarView()
     }
-    //메인으로 돌아갈 백 버튼
-    @objc func MainBackButtonTapped() {
-        if let mainViewController = navigationController?.viewControllers.first(where: { $0 is MainViewController }) {
-            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-            navigationController?.popToViewController(mainViewController, animated: true)
-        }
-
-        //메인으로 이동했을때 탭바를 다시 켬
-        tabBarController?.tabBar.isHidden = false
-    }
-    //학생회 공지사항, 투표를 할 뷰를 나눌 탭바 메서드
-    func setTabBarView() {
-        //학생회 공지사항 게시글과, 투표글에 대해 뷰를 나눌 탭바설정
-        let stackView = UIStackView(arrangedSubviews: [CouncilButton, VoteButton])
-        
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .center
-        stackView.backgroundColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        
-        view.addSubview(stackView)
-        
-        stackView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
-        }
-    }
-    //공지사항 버튼을 눌렀을때 액션
-    @objc func CouncilBtnTapped() {
-        navigationController?.pushViewController(DepartBoardViewController(), animated: false)
-    }
-    //투표 버튼을 눌렀을때 액션
-    @objc func VoteBtnTapped() {
-        navigationController?.pushViewController(VoteViewController(), animated: false)
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
-            //부모로 이동했을때 탭바를 다시 켬
-            if isMovingFromParent {
-                print("Back 버튼 클릭됨")
-                tabBarController?.tabBar.isHidden = false
-                navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-            }
-        }
     //테이블뷰를 설정하는 메서드
     func setupTableView() {
-        //UITableViewDelegate, UITableDataSource 프로토콜을 해당 뷰컨트롤러에서 구현
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.isScrollEnabled = true
         tableView.frame = view.bounds
-        tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-        // 탭 바의 높이만큼 상단 여백 추가
-        tableView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
+        tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         //UITableView에 셀 등록
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
-        
     }
     // MARK: - UITableViewDataSource
     //테이블 뷰의 데이터 소스 프로토콜을 구현
     //numberOfRowsInSection 메서드 개시물 개수 반환
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return voteposts.count
+        return posts.count
     }
-    //cellForRowAt 메서드 각 셀에 해당하는 개시물의 제목 표시
+    //cellForRowAt 메서드 각 셀에 해당하는 게시물의 제목 표시
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
-        let post = voteposts[indexPath.row]
+        let post = posts[indexPath.row]
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
-        cell.postImageView.image = post.image
         cell.DayLabel.text = post.day
+        
+        //MARK: - URL to Image Conversion
+        // 첫 번째 이미지 URL 가져오기
+        if let firstImageUrl = post.imageUrls.first, let imageUrl = URL(string: firstImageUrl) {
+            // KingFisher를 사용하여 이미지 로드 및 표시
+            print("첫 번째 이미지를 가져옵니다. - \(firstImageUrl)")
+            print("첫 번째 이미지를 post 합니다. \(imageUrl)")
+            cell.postImageView.kf.setImage(with: imageUrl)
+        }
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -172,30 +122,27 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
     //didselectRowAt 메서드 특정 게시물의 상세 내용을 보여주기 위함
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let post = voteposts[indexPath.row]
+        let post = posts[indexPath.row]
         showPostDetail(post: post)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
     //셀을 선택했을 때 해당 게시물의 상세 내용을 보여주기 위함
-    func showPostDetail(post: VotePost){
-        let detailViewController = VotePostDetailViewController(post: post)
+    func showPostDetail(post: MyCommentPost){
+        let detailViewController = MyCommentDetailViewController(post: post)
         //게시글의 상세 글 볼때 탭바 숨기기
         tabBarController?.tabBar.isHidden = true
         navigationController?.pushViewController(detailViewController, animated: true)
     }
-    //글쓰기 버튼을 누르면 글작성 뷰로 이동시킬 메서드
-    @objc func WriteBtnTappend() {
-        navigationController?.pushViewController(VoteBoardWriteViewController(), animated: true)
-    }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
-    func fetchPosts(page: Int, completion: @escaping ([VotePost]?, Error?) -> Void){
+    func fetchPosts(page: Int, completion: @escaping ([MyCommentPost]?, Error?) -> Void){
         // 서버에서 페이지와 페이지 크기를 기반으로 게시글 데이터를 가져옴
         // 결과는 completion 핸들러를 통해 반환
         // URLSession을 사용하여 데이터를 가져오는 경우
         let url = URL(string: "https://example.com/api/posts?page=\(page)")!
+        //토큰을 추가해야함.
         URLSession.shared.dataTask(with: url) { (data, response, error) in
                 // 요청이 완료된 후 실행될 클로저
                 // 에러 처리
@@ -273,7 +220,7 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
             
             if let newPosts = newPosts {
                 // 새로운 데이터를 기존 데이터와 병합
-                self.voteposts += newPosts
+                self.posts += newPosts
                 
                 // 테이블 뷰 갱신
                 DispatchQueue.main.async {
@@ -306,7 +253,7 @@ class VoteViewController:  UIViewController, UITableViewDelegate, UITableViewDat
 //                self.activityIndicator.stopAnimating()
 //            }
             if let newPosts = newPosts {
-                self.voteposts += newPosts
+                self.posts += newPosts
 
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
