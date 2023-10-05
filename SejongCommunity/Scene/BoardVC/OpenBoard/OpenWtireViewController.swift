@@ -331,15 +331,17 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
                 }
                 if status == 200 {
                     //적절할때. 업로드 완료가 되었을때. 팝업. reload
-                    let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
-                    let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
-                        // OpenBoardViewController로 이동
-                        if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
-                            self.navigationController?.popToViewController(openboardViewController, animated: true)
+                    DispatchQueue.main.async{
+                        let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
+                        let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                            // OpenBoardViewController로 이동
+                            if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+                                self.navigationController?.popToViewController(openboardViewController, animated: true)
+                            }
                         }
+                        alertController.addAction(CancelController)
+                        self.present(alertController, animated: true)
                     }
-                    alertController.addAction(CancelController)
-                    self.present(alertController, animated: true)
                 }
             }
             task.resume() // 요청 보내기

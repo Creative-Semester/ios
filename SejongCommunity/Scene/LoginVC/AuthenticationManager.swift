@@ -73,7 +73,14 @@ class AuthenticationManager {
                         print("토큰 유효성 검사 에러 - Invalid JSON response")
                     }
                     //리프레시 토큰이 살아있다면, 새로운 토큰을 받아서 저장해야함.
-                    if Expiration != "L003"{
+                    if (Message == "사용자를 찾지 못했습니다" && Expiration == "U001") {
+                        //사용자를 찾지 못했을 경우 로그아웃 시켜야함.
+                        isValid = false
+                        AuthenticationManager.logoutUser()
+                    }else if(Expiration == "L003"){ //리프레시 토큰이 죽었다면 로그아웃 시켜야함. 로그인이 false(L003)
+                        isValid = false
+                        AuthenticationManager.logoutUser()
+                    }else if Expiration != "L003"{
                         if let result = responseJSON["result"] as? [String: Any],
                             let accessToken = result["accessToken"] as? String,
                             let refreshToken = result["refreshToken"] as? String{
@@ -83,13 +90,6 @@ class AuthenticationManager {
                         }else{
                             print("토큰 재발행 에러 - Invalid JSON response")
                         }
-                    }else if (Message == "사용자를 찾지 못했습니다" && Expiration == "U001") {
-                        //사용자를 찾지 못했을 경우 로그아웃 시켜야함.
-                        isValid = false
-                        AuthenticationManager.logoutUser()
-                    }else if(Expiration == "L003"){ //리프레시 토큰이 죽었다면 로그아웃 시켜야함. 로그인이 false(L003)
-                        isValid = false
-                        AuthenticationManager.logoutUser()
                     }
                 }else{
                     print("reissue - 통신 에러")

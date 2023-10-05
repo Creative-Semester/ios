@@ -17,7 +17,7 @@ struct Comment : Decodable{
     let comment : String // 댓글 내용
 }
 //게시물의 상세 내용을 보여주는 UIViewController
-class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
+class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate{
     var CommentTableView = UITableView()
     private let GreatBtn = UIButton()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
@@ -31,7 +31,8 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     var comments : [Comment] = [
         Comment(commentId:1,comment: "첫 번째 댓글입니다"),
         Comment(commentId:2,comment: "두 번째 댓글입니다"),
-        Comment(commentId:3,comment: "세 번째 댓글입니다")
+        Comment(commentId:3,comment: "세 번째 댓글입니다"),
+        Comment(commentId:3,comment: "네 번째 댓글입니다")
     ]
     let post : Post
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
@@ -50,6 +51,9 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
         BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
+        // 로딩 인디케이터 뷰 초기 설정
+        activityIndicator.color = .gray
+        activityIndicator.center = view.center
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
@@ -196,6 +200,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         StackView.addArrangedSubview(DetailView)
         StackView.addArrangedSubview(CommentTableView)
         ScrollView.addSubview(StackView)
+        ScrollView.delegate = self
         self.view.addSubview(ScrollView)
         //SnapKit을 이용한 오토레이아웃 설정
         ScrollView.snp.makeConstraints{ (make) in
@@ -205,14 +210,20 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         }
         StackView.snp.makeConstraints{ (make) in
 //            make.height.equalTo(CommentTableView.frame.height)
-            if(post.images.imageUrl.isEmpty){ // 수정필요
+            if (comments.count < 5 && post.images.imageUrl.isEmpty) {
+                make.height.equalTo(ScrollView.snp.height)
+                make.bottom.equalToSuperview().offset(-10)
+            }else if(post.images.imageUrl.isEmpty){ // 수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
+                make.bottom.equalToSuperview().offset(-0)
             }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + CGFloat((comments.count + 4) * 100))
+                make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + CGFloat((comments.count + 4)
+                                                                                                     * 100))
+                
+                make.bottom.equalToSuperview().offset(-0)
             }
             make.width.equalTo(ScrollView.snp.width)
-            make.bottom.equalToSuperview().offset(-0)
             make.top.equalToSuperview().offset(0)
         }
         DetailView.snp.makeConstraints{ (make) in
@@ -341,10 +352,10 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     //댓글을 눌렀을때 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        let isMyPost = true //게시글의 작성자와 현재 사용자가 동일한지 판별
+        CommentIsMine = false
         //댓글 조회를 통해 아이디를 가져와 해당 셀이 ismine인지 판별
         let comment = comments[indexPath.row]
-        checkIfCurrentIsAuthorOfPost(userIdOfAuthor: 0 , currentUserId: comment.commentId) //사용자의 아이디 수정
+        checkIfCurrentIsAuthorOfPost(userIdOfAuthor: 0, currentUserId: comment.commentId) //사용자의 아이디 수정
         print("해당 댓글이 내 댓글인지 확인 - \(CommentIsMine)")
         //댓글 작성자와 현재 사용자가 같을때
         if CommentIsMine {
@@ -390,6 +401,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
             if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
                 loadNextPageCalled = true // 호출되었다고 표시
+                
                 self.view.addSubview(activityIndicator)
                 activityIndicator.startAnimating() // 로딩 인디케이터 시작
                 loadNextPage()
@@ -507,12 +519,12 @@ extension PostDetailViewController {
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let result = json?["result"] as? [String: Any], let comments = result["comments"] as? [[String: Any]] {
+                if let result = json?["result"] as? [String: Any], let comments = result["commentList"] as? [[String: Any]] {
                     var posts = [Comment]()
                     for comment in comments {
                         if
-                            let commentId = comment["commentId"] as? Int,
-                            let comment = comment["comment"] as? String
+                            let commentId = comment["id"] as? Int,
+                            let comment = comment["text"] as? String
                         {
                             let post = Comment(commentId: commentId, comment: comment)
                             posts.append(post)
@@ -552,7 +564,7 @@ extension PostDetailViewController {
                 print("Response JSON: \(responseJSON)")
                 // 형식은 수정해줘야함.
                 if let result = responseJSON["result"] as? [String: Any],
-                   let ismine = result["ismine"] as? Bool{
+                   let ismine = result["isMine"] as? Bool{
                      self.IsMine = ismine //게시글 작성자와 사용자가 동일한지 판별
                     }
                 }else{ print("게시글 상세내용 조회 - JSON 파싱 오류") }
@@ -562,6 +574,7 @@ extension PostDetailViewController {
     //댓글 작성 메서드
     @objc func CommentBtnTapped() {
         print("CommentBtnTapped - called()")
+        var status = 0
         guard let commentText = commentField.text, !commentText.isEmpty else{
             return // 댓글 내용이 비어 있으면 아무 작업도 하지 않음
         }
@@ -591,11 +604,15 @@ extension PostDetailViewController {
             if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             // 서버로부터 받은 JSON 데이터 처리
                 print("Response JSON: \(responseJSON)")
+                status = responseJSON["status"] as? Int ?? 0
                 }
             }
-            // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
-            DispatchQueue.main.async {
-                self.CommentTableView.reloadData()
+            if status == 200 {
+                // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
+                print("댓글 전송이 성공했습니다. 테이블뷰를 reloadData 할게요.")
+                DispatchQueue.main.async {
+                    self.CommentTableView.reloadData()
+                }
             }
         }.resume()
     }
@@ -613,7 +630,7 @@ extension PostDetailViewController {
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
         guard let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)") else { return }
-
+        print("삭제하려는데 몇번 게시물인가요? - \(post.boardId)")
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -637,16 +654,18 @@ extension PostDetailViewController {
                 }
             }
             if status == 200 {
-                // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
-                let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
-                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
-                }
-                DeleteAlertController.addAction(CancelController)
-                self.present(DeleteAlertController, animated: true)
-                // 게시글이 삭제되면 Alert 팝업창과 함께 메인으로 가서 reload.data해야함.
-                // OpenBoardViewController로 이동
-                if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
-                    self.navigationController?.popToViewController(openboardViewController, animated: true)
+                DispatchQueue.main.async {
+                    // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
+                    let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+                    let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                    }
+                    DeleteAlertController.addAction(CancelController)
+                    self.present(DeleteAlertController, animated: true)
+                    // 게시글이 삭제되면 Alert 팝업창과 함께 메인으로 가서 reload.data해야함.
+                    // OpenBoardViewController로 이동
+                    if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+                        self.navigationController?.popToViewController(openboardViewController, animated: true)
+                    }
                 }
             }else{
                 print("게시글 삭제 실패")
@@ -689,12 +708,14 @@ extension PostDetailViewController {
                 }
             }
             if status == 200 {
-                // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
-                let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다.", preferredStyle: .alert)
-                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                DispatchQueue.main.async {
+                    // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
+                    let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다.", preferredStyle: .alert)
+                    let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                    }
+                    DeleteAlertController.addAction(CancelController)
+                    self.present(DeleteAlertController, animated: true)
                 }
-                DeleteAlertController.addAction(CancelController)
-                self.present(DeleteAlertController, animated: true)
             }else{
                 print("댓글 삭제 실패")
             }
@@ -736,12 +757,14 @@ extension PostDetailViewController {
                 }
             }
             if status == 200 {
-                // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
-                let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 신고 되었습니다.", preferredStyle: .alert)
-                let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                DispatchQueue.main.async{
+                    // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
+                    let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 신고 되었습니다.", preferredStyle: .alert)
+                    let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                    }
+                    DeleteAlertController.addAction(CancelController)
+                    self.present(DeleteAlertController, animated: true)
                 }
-                DeleteAlertController.addAction(CancelController)
-                self.present(DeleteAlertController, animated: true)
             }else{
                 print("댓글 신고 실패")
             }
