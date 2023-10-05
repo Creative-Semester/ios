@@ -292,9 +292,6 @@ class CouncilBoardViewController : UIViewController {
         super.viewWillAppear(animated)
         self.title = "학생회"
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.tintColor = .red

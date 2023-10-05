@@ -20,9 +20,6 @@ class ProfessorBoardViewController: UIViewController {
         
         return collectionView
     }()
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
