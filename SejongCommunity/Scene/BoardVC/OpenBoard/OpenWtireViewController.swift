@@ -277,17 +277,6 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             alertController.addAction(CancelController)
             present(alertController, animated: true)
         }else{
-            //적절할때 업로드 완료 팝업
-            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
-            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
-                // OpenBoardViewController로 이동
-                if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
-                    self.navigationController?.popToViewController(openboardViewController, animated: true)
-                }
-            }
-            alertController.addAction(CancelController)
-            present(alertController, animated: true)
-            // 나중에 순서 바꾸기, 통신이 완료되면 >> 업로드 완료 게시
             //MARK: image 통신
             // 이미지 배열을 서버로 업로드, 바디에 들어갈 imageInfoArray 업데이트
             print("이미지를 첨부하지 않습니까? - \(AddImageView[0].image)")
@@ -326,7 +315,7 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             let token = KeychainWrapper.standard.string(forKey: "AuthToken")
             request.setValue(token, forHTTPHeaderField: "accessToken")
-            
+            var status = 200
             // URLSession을 사용하여 서버와 통신
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                         // 서버 응답 처리
@@ -337,7 +326,20 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
                 if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                     // 서버로부터 받은 JSON 데이터 처리
                     print("Response JSON: \(responseJSON)")
+                    status = responseJSON["status"] as? Int ?? 0
                     }
+                }
+                if status == 200 {
+                    //적절할때. 업로드 완료가 되었을때. 팝업. reload
+                    let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
+                    let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                        // OpenBoardViewController로 이동
+                        if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+                            self.navigationController?.popToViewController(openboardViewController, animated: true)
+                        }
+                    }
+                    alertController.addAction(CancelController)
+                    self.present(alertController, animated: true)
                 }
             }
             task.resume() // 요청 보내기

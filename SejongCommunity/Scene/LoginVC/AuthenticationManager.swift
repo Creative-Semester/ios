@@ -31,6 +31,7 @@ class AuthenticationManager {
     static func isTokenValid() -> Bool {
         print("isTokenValid - called()")
         var Expiration = ""
+        var Message = ""
         var isValid = true
         //코드가 만료되었는지 확인 -> 리프레시 재발급
         var urlString = "http://15.164.161.53:8082/api/v1/auth/reissue"
@@ -63,9 +64,11 @@ class AuthenticationManager {
                     print("Response JSON: \(responseJSON)")
                     //토큰이 만료 되었는지 확인
                     print("토큰 유효성 검사 메서드에서의 status - \(responseJSON["status"]), code - \(responseJSON["code"]),  result - \(responseJSON["result"])")
-                    if let serverResponseCode = responseJSON["code"] as? String{
+                    if let serverResponseCode = responseJSON["code"] as? String,
+                        let message = responseJSON["message"] as? String{
                         Expiration = serverResponseCode
-                        print("토큰 유효성 검사 : \(Expiration)")
+                        Message = message
+                        print("토큰 유효성 검사 : \(Expiration), 메시지 : \(message)")
                     }else{
                         print("토큰 유효성 검사 에러 - Invalid JSON response")
                     }
@@ -80,8 +83,13 @@ class AuthenticationManager {
                         }else{
                             print("토큰 재발행 에러 - Invalid JSON response")
                         }
-                    }else{ //리프레시 토큰이 죽었다면 로그아웃 시켜야함. 로그인이 false(L003)
+                    }else if (Message == "사용자를 찾지 못했습니다" && Expiration == "U001") {
+                        //사용자를 찾지 못했을 경우 로그아웃 시켜야함.
                         isValid = false
+                        AuthenticationManager.logoutUser()
+                    }else if(Expiration == "L003"){ //리프레시 토큰이 죽었다면 로그아웃 시켜야함. 로그인이 false(L003)
+                        isValid = false
+                        AuthenticationManager.logoutUser()
                     }
                 }else{
                     print("reissue - 통신 에러")
@@ -93,12 +101,15 @@ class AuthenticationManager {
     }
     static func logoutUser() {
         print("AuthenticationManager.logoutUser - called()")
-        KeychainWrapper.standard.removeObject(forKey: kAuthTokenKey)
-        KeychainWrapper.standard.removeObject(forKey: krefreshTokenKey)
-        // 예: 로그인 화면을 다시 표시
-        let loginViewController = LoginViewController()
-        let navigationController = UINavigationController(rootViewController: loginViewController)
-        UIApplication.shared.keyWindow?.rootViewController = navigationController
+        DispatchQueue.main.async {
+                // 메인 스레드에서 UI 업데이트 수행
+                KeychainWrapper.standard.removeObject(forKey: kAuthTokenKey)
+                KeychainWrapper.standard.removeObject(forKey: krefreshTokenKey)
+                // 예: 로그인 화면을 다시 표시
+                let loginViewController = LoginViewController()
+                let navigationController = UINavigationController(rootViewController: loginViewController)
+                UIApplication.shared.keyWindow?.rootViewController = navigationController
+            }
     }
     // 토큰 유효성 검사
     static func validateToken() {

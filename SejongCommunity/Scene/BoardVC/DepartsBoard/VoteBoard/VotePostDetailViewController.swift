@@ -436,12 +436,8 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
 
     @objc func toolBtnTapped() {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        getAuthorInfo() // 게시글 작성자 정보를 가져옴
-        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
-        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
-        
         //게시글의 작성자와 현재 사용자가 같을때
-        if isMyPost {
+        if true {
                     // 삭제
             let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
                 self.PostDelete()
@@ -483,12 +479,8 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
     //댓글을 눌렀을때 신고하기 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        getAuthorInfo() // 게시글 작성자 정보를 가져옴
-        getCurrentUserInfo() // 게시글 사용자 정보를 가져옴
-        let isMyPost = checkIfCurrentIsAuthorOfPost(userIdOfAuthor: userIdOfAuthor, currentUserId: currentUserId) //게시글의 작성자와 현재 사용자가 동일한지 판별
-        
         //게시글의 작성자와 현재 사용자가 같을때
-        if isMyPost {
+        if true {
                     // 삭제
             let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
                 self.CommentDelete()
@@ -529,64 +521,6 @@ extension VotePostDetailViewController {
         //게시물 작성자와 현재 작성자를 판별
         return userIdOfAuthor == currentUserId // 현재는 내 게시물로 가정 true 반환
     }
-    //현재 게시물의 작성자, 사용자를 가져오는 메서드
-    // 현재 사용자 정보를 가져오는 메서드
-    func getCurrentUserInfo() {
-        print("getCurrentUserInfo - called()")
-        
-        // 현재 사용자의 사용자 ID 또는 다른 식별자를 사용하여 API 호출
-        let currentUserId = "현재 사용자의 사용자 ID" // 실제 사용자 ID 또는 식별자로 대체해야 합니다.
-        
-        guard let url = URL(string: "https://yourapi.com/userInfo/\(currentUserId)") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        // 인증 헤더 또는 토큰을 추가!!
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-            if let data = data {
-                do {
-                    let user = try JSONDecoder().decode(User.self, from: data)
-                    self.currentUserId = user.userId
-                    // 여기서 현재 사용자 정보를 필요한 속성에 저장하거나 처리할 수 있습니다.
-                } catch {
-                    print("Error decoding current user data: \(error.localizedDescription)")
-                }
-            }
-        }
-        task.resume()
-    }
-    // 게시물의 작성자 정보를 가져오는 메서드
-    func getAuthorInfo() {
-        print("getAuthorInfo - called()")
-        
-        
-        guard let url = URL(string: "https://yourapi.com/userInfo/") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        // 인증 헤더 또는 토큰을 추가!!
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-            if let data = data {
-                do {
-                    let user = try JSONDecoder().decode(User.self, from: data)
-                    self.userIdOfAuthor = user.userId
-                    // 게시물 작성자 정보를 필요한 속성에 저장, 처리 가능
-                } catch {
-                    print("Error decoding author data: \(error.localizedDescription)")
-                }
-            }
-        }
-        task.resume()
-    }
-
     //게시글 삭제 메서드
     func PostDelete() {
         print("PostDelete - called()")

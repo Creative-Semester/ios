@@ -213,19 +213,10 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     @objc func updatePage() {
         print("updatePage() - called")
         currentPage = 0 //처음 페이지부터 다시 시작
-        //스크롤을 감지해서 인디케이터가 시작되면
-        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
-        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    self.activityIndicator.stopAnimating()
-                }
+        //스크롤을 감지해서 인디케이터가 시작되면 종료가 되면 로딩인디케이터를 멈처야함
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            // 로딩 인디케이터 멈춤
-//            DispatchQueue.main.async {
-//                self.activityIndicator.stopAnimating()
-//            }
             // 데이터를 비워줌
             self.posts.removeAll()
             if let newPosts = newPosts {
@@ -241,6 +232,10 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
                 // 오류 처리
                 print("Error fetching next page: \(error.localizedDescription)")
             }
+            // 로딩 인디케이터 멈춤
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+            }
             self.updatePageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
@@ -249,19 +244,10 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         print("loadNextPage() - called")
         currentPage += 1
         isLoading = true
-        //스크롤을 감지해서 인디케이터가 시작되면
-        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
-        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    self.activityIndicator.stopAnimating()
-                }
+        //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
 
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            // 로딩 인디케이터 멈춤
-//            DispatchQueue.main.async {
-//                self.activityIndicator.stopAnimating()
-//            }
             if let newPosts = newPosts {
                 self.posts += newPosts
                 // 테이블뷰 갱신
@@ -271,6 +257,10 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
                 print("loadNextPage - Success")
             } else if let error = error {
                 print("Error fetching next page: \(error.localizedDescription)")
+            }
+            // 로딩 인디케이터 멈춤
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
             }
             self.isLoading = false
             self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
