@@ -13,8 +13,10 @@ import Kingfisher //url - > image 변환 라이브러리
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
 //댓글 창
 struct Comment : Decodable{
+    let day : String // 생성 날짜
     let commentId : Int // 댓글 고유 ID
     let comment : String // 댓글 내용
+    let commentIsMine : Bool // 내 댓글인지 확인
 }
 //게시물의 상세 내용을 보여주는 UIViewController
 class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate{
@@ -25,14 +27,12 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     var currentPage = 0
     //해당 게시글 작성자와 사용자가 동일한지 비교하기 위해 전역변수 선언
     var IsMine = false
-    //댓글 작성자와 사용자를 비교하기 위해 전연변수 선언
-    var CommentIsMine = false
     // 댓글을 저장할 배열
     var comments : [Comment] = [
-        Comment(commentId:1,comment: "첫 번째 댓글입니다"),
-        Comment(commentId:2,comment: "두 번째 댓글입니다"),
-        Comment(commentId:3,comment: "세 번째 댓글입니다"),
-        Comment(commentId:3,comment: "네 번째 댓글입니다")
+        Comment(day: "2022", commentId:0, comment: "첫 번째 댓글입니다", commentIsMine: false),
+        Comment(day: "2022", commentId:0, comment: "두 번째 댓글입니다", commentIsMine: false),
+        Comment(day: "2022", commentId:0, comment: "세 번째 댓글입니다", commentIsMine: false),
+        Comment(day: "2022", commentId:0, comment: "네 번째 댓글입니다", commentIsMine: false)
     ]
     let post : Post
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
@@ -46,6 +46,8 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     // 댓글창 입력 전역변수
     var commentField = ExpandingTextView()
     var vview = UIView()
+    var ScrollView = UIScrollView()
+    var StackView = UIStackView()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -61,10 +63,10 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                 if let newPosts = newPosts {
                     // 초기 데이터를 posts 배열에 추가
                     self.comments += newPosts
-                    
                     // 테이블 뷰 갱신
                     DispatchQueue.main.async {
                         self.CommentTableView.reloadData()
+                        print("처음 가져오고 난 후 comments의 배열입니다. - \(self.comments)")
                     }
                     print("Initial data fetch - Success")
                 } else if let error = error {
@@ -72,7 +74,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                     print("Error fetching initial data: \(error.localizedDescription)")
                 }
             }
-        
         title = post.title
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
@@ -123,12 +124,10 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     }
     func setupView(){
         //각 뷰들을 넣을 스크롤뷰 생성
-        let ScrollView = UIScrollView()
         ScrollView.backgroundColor = .white
         ScrollView.isScrollEnabled = true
         ScrollView.showsHorizontalScrollIndicator = true
         //스택뷰를 이용해 오토레이아웃 설정
-        let StackView = UIStackView()
         StackView.axis = .vertical
         StackView.distribution = .fill
         StackView.alignment = .fill
@@ -186,7 +185,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                     }
         }
         //게시물의 댓글을 나열 할 뷰
-        let CommentTableView = UITableView()
         CommentTableView.backgroundColor = .white
         CommentTableView.delegate = self
         CommentTableView.dataSource = self
@@ -343,6 +341,10 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
         let comment = comments[indexPath.row]
         cell.commentLabel.text = comment.comment
+        print("댓글이 업데이트가 되었는지 확인합니다. \(comment.comment)")
+        // 업데이트가 완료된 후에 이 부분에서 셀 정보를 확인할 수 있습니다.
+        let cellText = cell.commentLabel.text ?? "No Text"
+        print("Cell at section \(indexPath.section), row \(indexPath.row): \(cellText)")
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -352,14 +354,10 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     //댓글을 눌렀을때 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
-        CommentIsMine = false
         //댓글 조회를 통해 아이디를 가져와 해당 셀이 ismine인지 판별
         let comment = comments[indexPath.row]
-        checkIfCurrentIsAuthorOfPost(userIdOfAuthor: 0, currentUserId: comment.commentId) //사용자의 아이디 수정
-        print("해당 댓글이 내 댓글인지 확인 - \(CommentIsMine)")
         //댓글 작성자와 현재 사용자가 같을때
-        if CommentIsMine {
-                    // 삭제
+        if comment.commentIsMine {// 삭제
             let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
                 self.CommentDelete(commentId: comment.commentId) //댓글 삭제 메서드
                     }
@@ -428,7 +426,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             if let newPosts = newPosts {
                 // 새로운 데이터를 기존 데이터와 병합
                 self.comments += newPosts
-                
+                print("갱신된 댓글 테이블입니다 - \(self.comments)")
                 // 테이블 뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
@@ -523,10 +521,12 @@ extension PostDetailViewController {
                     var posts = [Comment]()
                     for comment in comments {
                         if
+                            let day = comment["createdTime"] as? String,
                             let commentId = comment["id"] as? Int,
-                            let comment = comment["text"] as? String
+                            let commentText = comment["text"] as? String,
+                            let isMine = comment["isMine"] as? Bool
                         {
-                            let post = Comment(commentId: commentId, comment: comment)
+                            let post = Comment(day: day, commentId: commentId, comment: commentText, commentIsMine: isMine)
                             posts.append(post)
                         }
                     }
@@ -611,18 +611,11 @@ extension PostDetailViewController {
                 // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
                 print("댓글 전송이 성공했습니다. 테이블뷰를 reloadData 할게요.")
                 DispatchQueue.main.async {
+                    self.commentField.text = ""
                     self.CommentTableView.reloadData()
                 }
             }
         }.resume()
-    }
-    //게시물 작성자와 현재 사용자를 비교하는 함수
-    func checkIfCurrentIsAuthorOfPost(userIdOfAuthor: Int, currentUserId: Int){
-        print("checkIfCurrentIsAutorOfPost - called()")
-        //게시물 작성자와 현재 작성자를 판별
-        if userIdOfAuthor == currentUserId {
-            CommentIsMine = true // 현재는 내 게시물로 가정 true 반환
-        }
     }
     //게시글 삭제 메서드
     func PostDelete() {
@@ -658,14 +651,14 @@ extension PostDetailViewController {
                     // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
                     let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                        // 게시글이 삭제되면 Alert 팝업창과 함께 메인으로 돌아갑니다.
+                        if let navigationController = self.navigationController {
+                                    navigationController.popViewController(animated: true)
+                                }
                     }
                     DeleteAlertController.addAction(CancelController)
                     self.present(DeleteAlertController, animated: true)
                     // 게시글이 삭제되면 Alert 팝업창과 함께 메인으로 가서 reload.data해야함.
-                    // OpenBoardViewController로 이동
-                    if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
-                        self.navigationController?.popToViewController(openboardViewController, animated: true)
-                    }
                 }
             }else{
                 print("게시글 삭제 실패")
