@@ -29,10 +29,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     var IsMine = false
     // 댓글을 저장할 배열
     var comments : [Comment] = [
-        Comment(day: "2022", commentId:0, comment: "첫 번째 댓글입니다", commentIsMine: false),
-        Comment(day: "2022", commentId:0, comment: "두 번째 댓글입니다", commentIsMine: false),
-        Comment(day: "2022", commentId:0, comment: "세 번째 댓글입니다", commentIsMine: false),
-        Comment(day: "2022", commentId:0, comment: "네 번째 댓글입니다", commentIsMine: false)
     ]
     let post : Post
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
@@ -207,7 +203,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             make.trailing.leading.equalToSuperview().inset(0)
         }
         StackView.snp.makeConstraints{ (make) in
-//            make.height.equalTo(CommentTableView.frame.height)
             if (comments.count < 5 && post.images.imageUrl.isEmpty) {
                 make.height.equalTo(ScrollView.snp.height)
                 make.bottom.equalToSuperview().offset(-10)
@@ -430,6 +425,21 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                 // 테이블 뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
+                    self.StackView.snp.remakeConstraints{ (make) in
+                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
+                            make.height.equalTo(self.ScrollView.snp.height)
+                            make.bottom.equalToSuperview().offset(-10)
+                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
+                            print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                            make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
+                            make.bottom.equalToSuperview().offset(-0)
+                        }else{
+                            make.height.equalTo( CGFloat((self.comments.count + 4) * 100))
+                            make.bottom.equalToSuperview().offset(-0)
+                        }
+                        make.width.equalTo(self.ScrollView.snp.width)
+                        make.top.equalToSuperview().offset(0)
+                    }
                 }
                 print("updatePage - Success")
             } else if let error = error {
@@ -456,6 +466,21 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                 // 테이블뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
+                    self.StackView.snp.remakeConstraints{ (make) in
+                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
+                            make.height.equalTo(self.ScrollView.snp.height)
+                            make.bottom.equalToSuperview().offset(-10)
+                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
+                            print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                            make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
+                            make.bottom.equalToSuperview().offset(-0)
+                        }else{
+                            make.height.equalTo( CGFloat((self.comments.count + 4) * 100))
+                            make.bottom.equalToSuperview().offset(-0)
+                        }
+                        make.width.equalTo(self.ScrollView.snp.width)
+                        make.top.equalToSuperview().offset(0)
+                    }
                 }
                 print("loadNextPage - Success")
             } else if let error = error {
