@@ -54,6 +54,12 @@
 		F1E5478D2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */; };
 		F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */; };
 		F1E547962AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547952AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift */; };
+		F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */; };
+		F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = F1E5479A2AC2B27E00671182 /* DGCharts */; };
+		F1E5479D2AC8502D00671182 /* MyChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */; };
+		F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */; };
+		F1E547A22ACABED300671182 /* sampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A12ACABED300671182 /* sampleModel.swift */; };
+		F1E547A52ACABEF700671182 /* sampleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A42ACABEF700671182 /* sampleService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +112,11 @@
 		F1E5478C2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorDetailClassViewController.swift; sourceTree = "<group>"; };
 		F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorReviewTableViewCell.swift; sourceTree = "<group>"; };
 		F1E547952AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteOfficeDetailsViewController.swift; sourceTree = "<group>"; };
+		F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeBoardMenuCollectionViewCell.swift; sourceTree = "<group>"; };
+		F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChattingTableViewCell.swift; sourceTree = "<group>"; };
+		F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourChattingTableViewCell.swift; sourceTree = "<group>"; };
+		F1E547A12ACABED300671182 /* sampleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sampleModel.swift; sourceTree = "<group>"; };
+		F1E547A42ACABEF700671182 /* sampleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sampleService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */,
+				F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */,
 				E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */,
 				E4B1E7522ABD769A00CD4DE2 /* SwiftKeychainWrapper in Frameworks */,
 			);
@@ -251,6 +263,8 @@
 		F124650E2A67BAB500037D8C /* SejongCommunity */ = {
 			isa = PBXGroup;
 			children = (
+				F1E547A02ACABEBA00671182 /* Model */,
+				F1E547A32ACABEDA00671182 /* Service */,
 				F1E547382A84C2CA00671182 /* Scene */,
 				F124650F2A67BAB500037D8C /* AppDelegate.swift */,
 				F12465112A67BAB500037D8C /* SceneDelegate.swift */,
@@ -292,6 +306,7 @@
 				F1E5472D2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift */,
 				F1E5472B2A82680B00671182 /* OfficeDetailsTableViewCell.swift */,
 				F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */,
+				F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */,
 				F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */,
 				F1E547952AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift */,
 			);
@@ -304,6 +319,8 @@
 				F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */,
 				F1E547442A9373B300671182 /* ChatTableViewCell.swift */,
 				F1E547462A937B8000671182 /* ChatRoomViewController.swift */,
+				F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */,
+				F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -319,6 +336,22 @@
 				F1E5478E2AB8640800671182 /* ProfessorReviewTableViewCell.swift */,
 			);
 			path = ProfessorBoard;
+			sourceTree = "<group>";
+		};
+		F1E547A02ACABEBA00671182 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F1E547A12ACABED300671182 /* sampleModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		F1E547A32ACABEDA00671182 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				F1E547A42ACABEF700671182 /* sampleService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -341,6 +374,7 @@
 			name = SejongCommunity;
 			packageProductDependencies = (
 				E4D466592AB1B7DA003E5DD9 /* FSCalendar */,
+				F1E5479A2AC2B27E00671182 /* DGCharts */,
 				E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */,
 			);
 			productName = SejongCommunity;
@@ -373,6 +407,7 @@
 			mainGroup = F12465032A67BAB500037D8C;
 			packageReferences = (
 				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */,
 				E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
 			);
 			productRefGroup = F124650D2A67BAB500037D8C /* Products */;
@@ -452,6 +487,7 @@
 				E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */,
 				E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */,
 				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
+				F1E547A22ACABED300671182 /* sampleModel.swift in Sources */,
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
 				E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */,
@@ -463,6 +499,7 @@
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
+				F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */,
 				E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */,
 				E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */,
 				F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */,
@@ -471,6 +508,8 @@
 				E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */,
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
+				F1E547A52ACABEF700671182 /* sampleService.swift in Sources */,
+				F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				E4E9F65E2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift in Sources */,
 				F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */,
@@ -484,6 +523,7 @@
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,
 				E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */,
+				F1E5479D2AC8502D00671182 /* MyChattingTableViewCell.swift in Sources */,
 				F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -714,6 +754,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -726,6 +774,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */;
 			productName = FSCalendar;
+		};
+		F1E5479A2AC2B27E00671182 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -99,16 +99,16 @@ class ProfessorDetailClassViewController: UIViewController {
         reviewView.addSubview(reviewRegisterButton)
         reviewRegisterButton.snp.makeConstraints{ make in
             make.trailing.equalTo(reviewView.snp.trailing).inset(12)
-            make.centerY.equalTo(reviewView.snp.centerY)
+            make.bottom.equalTo(reviewView.snp.bottom).inset(5)
             make.height.width.equalTo(40)
         }
         
         reviewView.addSubview(reviewTextView)
         reviewTextView.snp.makeConstraints{ make in
+            make.top.equalTo(reviewView.snp.top).offset(5)
             make.leading.equalTo(reviewView.snp.leading).inset(12)
             make.trailing.equalTo(reviewRegisterButton.snp.leading).offset(-6)
-            make.centerY.equalTo(reviewView.snp.centerY)
-            make.height.equalTo(40)
+            make.bottom.equalTo(reviewView.snp.bottom).offset(-5)
         }
         
         view.addSubview(professorReviewTableView)
@@ -134,9 +134,47 @@ class ProfessorDetailClassViewController: UIViewController {
         
         return size.height
     }
+    
+    func heightForReviewText(_ text: String) -> CGFloat {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.numberOfLines = 0
+        label.text = text
+        
+        // 텍스트를 표시하고 있는 라벨의 크기를 계산합니다.
+        let size = label.sizeThatFits(CGSize(width: reviewTextView.bounds.width, height: CGFloat.greatestFiniteMagnitude))
+        
+        // 최소 높이를 50으로 설정
+        let minHeight: CGFloat = 50.0
+        
+        // 최대 4줄까지 높이가 커지도록 설정
+        let maxHeight = label.font.lineHeight * 4 + 10 // 여백 등을 고려하여 최대 높이 계산
+        
+        // 최소 높이와 실제 높이, 최대 높이 중 적절한 값을 반환
+        return max(min(size.height + 34, maxHeight), minHeight)
+    }
+    
+    // 높이를 계산하고 그 결과에 따라 reviewTextView의 높이 제약을 업데이트합니다.
+    func updateReviewTextViewHeight() {
+        // 원본 텍스트를 가져와서 높이를 계산합니다.
+        let originalText = reviewTextView.text ?? ""
+        let newHeight = heightForReviewText(originalText)
+        
+        // 높이 제약을 업데이트합니다.
+        reviewView.snp.updateConstraints { make in
+            make.height.equalTo(newHeight)
+        }
+        
+        // 화면 갱신을 요청하여 제약 조정을 반영합니다.
+        view.layoutIfNeeded()
+    }
 }
 
 extension ProfessorDetailClassViewController: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        updateReviewTextViewHeight()
+    }
     
     //엔터키를 눌렀을 경우 서버에 /n값을 추가하기 위해서 해당 함수를 추가했습니다.
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
