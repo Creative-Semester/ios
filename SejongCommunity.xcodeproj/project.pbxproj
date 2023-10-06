@@ -29,7 +29,7 @@
 		E4E9F6582AC85A2B00F8AEAD /* MyCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F6572AC85A2B00F8AEAD /* MyCommentViewController.swift */; };
 		E4E9F65C2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */; };
 		E4E9F65E2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F65D2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift */; };
-		E4E9F6602ACEC6CC00F8AEAD /* HeaderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F65F2ACEC6CC00F8AEAD /* HeaderViewCell.swift */; };
+		E4E9F6622AD06C5200F8AEAD /* CustomCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F6612AD06C5200F8AEAD /* CustomCommentTableViewCell.swift */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
 		F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12465112A67BAB500037D8C /* SceneDelegate.swift */; };
 		F12465192A67BAB600037D8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12465182A67BAB600037D8C /* Assets.xcassets */; };
@@ -85,7 +85,7 @@
 		E4E9F6572AC85A2B00F8AEAD /* MyCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCommentViewController.swift; sourceTree = "<group>"; };
 		E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWriteDetailViewController.swift; sourceTree = "<group>"; };
 		E4E9F65D2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCommentDetailViewController.swift; sourceTree = "<group>"; };
-		E4E9F65F2ACEC6CC00F8AEAD /* HeaderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderViewCell.swift; sourceTree = "<group>"; };
+		E4E9F6612AD06C5200F8AEAD /* CustomCommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCommentTableViewCell.swift; sourceTree = "<group>"; };
 		E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.debug.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.debug.xcconfig"; sourceTree = "<group>"; };
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F124650F2A67BAB500037D8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -157,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */,
+				E4E9F6612AD06C5200F8AEAD /* CustomCommentTableViewCell.swift */,
 				F1E5473B2A84C3E500671182 /* ProfessorBoard */,
 				F1E547392A84C31900671182 /* CouncilBoard */,
 				F1E547312A84C0A900671182 /* DepartsBoard */,
@@ -182,7 +183,6 @@
 				E4021E6A2A6F8B1000FFEAB2 /* OpenBoardViewController.swift */,
 				E4021E792A76494000FFEAB2 /* OpenWtireViewController.swift */,
 				E4021E772A76414400FFEAB2 /* PostDetailViewController.swift */,
-				E4E9F65F2ACEC6CC00F8AEAD /* HeaderViewCell.swift */,
 			);
 			path = OpenBoard;
 			sourceTree = "<group>";
@@ -484,7 +484,6 @@
 				E4021E6B2A6F8B1000FFEAB2 /* OpenBoardViewController.swift in Sources */,
 				E4021E782A76414400FFEAB2 /* PostDetailViewController.swift in Sources */,
 				F1E5472C2A82680B00671182 /* OfficeDetailsTableViewCell.swift in Sources */,
-				E4E9F6602ACEC6CC00F8AEAD /* HeaderViewCell.swift in Sources */,
 				E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */,
 				F1E5478D2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift in Sources */,
 				F1E547962AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift in Sources */,
@@ -495,6 +494,7 @@
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
 				E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */,
+				E4E9F6622AD06C5200F8AEAD /* CustomCommentTableViewCell.swift in Sources */,
 				F1E547352A84C13D00671182 /* DepartOpenWriteViewController.swift in Sources */,
 				F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */,
 				F1E5477F2AA0878700671182 /* ProfessorBoardViewController.swift in Sources */,

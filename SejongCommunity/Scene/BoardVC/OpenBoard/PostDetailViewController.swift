@@ -48,6 +48,8 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
+        CommentTableView.estimatedRowHeight = 100 // 예상 높이 (원하는 초기 높이)
+        CommentTableView.rowHeight = UITableView.automaticDimension
         BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
         // 로딩 인디케이터 뷰 초기 설정
         activityIndicator.color = .gray
@@ -188,7 +190,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         CommentTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         CommentTableView.showsHorizontalScrollIndicator = false
         CommentTableView.isScrollEnabled = false
-        CommentTableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
+        CommentTableView.register(CustomCommentTableViewCell.self, forCellReuseIdentifier: "cell")
         
         
         StackView.addArrangedSubview(DetailView)
@@ -333,19 +335,20 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         return comments.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomCommentTableViewCell
         let comment = comments[indexPath.row]
         cell.commentLabel.text = comment.comment
-        print("댓글이 업데이트가 되었는지 확인합니다. \(comment.comment)")
+        cell.DayLabel.text = comment.day
+        cell.commentLabel.sizeToFit()
         // 업데이트가 완료된 후에 이 부분에서 셀 정보를 확인할 수 있습니다.
         let cellText = cell.commentLabel.text ?? "No Text"
         print("Cell at section \(indexPath.section), row \(indexPath.row): \(cellText)")
         return cell
     }
     // MARK: - UITableViewDelegate
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 100
+//    }
     //댓글을 눌렀을때 팝업
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let alertController = UIAlertController(title: "댓글 메뉴", message: nil, preferredStyle: .alert)
@@ -521,7 +524,7 @@ class ExpandingTextView: UITextView {
 extension PostDetailViewController {
     //MARK: - 서버에서 데이터 가져오기 -> 댓글 조회
     func fetchPosts(page: Int, completion: @escaping ([Comment]?, Error?) -> Void) {
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment")!
+        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(post.page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)

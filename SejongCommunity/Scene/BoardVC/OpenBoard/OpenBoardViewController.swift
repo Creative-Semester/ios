@@ -17,6 +17,7 @@ struct Post: Decodable {
     let content: String
     let images: Images
     let day: String
+    let page: Int
     struct Images: Decodable {
         let imageName: String
         let imageUrl: String
@@ -129,14 +130,14 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
     func fetchPosts(page: Int, completion: @escaping ([Post]?, Error?) -> Void) {
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards?page=\(page)")!
+        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards?page=\(page)&boardType=Free")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(acToken, forHTTPHeaderField: "accessToken")
-
+        var page = currentPage
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completion(nil, error)
@@ -153,16 +154,16 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
                 if let result = json?["result"] as? [String: Any], let boards = result["boards"] as? [[String: Any]] {
                     var posts = [Post]()
                     for board in boards {
-                        if
-                            let boardId = board["boardId"] as? Int,
-                            let title = board["title"] as? String,
-                            let content = board["content"] as? String,
-                            let day = board["day"] as? String,
-                            let images = board["images"] as? [String: Any],
-                            let imageUrls = images["imageUrl"] as? String,
-                            let imageNames = images["imageName"] as? String
+                        if let title = board["title"] as? String,
+                           let content = board["content"] as? String,
+                           let boardId = board["boardId"] as? Int,
+                           // 이미지 가져오기 수정해야함.
+//                           let images = board["images"] as? [String: Any],
+//                           let imageUrls = images["imageUrl"] as? String,
+//                           let imageNames = images["imageName"] as? String,
+                           let day = board["createdTime"] as? String
                         {
-                            let post = Post(boardId: boardId, title: title, content: content, images: Post.Images(imageName: imageNames, imageUrl: imageUrls), day: day)
+                            let post = Post(boardId: boardId, title: title, content: content, images: Post.Images(imageName: "", imageUrl: ""), day: day, page: page)
                             posts.append(post)
                         }
                     }

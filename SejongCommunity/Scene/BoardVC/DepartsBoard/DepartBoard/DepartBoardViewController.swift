@@ -7,12 +7,19 @@
 
 import Foundation
 import UIKit
+import SwiftKeychainWrapper
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
-struct DepartPost {
-    let title : String
-    let content : String
-    let image : UIImage?
-    let day : String
+struct DepartPost: Decodable {
+    let boardId: Int
+    let title: String
+    let content: String
+    let images: Images
+    let day: String
+    let page: Int
+    struct Images: Decodable {
+        let imageName: String
+        let imageUrl: String
+    }
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class DepartBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -38,13 +45,11 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     }()
     //페이지 번호와 크기
     var currentPage = 0
-    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
+    
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
+    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     var departposts : [DepartPost] = [
-        DepartPost(title: "첫 번째 게시물", content: "첫 번째 게시물 내용입니다.", image: UIImage(named: "studentCouncil")!, day: "2023-09-19 19:44"),
-        DepartPost(title: "두 번째 게시물", content: "두 번째 게시물 내용입니다.", image: nil, day: "2023-09-18 15:42"),
-        DepartPost(title: "세 번째 게시물", content: "세 번째 게시물 내용입니다.", image: UIImage(named: "SideLogo")!, day: "2023-09-13 11:02")
     ]
     override func viewDidLoad() {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
@@ -107,6 +112,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         tableView.delegate = self
         tableView.dataSource = self
         tableView.frame = view.bounds
+        tableView.isScrollEnabled = true
         tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
         // 탭 바의 높이만큼 상단 여백 추가
         tableView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
@@ -126,8 +132,19 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         let post = departposts[indexPath.row]
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
-        cell.postImageView.image = post.image
         cell.DayLabel.text = post.day
+        
+        //MARK: - URL to Image Conversion
+        // 첫 번째 이미지가 nil이면 안함.
+        if !post.images.imageUrl.isEmpty {
+            // 이미지 URL 가져오기
+            if let imageUrl = URL(string: post.images.imageUrl) {
+                // KingFisher를 사용하여 이미지 로드 및 표시
+                print("이미지를 가져옵니다. - \(post.images.imageUrl)")
+                print("이미지를 post 합니다. \(imageUrl)")
+                cell.postImageView.kf.setImage(with: imageUrl)
+            }
+        }
         return cell
     }
     //학생회 공지사항, 투표를 할 뷰를 나눌 탭바 메서드
@@ -181,35 +198,54 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
-    func fetchPosts(page: Int, completion: @escaping ([DepartPost]?, Error?) -> Void){
-        // 서버에서 페이지와 페이지 크기를 기반으로 게시글 데이터를 가져옴
-        // 결과는 completion 핸들러를 통해 반환
-        // URLSession을 사용하여 데이터를 가져오는 경우
-        let url = URL(string: "https://example.com/api/posts?page=\(page)")!
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-                // 요청이 완료된 후 실행될 클로저
-                // 에러 처리
-                if let error = error {
-                    completion(nil, error)
-                    return
-                }
-                // 데이터 파싱
-                guard let data = data else {
-                    completion(nil, nil) // 데이터가 없는 경우
-                    return
-                }
-                do {
-                    // JSON 데이터를 파싱하여 Post 객체 배열로 변환
-//                    let posts = try JSONDecoder().decode([Post].self, from: data)
+    func fetchPosts(page: Int, completion: @escaping ([DepartPost]?, Error?) -> Void) {
+        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards?page=\(page)&boardType=Council")!
+        if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
+        let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(acToken, forHTTPHeaderField: "accessToken")
+        var page = currentPage
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                completion(nil, error)
+                return
+            }
 
-                    // 성공적으로 데이터를 가져온 경우
-//                    completion(posts, nil)
-                } catch {
-                    // JSON 파싱 오류 처리
-                    completion(nil, error)
+            guard let data = data else {
+                completion(nil, nil)
+                return
+            }
+
+            do {
+                let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                if let result = json?["result"] as? [String: Any], let boards = result["boards"] as? [[String: Any]] {
+                    var posts = [DepartPost]()
+                    for board in boards {
+                        if let title = board["title"] as? String,
+                           let content = board["content"] as? String,
+                           let boardId = board["boardId"] as? Int,
+                           // 이미지 가져오기 수정해야함.
+//                           let images = board["images"] as? [String: Any],
+//                           let imageUrls = images["imageUrl"] as? String,
+//                           let imageNames = images["imageName"] as? String,
+                           let day = board["createdTime"] as? String
+                        {
+                            let post = DepartPost(boardId: boardId, title: title, content: content, images: DepartPost.Images(imageName: "", imageUrl: ""), day: day, page: page)
+                            posts.append(post)
+                        }
+                    }
+                    completion(posts, nil)
+                } else {
+                    completion(nil, nil)
                 }
-            }.resume() // URLSession 작업 시작
+            } catch {
+                completion(nil, error)
+            }
+        }.resume()
     }
+
     var isScrolling = false
     var lastContentOffsetY : CGFloat = 0
     var isScrollingDown = false
@@ -242,27 +278,16 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
             }
         }
     }
-
     //새로운 페이지 새로고침
     @objc func updatePage() {
         print("updatePage() - called")
         currentPage = 0 //처음 페이지부터 다시 시작
-        isLoading = false
-        //스크롤을 감지해서 인디케이터가 시작되면
-        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
-        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    self.activityIndicator.stopAnimating()
-                }
-        
+        //스크롤을 감지해서 인디케이터가 시작되면 종료가 되면 로딩인디케이터를 멈처야함
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            // 로딩 인디케이터 멈춤
-//            DispatchQueue.main.async {
-//                self.activityIndicator.stopAnimating()
-//            }
-            
+            // 데이터를 비워줌
+            self.departposts.removeAll()
             if let newPosts = newPosts {
                 // 새로운 데이터를 기존 데이터와 병합
                 self.departposts += newPosts
@@ -276,7 +301,11 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
                 // 오류 처리
                 print("Error fetching next page: \(error.localizedDescription)")
             }
-            self.isLoading = false
+            // 로딩 인디케이터 멈춤
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+            }
+            self.updatePageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
     //스크롤이 아래로 내려갈때 기존페이지 + 다음 페이지 로드
@@ -284,28 +313,23 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         print("loadNextPage() - called")
         currentPage += 1
         isLoading = true
-        //스크롤을 감지해서 인디케이터가 시작되면
-        //로딩인디케이터를 중지 >> 변경해줘야함. 통신이 끝나면 정지
-        // 특정 시간(예: 2초) 후에 로딩 인디케이터 정지
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    self.activityIndicator.stopAnimating()
-                }
+        //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
 
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            // 로딩 인디케이터 멈춤
-//            DispatchQueue.main.async {
-//                self.activityIndicator.stopAnimating()
-//            }
             if let newPosts = newPosts {
                 self.departposts += newPosts
-
+                // 테이블뷰 갱신
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
                 print("loadNextPage - Success")
             } else if let error = error {
                 print("Error fetching next page: \(error.localizedDescription)")
+            }
+            // 로딩 인디케이터 멈춤
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
             }
             self.isLoading = false
             self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
