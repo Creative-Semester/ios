@@ -20,7 +20,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
     // DatePicker를 지연 초기화
     lazy var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
-        picker.datePickerMode = .date
+        picker.datePickerMode = .dateAndTime
         picker.locale = Locale(identifier: "ko_KR")
         picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         return picker
@@ -31,7 +31,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
     var deadLine = ""
     func updateDateLabel() {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
         let selectedDate = datePicker.date
         let formattedDate = dateFormatter.string(from: selectedDate)
         deadLine = formattedDate

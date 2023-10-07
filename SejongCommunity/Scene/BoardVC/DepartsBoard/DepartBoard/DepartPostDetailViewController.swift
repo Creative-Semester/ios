@@ -100,6 +100,7 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         let iconImage = UIImage(systemName: "message")
         CommentBtn.setImage(iconImage, for: .normal)
         CommentBtn.tintColor = .black
+        CommentBtn.addTarget(self, action: #selector(CommentBtnTapped), for: .touchUpInside)
         vview.addSubview(CommentBtn)
         //SnapKit을 이용한 오토레이아웃 설정
         CommentBtn.snp.makeConstraints{ (make) in
@@ -187,7 +188,7 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         CommentTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         CommentTableView.showsHorizontalScrollIndicator = false
         CommentTableView.isScrollEnabled = false
-        CommentTableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
+        CommentTableView.register(CustomCommentTableViewCell.self, forCellReuseIdentifier: "cell")
         
         
         StackView.addArrangedSubview(DetailView)
@@ -298,8 +299,6 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
     //게시글의 툴버튼을 눌렀을 때 팝업
     @objc func toolBtnTapped() {
         let alertController = UIAlertController(title: "게시글 메뉴", message: nil, preferredStyle: .alert)
-        let isMyPost = true //게시글의 작성자와 현재 사용자가 동일한지 판별
-        //ismine으로 수정해야함.
         print("해당 게시물이 내 게시글인지 확인 - \(IsMine)")
         //게시글의 작성자와 현재 사용자가 같을때
         if IsMine {
