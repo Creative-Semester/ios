@@ -1038,7 +1038,7 @@ extension VotePostDetailViewController {
             if status == 200 {
                 // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
                 DispatchQueue.main.async {
-                    //메인스레드에서 실행할 기능
+                    
                 }
             }
         }.resume()
