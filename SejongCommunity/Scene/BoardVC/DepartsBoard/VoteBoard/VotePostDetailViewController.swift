@@ -400,11 +400,7 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
                 isAgreed = true
                 // 투표를 조회해서 찬성, 반대 수 가져오기
                 VoteStatusCheck()
-                agreeCountLabel.text = "찬성: \(agreeCount)"
-                //사용자가 이미 투표한 경우 투표를 못하게 해야함.
-                agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
-                agreeButton.isEnabled = false
-                updateRatioLabel()
+                agreeCountLabel.text = "찬성: \(agreeCount)"                updateRatioLabel()
                 updateProgressViews()
             }
         }
@@ -417,8 +413,6 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
                 // 투표를 조회해서 찬성, 반대 수 가져오기
                 VoteStatusCheck()
                 disagreeCountLabel.text = "반대: \(disagreeCount)"
-                disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
-                disagreeButton.isEnabled = false
                 updateRatioLabel()
                 updateProgressViews()
             }
@@ -523,9 +517,6 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
         cell.commentLabel.text = comment.comment
         cell.DayLabel.text = comment.day
         cell.commentLabel.sizeToFit()
-        // 업데이트가 완료된 후에 이 부분에서 셀 정보를 확인할 수 있습니다.
-        let cellText = cell.commentLabel.text ?? "No Text"
-        print("Cell at section \(indexPath.section), row \(indexPath.row): \(cellText)")
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -970,6 +961,7 @@ extension VotePostDetailViewController {
     @objc func VoteBtnClicked(VoteType : String) {
         print("VoteBtnClicked - called()")
         var status = 0
+        var message = ""
         print("찬성인가요 반대인가요 - \(VoteType)")
         let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote?VoteType=\(VoteType)")
         var request = URLRequest(url: apiUrl!)
@@ -991,12 +983,37 @@ extension VotePostDetailViewController {
                 print("Response JSON: \(responseJSON)")
                 status = responseJSON["status"] as? Int ?? 0
                 }
+                message = responseJSON["message"] as? String ?? ""
             }
             if status == 200 {
                 // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
                 print("투표 전송이 성공했습니다.")
                 DispatchQueue.main.async {
                     //메인스레드에서 실행할 기능
+                    if VoteType == "AGREE" {
+                        agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+                        agreeButton.isEnabled = false
+
+                    }else if VoteType == "OPPOSE"{
+                        disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+                        disagreeButton.isEnabled = false
+                    }
+                }
+            }else if message == "이미 투표를 완료한 사용자입니다"{
+                print("이미 투표를 완료한 사용자입니다.")
+                DispatchQueue.main.async {
+                    //메인스레드에서 실행할 기능
+                    if VoteType == "AGREE" {
+                        agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+                        agreeButton.isEnabled = false
+                        //이미 투표를 완료했음을 알림
+                        
+                    }else if VoteType == "OPPOSE"{
+                        disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+                        disagreeButton.isEnabled = false
+                        //이미 투표를 완료했음을 알림
+                        
+                    }
                 }
             }
         }.resume()
