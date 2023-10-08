@@ -69,6 +69,8 @@
 		F1E547A22ACABED300671182 /* sampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A12ACABED300671182 /* sampleModel.swift */; };
 		F1E547A52ACABEF700671182 /* APIContants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A42ACABEF700671182 /* APIContants.swift */; };
 		F1EA83A72AD02583006B9741 /* CouncilInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EA83A62AD02583006B9741 /* CouncilInfoService.swift */; };
+		F1F91D462AD300EA009D95B0 /* PromiseCheckService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F91D452AD300EA009D95B0 /* PromiseCheckService.swift */; };
+		F1F91D482AD3015E009D95B0 /* PromiseCheckModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F91D472AD3015E009D95B0 /* PromiseCheckModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -135,6 +137,8 @@
 		F1E547A12ACABED300671182 /* sampleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sampleModel.swift; sourceTree = "<group>"; };
 		F1E547A42ACABEF700671182 /* APIContants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIContants.swift; sourceTree = "<group>"; };
 		F1EA83A62AD02583006B9741 /* CouncilInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilInfoService.swift; sourceTree = "<group>"; };
+		F1F91D452AD300EA009D95B0 /* PromiseCheckService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseCheckService.swift; sourceTree = "<group>"; };
+		F1F91D472AD3015E009D95B0 /* PromiseCheckModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseCheckModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -302,6 +306,7 @@
 				F1448FF82AD2AEAE00AE9E7A /* DepartmentModel.swift */,
 				F14E43CB2AD2B2540096221D /* DepartmentPromisesModel.swift */,
 				F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */,
+				F1F91D472AD3015E009D95B0 /* PromiseCheckModel.swift */,
 			);
 			path = CouncilBoardModels;
 			sourceTree = "<group>";
@@ -392,6 +397,7 @@
 				F1EA83A62AD02583006B9741 /* CouncilInfoService.swift */,
 				F1448FFA2AD2AF6D00AE9E7A /* DepartmentService.swift */,
 				F14E43CD2AD2B33D0096221D /* DepartmentPromisesService.swift */,
+				F1F91D452AD300EA009D95B0 /* PromiseCheckService.swift */,
 				F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */,
 			);
 			path = CouncilBoardServices;
@@ -533,6 +539,7 @@
 				E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */,
 				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
 				F1448FFB2AD2AF6D00AE9E7A /* DepartmentService.swift in Sources */,
+				F1F91D482AD3015E009D95B0 /* PromiseCheckModel.swift in Sources */,
 				F1E547A22ACABED300671182 /* sampleModel.swift in Sources */,
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
@@ -544,6 +551,7 @@
 				E4E9F6582AC85A2B00F8AEAD /* MyCommentViewController.swift in Sources */,
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
+				F1F91D462AD300EA009D95B0 /* PromiseCheckService.swift in Sources */,
 				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
 				F12FE6B72AD0434C00B47DA0 /* NetworkResult.swift in Sources */,
 				F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */,
