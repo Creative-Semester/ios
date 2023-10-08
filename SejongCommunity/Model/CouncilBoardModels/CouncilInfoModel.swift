@@ -9,10 +9,10 @@ import Foundation
 
 struct CouncilInfoResponse: Codable {
     let time: String
-        let status: Int
-        let code: String
-        let message: String
-        let result: CouncilInfo
+    let status: Int
+    let code: String
+    let message: String
+    let result: CouncilInfo
 }
 
 struct CouncilInfo: Codable {
