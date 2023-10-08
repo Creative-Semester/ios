@@ -134,19 +134,22 @@ class CouncilBoardViewController : UIViewController {
         officeDetailButton.addTarget(self, action: #selector(officeDetailButtonTapped), for: .touchUpInside)
 
         getCouncilInfoData()
+        getPromisesPercentageData()
         setupStudentCouncilView()
-        setupBarChart()
     }
     
-    func setupBarChart() {
+    func setupBarChart(promisesPercentage: PromisesPercentage) {
         // 그래프 데이터 생성
-        let entries: [BarChartDataEntry] = [
-            BarChartDataEntry(x: 0.0, y: 0.25),
-            BarChartDataEntry(x: 1.0, y: 0.55),
-            BarChartDataEntry(x: 2.0, y: 0.43),
-            BarChartDataEntry(x: 3.0, y: 0.98),
-            BarChartDataEntry(x: 4.0, y: 0.13)
-        ]
+        let deptPromiseRate = promisesPercentage.deptPromiseRate
+
+        var entries: [BarChartDataEntry] = []
+        
+
+        for (index, rate) in deptPromiseRate.enumerated() {
+            let entry = BarChartDataEntry(x: Double(index), y: rate.percent)
+            entries.append(entry)
+        }
+        entries.append(BarChartDataEntry(x: Double(deptPromiseRate.count), y: promisesPercentage.totalPercent))
         
         // 데이터셋 생성
         let dataSet = BarChartDataSet(entries: entries, label: "공약 이행률")
@@ -165,7 +168,8 @@ class CouncilBoardViewController : UIViewController {
         barChartView.rightAxis.enabled = false //하단의 기본 0.2, 0.4, 0.6 등 표시 제한
         
         // X축 레이블 설정
-        let titles = ["복지행사", "문화행사", "학술행사", "건강행사", "전체공약률"]
+        var titles = deptPromiseRate.map { $0.departmentName }
+        titles.append("전체공약률")
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: titles)
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.granularityEnabled = true
@@ -194,7 +198,6 @@ class CouncilBoardViewController : UIViewController {
     func getCouncilInfoData() {
         
         CouncilInfoService.shared.getCheckUserInfo() { response in
-            print("1번까지 진입 성공")
             switch response {
                 
             case .success(let data):
@@ -202,6 +205,27 @@ class CouncilBoardViewController : UIViewController {
                 self.studentCouncilNameLabel.text = infoData.result.name
                 self.studentCouncilNumLabel.text = "제 \(String(infoData.result.number))대 학생회"
                 self.studentCouncilExpLabel.text = infoData.result.introduce
+                
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func getPromisesPercentageData() {
+        
+        PromisesPercentageService.shared.getPromisesPercentage() { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? PromisesPercentageResponse else { return }
+                self.setupBarChart(promisesPercentage: infoData.result)
                 
                 
                 // 실패할 경우에 분기처리는 아래와 같이 합니다.
