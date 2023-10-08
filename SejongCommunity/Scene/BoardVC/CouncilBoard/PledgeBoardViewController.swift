@@ -13,6 +13,7 @@ class PledgeBoardViewController: UIViewController {
     private var isEditingMode: Bool = false
     private var menuItems = [DepartmentInfo]()
     private var pledegeMenus = [DepartmentPromises]()
+    private var presentPageId: Int = 0
     
     private let menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -81,7 +82,8 @@ class PledgeBoardViewController: UIViewController {
                 self.menuItems = infoData.result
                 self.pledgeTitleLabel.text = infoData.result[0].name + " 공약"
                 self.menuCollectionView.reloadData()
-                self.getDepartmentPromisesData(departmentId: infoData.result[0].id)
+                self.presentPageId = infoData.result[0].id
+                self.getDepartmentPromisesData(departmentId: self.presentPageId)
                 
                 // 실패할 경우에 분기처리는 아래와 같이 합니다.
             case .pathErr :
@@ -111,6 +113,26 @@ class PledgeBoardViewController: UIViewController {
                 print("서버에러가 발생했습니다.")
             default:
                 print("networkFail")
+            }
+        }
+    }
+    
+    func getPromiseCheck(promiseId: Int) {
+        
+        PromiseCheckService.shared.getPromiseCheck(promiseId: promiseId) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? PromiseCheckResponse else { return }
+                print(infoData.message)
+                self.getDepartmentPromisesData(departmentId: self.presentPageId)
+            default:
+                let alertController = UIAlertController(title: "수정 권한이 없습니다.", message: "공약 이행 수정은 학생회만 가능합니다.", preferredStyle: .alert)
+
+                let okAction = UIAlertAction(title: "확인", style: .default) { (action) in }
+
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
             }
         }
     }
@@ -161,11 +183,8 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 사용자가 셀을 선택했을 때 호출되는 메서드
-        // indexPath를 사용하여 선택된 셀의 정보를 가져올 수 있음
         
-        let selectedRow = indexPath.row
-        print("Selected row: \(selectedRow)")
-        
+        getPromiseCheck(promiseId: pledegeMenus[indexPath.row].promiseId)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -228,6 +247,7 @@ extension PledgeBoardViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         pledgeTitleLabel.text = menuItems[indexPath.item].name + " 공약"
         // 선택한 셀의 색상을 변경
+        presentPageId = menuItems[indexPath.item].id
         getDepartmentPromisesData(departmentId: menuItems[indexPath.item].id)
         if let selectedCell = collectionView.cellForItem(at: indexPath) {
             selectedCell.layer.cornerRadius = 15
@@ -262,6 +282,22 @@ private extension PledgeBoardViewController {
     
     @objc func editButtonTapped() {
         isEditingMode.toggle()
+        
+        if isEditingMode {
+            let alertController = UIAlertController(title: "공약 이행 수정모드", message: "공약 이행이 변경된 사항을 클릭하여 수정할 수 있습니다.", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "확인", style: .default) { (action) in }
+
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        } else {
+            let alertController = UIAlertController(title: "공약 이행 수정완료", message: "공약 이행이 수정 완료되었습니다.", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "확인", style: .default) { (action) in }
+
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        }
         
         // 네비게이션 바 우측 버튼 텍스트 변경
         setupNavigationBar()
