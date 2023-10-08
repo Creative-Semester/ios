@@ -31,14 +31,26 @@ class CouncilBoardViewController : UIViewController {
         return label
     }()
     
+    private let studentCouncilNumLabel: UILabel = {
+       let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 13, weight: .medium)//임시로 추가
+        label.textColor = .darkGray
+        label.textAlignment = .left
+        label.text = "제 7대 학생회"
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
     private let studentCouncilExpLabel: UILabel = {
        let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 13, weight: .medium)//임시로 추가
         label.textColor = .darkGray
         label.textAlignment = .left
-        label.text = "제 7대 학생회\nRU:RI - 하나되어 울리는 두드림입니다."
-        label.numberOfLines = 2
+        label.text = "RU:RI - 하나되어 울리는 두드림입니다."
+        label.numberOfLines = 1
         
         return label
     }()
@@ -104,196 +116,13 @@ class CouncilBoardViewController : UIViewController {
     }()
     
     
-    private let progressStackView: UIStackView = {
-        let stackView = UIStackView()
-        
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        stackView.spacing = 15
-        stackView.backgroundColor = .white
-        
-        return stackView
-    }()
-    
-    private let totalProgressView: UIView = {
-       let view = UIView()
-        
-        view.backgroundColor = .white
-        
-        return view
-    }()
-    
-    private let totalProgressTitleLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .darkGray
-        label.textAlignment = .center
-        label.text = "학생회 전체 공약 이행률"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    private let totalProgressPercentLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .black
-        label.textAlignment = .center
-        label.text = "47%"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    
-    private let totalProgressBar: UIProgressView = {
-        let progressView = UIProgressView(progressViewStyle: .bar)
-        
-        progressView.progressTintColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        progressView.trackTintColor = UIColor.lightGray
-        progressView.progress = 0.4
-        progressView.clipsToBounds = true
-        
-        return progressView
-    }()
-    
-    private let welfareProgressView: UIView = {
-       let view = UIView()
-        
-        view.backgroundColor = .white
-        
-        return view
-    }()
-    
-    private let welfareProgressTitleLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .darkGray
-        label.textAlignment = .center
-        label.text = "복지행사 공약 이행률"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    private let welfareProgressPercentLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .black
-        label.textAlignment = .center
-        label.text = "47%"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    private let welfareProgressBar: UIProgressView = {
-        let progressView = UIProgressView(progressViewStyle: .bar)
-        
-        progressView.progressTintColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        progressView.trackTintColor = UIColor.lightGray
-        progressView.progress = 0.4
-        progressView.clipsToBounds = true
-        
-        return progressView
-    }()
-    
-    private let cultureProgressView: UIView = {
-       let view = UIView()
-        
-        view.backgroundColor = .white
-        
-        return view
-    }()
-    
-    private let cultureProgressTitleLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .darkGray
-        label.textAlignment = .center
-        label.text = "문화행사 공약 이행률"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    private let cultureProgressPercentLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .black
-        label.textAlignment = .center
-        label.text = "47%"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    private let cultureProgressBar: UIProgressView = {
-        let progressView = UIProgressView(progressViewStyle: .bar)
-        
-        progressView.progressTintColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        progressView.trackTintColor = UIColor.lightGray
-        progressView.progress = 0.4
-        progressView.clipsToBounds = true
-        
-        return progressView
-    }()
-    
-    private let scholarshipProgressView: UIView = {
-       let view = UIView()
-        
-        view.backgroundColor = .white
-        
-        return view
-    }()
-    
-    private let scholarshipProgressTitleLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .darkGray
-        label.textAlignment = .center
-        label.text = "학술행사 공약 이행률"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    private let scholarshipProgressPercentLabel: UILabel = {
-       let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 13, weight: .bold)//임시로 추가
-        label.textColor = .black
-        label.textAlignment = .center
-        label.text = "47%"
-        label.numberOfLines = 1
-        
-        return label
-    }()
-    
-    private let scholarshipProgressBar: UIProgressView = {
-        let progressView = UIProgressView(progressViewStyle: .bar)
-        
-        progressView.progressTintColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        progressView.trackTintColor = UIColor.lightGray
-        progressView.progress = 0.4
-        progressView.clipsToBounds = true
-        
-        return progressView
-    }()
-    
     private var barChartView: HorizontalBarChartView!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.title = "학생회"
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.tintColor = .red
@@ -304,6 +133,7 @@ class CouncilBoardViewController : UIViewController {
         pledgeButton.addTarget(self, action: #selector(pledgeButtonTabbed), for: .touchUpInside)
         officeDetailButton.addTarget(self, action: #selector(officeDetailButtonTapped), for: .touchUpInside)
 
+        getCouncilInfoData()
         setupStudentCouncilView()
         setupBarChart()
     }
@@ -360,6 +190,30 @@ class CouncilBoardViewController : UIViewController {
         // 바탕색 변경
         barChartView.backgroundColor = .white
     }
+    
+    func getCouncilInfoData() {
+        
+        CouncilInfoService.shared.getCheckUserInfo() { response in
+            print("1번까지 진입 성공")
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? CouncilInfoResponse else { return }
+                self.studentCouncilNameLabel.text = infoData.result.name
+                self.studentCouncilNumLabel.text = "제 \(String(infoData.result.number))대 학생회"
+                self.studentCouncilExpLabel.text = infoData.result.introduce
+                
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
 }
 
 
@@ -398,9 +252,15 @@ extension CouncilBoardViewController {
             make.leading.equalTo(view.snp.leading).offset(15)
         }
         
+        view.addSubview(studentCouncilNumLabel)
+        studentCouncilNumLabel.snp.makeConstraints { make in
+            make.top.equalTo(studentCouncilNameLabel.snp.bottom).offset(10)
+            make.leading.equalTo(view.snp.leading).offset(15)
+        }
+        
         view.addSubview(studentCouncilExpLabel)
         studentCouncilExpLabel.snp.makeConstraints { make in
-            make.top.equalTo(studentCouncilNameLabel.snp.bottom).offset(10)
+            make.top.equalTo(studentCouncilNumLabel.snp.bottom)
             make.leading.equalTo(view.snp.leading).offset(15)
         }
         
@@ -452,119 +312,6 @@ extension CouncilBoardViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         
-        //setupStackView()
     }
     
-    func setupStackView() {
-        view.addSubview(progressStackView)
-        
-        progressStackView.snp.makeConstraints { make in
-            make.top.equalTo(pledgeTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(15)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-        }
-        
-        progressStackView.addArrangedSubview(totalProgressView)
-        progressStackView.addArrangedSubview(welfareProgressView)
-        progressStackView.addArrangedSubview(cultureProgressView)
-        progressStackView.addArrangedSubview(scholarshipProgressView)
-        
-        //학생회 전체 공약 이행률
-        totalProgressView.addSubview(totalProgressTitleLabel)
-        
-        totalProgressTitleLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(totalProgressView.snp.centerY).offset(-20)
-            make.leading.equalTo(totalProgressView.snp.leading).offset(10)
-        }
-        
-        totalProgressView.addSubview(totalProgressPercentLabel)
-        
-        totalProgressPercentLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(totalProgressTitleLabel.snp.centerY)
-            make.trailing.equalTo(totalProgressView.snp.trailing).offset(-10)
-        }
-        
-        totalProgressView.addSubview(totalProgressBar)
-        
-        totalProgressBar.snp.makeConstraints { make in
-            make.centerY.equalTo(totalProgressView.snp.centerY).offset(10)
-            make.leading.equalTo(totalProgressView.snp.leading).offset(10)
-            make.trailing.equalTo(totalProgressView.snp.trailing).offset(-10)
-            make.height.equalTo(15)
-        }
-        //복지행사 공약 이행률
-        
-        welfareProgressView.addSubview(welfareProgressTitleLabel)
-        
-        welfareProgressTitleLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(welfareProgressView.snp.centerY).offset(-20)
-            make.leading.equalTo(welfareProgressView.snp.leading).offset(10)
-        }
-        
-        welfareProgressView.addSubview(welfareProgressPercentLabel)
-        
-        welfareProgressPercentLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(welfareProgressTitleLabel.snp.centerY)
-            make.trailing.equalTo(welfareProgressView.snp.trailing).offset(-10)
-        }
-        
-        welfareProgressView.addSubview(welfareProgressBar)
-        
-        welfareProgressBar.snp.makeConstraints { make in
-            make.centerY.equalTo(welfareProgressView.snp.centerY).offset(10)
-            make.leading.equalTo(welfareProgressView.snp.leading).offset(10)
-            make.trailing.equalTo(welfareProgressView.snp.trailing).offset(-10)
-            make.height.equalTo(15)
-        }
-        
-        //문화행사 공약 이행률
-        
-        cultureProgressView.addSubview(cultureProgressTitleLabel)
-        
-        cultureProgressTitleLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(cultureProgressView.snp.centerY).offset(-20)
-            make.leading.equalTo(cultureProgressView.snp.leading).offset(10)
-        }
-        
-        cultureProgressView.addSubview(cultureProgressPercentLabel)
-        
-        cultureProgressPercentLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(cultureProgressTitleLabel.snp.centerY)
-            make.trailing.equalTo(cultureProgressView.snp.trailing).offset(-10)
-        }
-        
-        cultureProgressView.addSubview(cultureProgressBar)
-        
-        cultureProgressBar.snp.makeConstraints { make in
-            make.centerY.equalTo(cultureProgressView.snp.centerY).offset(10)
-            make.leading.equalTo(cultureProgressView.snp.leading).offset(10)
-            make.trailing.equalTo(cultureProgressView.snp.trailing).offset(-10)
-            make.height.equalTo(15)
-        }
-        
-        //학술행사 공약 이행률
-        
-        scholarshipProgressView.addSubview(scholarshipProgressTitleLabel)
-        
-        scholarshipProgressTitleLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(scholarshipProgressView.snp.centerY).offset(-20)
-            make.leading.equalTo(scholarshipProgressView.snp.leading).offset(10)
-        }
-        
-        scholarshipProgressView.addSubview(scholarshipProgressPercentLabel)
-        
-        scholarshipProgressPercentLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(scholarshipProgressTitleLabel.snp.centerY)
-            make.trailing.equalTo(scholarshipProgressView.snp.trailing).offset(-10)
-        }
-        
-        scholarshipProgressView.addSubview(scholarshipProgressBar)
-        
-        scholarshipProgressBar.snp.makeConstraints { make in
-            make.centerY.equalTo(scholarshipProgressView.snp.centerY).offset(10)
-            make.leading.equalTo(scholarshipProgressView.snp.leading).offset(10)
-            make.trailing.equalTo(scholarshipProgressView.snp.trailing).offset(-10)
-            make.height.equalTo(15)
-        }
-    }
 }
