@@ -7,9 +7,11 @@
 
 import Foundation
 import UIKit
+import SwiftKeychainWrapper
 
 class CouncilRegisterViewController : UIViewController{
     //이 뷰의 타이틀과 학생회 신청에 대한 설명을 나타내는 뷰
+    var codetext : UITextField?
     let ExplainView : UIView = {
        let view = UIView()
         let text = UITextView()
@@ -77,70 +79,63 @@ class CouncilRegisterViewController : UIViewController{
         view.layer.masksToBounds = true
         return view
     }()
-    
-    //인증코드를 입력받기 위한 뷰
-    let CodeView : UIView = {
-       let view = UIView()
-        view.backgroundColor = .white
-        //코드를 입력받기 위한 UITextField
-        let CodeText = UITextField()
-        CodeText.placeholder = "X6T3"
-        CodeText.textAlignment = .center
-        CodeText.font = UIFont.boldSystemFont(ofSize: 30)
-        CodeText.borderStyle = .roundedRect
-//        view.addSubview(CodeText)
-        view.layer.cornerRadius = 30
-        view.layer.masksToBounds = true
-        
-        //인증받기 버튼
-        let CodeBtn = UIButton()
-        CodeBtn.backgroundColor = #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
-        CodeBtn.setTitle("인증받기", for: .normal)
-        CodeBtn.setTitleColor(.black, for: .normal)
-        CodeBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
-        CodeBtn.layer.cornerRadius = 20
-        CodeBtn.layer.masksToBounds = true
-        CodeBtn.addTarget(self, action: #selector(CodeBtnTapped), for: .touchUpInside)
-//        view.addSubview(CodeBtn)
-        //StackView로 오토레이아웃 설정
-        let StackView = UIStackView()
-        StackView.axis = .vertical
-        StackView.spacing = 20
-        StackView.distribution = .fill
-        StackView.alignment = .fill
-        StackView.backgroundColor = .white
-        StackView.addArrangedSubview(CodeText)
-        StackView.addArrangedSubview(CodeBtn)
-        let Spacing = UIView()
-        Spacing.backgroundColor = .white
-        StackView.addArrangedSubview(Spacing)
-        view.addSubview(StackView)
-        //SnapKit으로 오토레이아웃 설정
-        StackView.snp.makeConstraints{ (make) in
-            make.top.bottom.leading.trailing.equalToSuperview().offset(0)
-        }
-        CodeText.snp.makeConstraints{ (make) in
-            make.top.equalToSuperview().offset(80)
-            make.leading.trailing.equalToSuperview().inset(0)
-            make.height.equalTo(60)
-        }
-        CodeBtn.snp.makeConstraints{ (make) in
-            make.top.equalTo(CodeText.snp.bottom).offset(30)
-            make.leading.trailing.equalToSuperview().inset(40)
-            make.height.equalTo(60)
-        }
-        Spacing.snp.makeConstraints{ (make) in
-            make.top.equalTo(CodeBtn.snp.bottom).offset(1)
-        }
-        view.layer.cornerRadius = 10
-        view.layer.masksToBounds = true
-        return view
-    }()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
         title = "학생회 신청"
+        let CodeView = UIView()
+         CodeView.backgroundColor = .white
+         //코드를 입력받기 위한 UITextField
+         let CodeText = UITextField()
+         CodeText.placeholder = "ex) X6T3"
+         CodeText.textAlignment = .center
+         CodeText.font = UIFont.boldSystemFont(ofSize: 30)
+         CodeText.text = ""
+         CodeText.borderStyle = .roundedRect
+         codetext = CodeText
+         
+         //인증받기 버튼
+         let CodeBtn = UIButton()
+         CodeBtn.backgroundColor = #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
+         CodeBtn.setTitle("인증받기", for: .normal)
+         CodeBtn.setTitleColor(.black, for: .normal)
+         CodeBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+         CodeBtn.layer.cornerRadius = 20
+         CodeBtn.layer.masksToBounds = true
+         CodeBtn.addTarget(self, action: #selector(CodeBtnTapped), for: .touchUpInside)
+         //StackView로 오토레이아웃 설정
+         let CodeStackView = UIStackView()
+         CodeStackView.axis = .vertical
+         CodeStackView.spacing = 20
+         CodeStackView.distribution = .fill
+         CodeStackView.alignment = .fill
+         CodeStackView.backgroundColor = .white
+         CodeStackView.addArrangedSubview(CodeText)
+         CodeStackView.addArrangedSubview(CodeBtn)
+         let Spacing = UIView()
+         Spacing.backgroundColor = .white
+         CodeStackView.addArrangedSubview(Spacing)
+         CodeView.addSubview(CodeStackView)
+         //SnapKit으로 오토레이아웃 설정
+         CodeStackView.snp.makeConstraints{ (make) in
+             make.top.bottom.leading.trailing.equalToSuperview().offset(0)
+         }
+         CodeText.snp.makeConstraints{ (make) in
+             make.top.equalToSuperview().offset(80)
+             make.leading.trailing.equalToSuperview().inset(0)
+             make.height.equalTo(60)
+         }
+         CodeBtn.snp.makeConstraints{ (make) in
+             make.top.equalTo(CodeText.snp.bottom).offset(30)
+             make.leading.trailing.equalToSuperview().inset(40)
+             make.height.equalTo(60)
+         }
+         Spacing.snp.makeConstraints{ (make) in
+             make.top.equalTo(CodeBtn.snp.bottom).offset(1)
+         }
+         CodeView.layer.cornerRadius = 10
+         CodeView.layer.masksToBounds = true
         
         let ScrollView = UIScrollView()
         ScrollView.isScrollEnabled = true
@@ -186,6 +181,54 @@ class CouncilRegisterViewController : UIViewController{
     }
     //인증받기 버튼 액션
     @objc func CodeBtnTapped() {
-        
+        print("CodeBtnTapped - called()")
+        //인증 코드
+        let code = codetext?.text ?? ""
+        print("code - \(code)")
+        let urlString = ""
+        guard let url = URL(string: urlString) else{
+            return //유효하지 않은 URL 처리
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let requestbody : [String:Any] = [
+            "code" : code
+        ]
+        if let jsonData = try?JSONSerialization.data(withJSONObject: requestbody, options: []){
+            request.httpBody = jsonData
+        }
+        // HTTP 요성 헤더 설정(필요에 따라 추가)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let token = KeychainWrapper.standard.string(forKey: "AuthToken")
+        request.setValue(token, forHTTPHeaderField: "accessToken")
+        var status = 0
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                    // 서버 응답 처리
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+            } else if let data = data {
+            // 서버 응답 데이터 처리 (만약 필요하다면)
+            if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                // 서버로부터 받은 JSON 데이터 처리
+                print("Response JSON: \(responseJSON)")
+                status = responseJSON["status"] as? Int ?? 0
+                }
+            }
+            if status == 200 {
+                //적절할때. 업로드 완료가 되었을때. 팝업. reload
+                DispatchQueue.main.async{
+                    let alertController = UIAlertController(title: "신청이 완료 되었습니다.", message: "승인 메일 수신 시 로그아웃", preferredStyle: .alert)
+                    let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                        // OpenBoardViewController로 이동
+                        if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is MypageViewController }) {
+                            self.navigationController?.popToViewController(openboardViewController, animated: true)
+                        }
+                    }
+                    alertController.addAction(CancelController)
+                    self.present(alertController, animated: true)
+                }
+            }
+        }
+        task.resume() // 요청 보내기
     }
 }

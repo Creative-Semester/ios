@@ -315,7 +315,7 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             let token = KeychainWrapper.standard.string(forKey: "AuthToken")
             request.setValue(token, forHTTPHeaderField: "accessToken")
-            var status = 200
+            var status = 0
             // URLSession을 사용하여 서버와 통신
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                         // 서버 응답 처리
