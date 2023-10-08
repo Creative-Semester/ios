@@ -18,6 +18,17 @@ struct MyComment : Decodable{
     let comment : String // 댓글 내용
     let commentIsMine : Bool // 내 댓글인지 확인
 }
+//게시글의 내용을 저장할 구조체
+struct MycommentPost {
+    let title: String
+    let content: String
+    let images: Images
+    let page: Int
+    struct Images: Decodable {
+        let imageName: String
+        let imageUrl: String
+    }
+}
 //게시물의 상세 내용을 보여주는 UIViewController
 class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
     var CommentTableView = UITableView()
@@ -29,8 +40,8 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
     var IsMine = false
     // 댓글을 저장할 배열
     var comments : [MyComment] = [
-        MyComment(day: "2023-10-09", commentId: 0, comment: "존\n웃\nㅋ", commentIsMine: false)
     ]
+    var commentpost = MycommentPost(title: "게시글 1", content: "내용 1", images: MycommentPost.Images(imageName: "", imageUrl: ""), page: 1)
     let post : MyCommentPost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
     init(post: MyCommentPost) {
@@ -45,21 +56,21 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
     var vview = UIView()
     var ScrollView = UIScrollView()
     var StackView = UIStackView()
+    var DetailLabel = UILabel()
     override func viewDidLoad() {
         super.viewDidLoad()
+        BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
-        title = post.title
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
         CommentTableView.estimatedRowHeight = 100 // 예상 높이 (원하는 초기 높이)
         CommentTableView.rowHeight = UITableView.automaticDimension
-        BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
-                
+
                 if let newPosts = newPosts {
                     // 초기 데이터를 posts 배열에 추가
                     self.comments += newPosts
@@ -80,7 +91,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         vview = UIView()
         vview.backgroundColor = .white
         vview.layer.borderWidth = 0.2
-        
+
         //댓글 입력 창과 버튼을 추가
         commentField = ExpandingTextView()
         commentField.backgroundColor =  #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
@@ -127,17 +138,15 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         ScrollView.isScrollEnabled = true
         ScrollView.showsHorizontalScrollIndicator = true
         //스택뷰를 이용해 오토레이아웃 설정
-        let StackView = UIStackView()
         StackView.axis = .vertical
         StackView.distribution = .fill
         StackView.alignment = .fill
         StackView.spacing = 20
-        
+
         //게시물의 상세내용을 넣을 뷰
         let DetailView = UIView()
         DetailView.backgroundColor = .white
-        let DetailLabel = UILabel()
-        DetailLabel.text = post.content
+        DetailLabel.text = commentpost.content
         DetailLabel.textColor = .black
         DetailLabel.font = UIFont.boldSystemFont(ofSize: 18)
         DetailView.addSubview(DetailLabel)
@@ -153,21 +162,21 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         ImageStackView.distribution = .fill
         ImageStackView.backgroundColor = .white
         let ImageView = UIImageView()
-        print("post.image가 nil인가? : \(String(describing: post.images.imageUrl.isEmpty))") //수정필요
-        if(post.images.imageUrl.isEmpty) { //수정필요
+        print("post.image가 nil인가? : \(String(describing: commentpost.images.imageUrl.isEmpty))") //수정필요
+        if(commentpost.images.imageUrl.isEmpty) { //수정필요
             print("post.image가 nil인데 화면의 크기의 조정이 필요합니다.")
         }else{
             // 게시글의 이미지 URL 배열에서 이미지를 가져와 처리
-            for imageUrlStsring in post.images.imageUrl {//수정필요
+            for imageUrlStsring in commentpost.images.imageUrl {//수정필요
                 if let imageUrl = URL(string: imageUrlStsring as? String ?? ""){
                     print("이미지들 Url 입니다. - \(imageUrl)")
                     // Kingfisher를 사용하여 이미지를 다운로드하고 처리
                     let imageView = UIImageView()
                     imageView.kf.setImage(with: imageUrl)
-                    
+
                     imageView.contentMode = .scaleAspectFit
                     imageView.backgroundColor = .white
-                    
+
                     // 이미지 뷰를 스택뷰에 추가
                     ImageStackView.addArrangedSubview(imageView)
                     // 이미지 뷰에 오토레이아웃 설정
@@ -193,8 +202,8 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         CommentTableView.showsHorizontalScrollIndicator = false
         CommentTableView.isScrollEnabled = false
         CommentTableView.register(CustomCommentTableViewCell.self, forCellReuseIdentifier: "cell")
-        
-        
+
+
         StackView.addArrangedSubview(DetailView)
         StackView.addArrangedSubview(CommentTableView)
         ScrollView.addSubview(StackView)
@@ -207,17 +216,17 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
             make.trailing.leading.equalToSuperview().inset(0)
         }
         StackView.snp.makeConstraints{ (make) in
-            if (comments.count < 5 && post.images.imageUrl.isEmpty) {
+            if (comments.count < 5 && commentpost.images.imageUrl.isEmpty) {
                 make.height.equalTo(ScrollView.snp.height)
                 make.bottom.equalToSuperview().offset(-10)
-            }else if(post.images.imageUrl.isEmpty){ // 수정필요
+            }else if(commentpost.images.imageUrl.isEmpty){ // 수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
                 make.bottom.equalToSuperview().offset(-0)
             }else{
                 make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + CGFloat((comments.count + 4)
                                                                                                      * 100))
-                
+
                 make.bottom.equalToSuperview().offset(-0)
             }
             make.width.equalTo(ScrollView.snp.width)
@@ -225,7 +234,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            if(post.images.imageUrl.isEmpty){ //수정필요
+            if(commentpost.images.imageUrl.isEmpty){ //수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + 100)
             }else{
@@ -327,7 +336,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         }
         //취소
         let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
-            
+
         }
         alertController.addAction(CancelController)
         present(alertController, animated: true)
@@ -373,7 +382,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         }
         //취소
         let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
-            
+
         }
         alertController.addAction(CancelController)
         present(alertController, animated: true)
@@ -396,7 +405,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
             if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
                 loadNextPageCalled = true // 호출되었다고 표시
-                
+
                 self.view.addSubview(activityIndicator)
                 activityIndicator.startAnimating() // 로딩 인디케이터 시작
                 loadNextPage()
@@ -428,10 +437,10 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
                     self.StackView.snp.remakeConstraints{ (make) in
-                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
+                        if (self.comments.count < 5 && self.commentpost.images.imageUrl.isEmpty) {
                             make.height.equalTo(self.ScrollView.snp.height)
                             make.bottom.equalToSuperview().offset(-10)
-                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
+                        }else if(self.commentpost.images.imageUrl.isEmpty){ // 수정필요
                             print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                             make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
                             make.bottom.equalToSuperview().offset(-0)
@@ -469,10 +478,10 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
                     self.StackView.snp.remakeConstraints{ (make) in
-                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
+                        if (self.comments.count < 5 && self.commentpost.images.imageUrl.isEmpty) {
                             make.height.equalTo(self.ScrollView.snp.height)
                             make.bottom.equalToSuperview().offset(-10)
-                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
+                        }else if(self.commentpost.images.imageUrl.isEmpty){ // 수정필요
                             print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                             make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
                             make.bottom.equalToSuperview().offset(-0)
@@ -507,7 +516,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
 extension MyCommentDetailViewController {
     //MARK: - 서버에서 데이터 가져오기 -> 댓글 조회
     func fetchPosts(page: Int, completion: @escaping ([MyComment]?, Error?) -> Void) {
-        guard let url = URL(string: "") else { return  }
+        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(page)") else { return  }
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
@@ -554,7 +563,7 @@ extension MyCommentDetailViewController {
     @objc func BoardDetailShow() {
         print("BoardDetailShow() - called()")
         // 서버 API 엔드포인트 및 요청 생성
-        guard let apiUrl = URL(string: "") else { return }
+        guard let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)") else { return }
         var request = URLRequest(url: apiUrl)
         request.httpMethod = "GET"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -562,7 +571,7 @@ extension MyCommentDetailViewController {
         //헤더와 인증토큰 설정
         request.setValue(acToken, forHTTPHeaderField: "accessToken")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         //서버로 요청 보내기
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             // 서버 응답 처리
@@ -575,12 +584,26 @@ extension MyCommentDetailViewController {
                 print("Response JSON: \(responseJSON)")
                 // 형식은 수정해줘야함.
                 if let result = responseJSON["result"] as? [String: Any],
+                   let title = result["title"] as? String,
+                      let content = result["content"] as? String,
+                      // 이미지 가져오기 수정해야함.
+//                           let images = board["images"] as? [String: Any],
+//                           let imageUrls = images["imageUrl"] as? String,
+//                           let imageNames = images["imageName"] as? String,
                    let ismine = result["isMine"] as? Bool{
                      self.IsMine = ismine //게시글 작성자와 사용자가 동일한지 판별
+                    DispatchQueue.main.async{
+                        self.commentpost = MycommentPost(title: title, content: content, images: MycommentPost.Images(imageName: "", imageUrl: ""), page: 0) //페이지 수정해야함.
+                        // 네비게이션 바의 title을 설정
+                            self.navigationItem.title = self.commentpost.title
+                        self.DetailLabel.text = self.commentpost.content
+                        print("commentpost - \(self.commentpost)")
+                        }
                     }
                 }else{ print("게시글 상세내용 조회 - JSON 파싱 오류") }
             }
         }.resume()
+        
     }
     //댓글 작성 메서드
     @objc func CommentBtnTapped() {
@@ -590,7 +613,7 @@ extension MyCommentDetailViewController {
             return // 댓글 내용이 비어 있으면 아무 작업도 하지 않음
         }
         // 서버 API 엔드포인트 및 요청 생성
-        let apiUrl = URL(string: "")
+        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "POST"
         let body : [String : Any] = [
@@ -604,7 +627,7 @@ extension MyCommentDetailViewController {
         //헤더와 인증토큰 설정
         request.setValue(acToken, forHTTPHeaderField: "accessToken")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         //서버로 요청 보내기
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             // 서버 응답 처리
@@ -633,7 +656,7 @@ extension MyCommentDetailViewController {
         print("PostDelete - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "") else { return }
+        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)") else { return }
         print("삭제하려는데 몇번 게시물인가요? - \(post.boardId)")
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -654,7 +677,7 @@ extension MyCommentDetailViewController {
                         status = jsonResponse["status"] as? Int ?? 0
                     }
                 }catch {
-                    
+
                 }
             }
             if status == 200 {
@@ -686,7 +709,7 @@ extension MyCommentDetailViewController {
         print("CommentDelete - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "") else { return }
+        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/comment/\(commentId)") else { return }
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -708,7 +731,7 @@ extension MyCommentDetailViewController {
                         status = jsonResponse["status"] as? Int ?? 0
                     }
                 }catch {
-                    
+
                 }
             }
             if status == 200 {
@@ -735,7 +758,7 @@ extension MyCommentDetailViewController {
         print("CommentDeclaration - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "") else { return }
+        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/comment/\(commentId)/report") else { return }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -757,7 +780,7 @@ extension MyCommentDetailViewController {
                         status = jsonResponse["status"] as? Int ?? 0
                     }
                 }catch {
-                    
+
                 }
             }
             if status == 200 {

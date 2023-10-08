@@ -30,6 +30,7 @@
 		E4E9F65C2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */; };
 		E4E9F65E2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F65D2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift */; };
 		E4E9F6622AD06C5200F8AEAD /* CustomCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F6612AD06C5200F8AEAD /* CustomCommentTableViewCell.swift */; };
+		E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F6632AD32E2200F8AEAD /* MyWriteVoteViewController.swift */; };
 		F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F124650F2A67BAB500037D8C /* AppDelegate.swift */; };
 		F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12465112A67BAB500037D8C /* SceneDelegate.swift */; };
 		F12465192A67BAB600037D8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12465182A67BAB600037D8C /* Assets.xcassets */; };
@@ -86,6 +87,7 @@
 		E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWriteDetailViewController.swift; sourceTree = "<group>"; };
 		E4E9F65D2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCommentDetailViewController.swift; sourceTree = "<group>"; };
 		E4E9F6612AD06C5200F8AEAD /* CustomCommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCommentTableViewCell.swift; sourceTree = "<group>"; };
+		E4E9F6632AD32E2200F8AEAD /* MyWriteVoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWriteVoteViewController.swift; sourceTree = "<group>"; };
 		E8AB31AE70865DF44DB53231 /* Pods-SejongCommunity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.debug.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.debug.xcconfig"; sourceTree = "<group>"; };
 		F124650C2A67BAB500037D8C /* SejongCommunity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SejongCommunity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F124650F2A67BAB500037D8C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 			children = (
 				E47237602AB972DE003BD82B /* MyWriteViewController.swift */,
 				E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */,
+				E4E9F6632AD32E2200F8AEAD /* MyWriteVoteViewController.swift */,
 			);
 			path = MyWriteVC;
 			sourceTree = "<group>";
@@ -523,6 +526,7 @@
 				E4E9F65C2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
+				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,
 				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,

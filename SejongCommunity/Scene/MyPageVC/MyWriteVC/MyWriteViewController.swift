@@ -18,6 +18,7 @@ struct MyWritePost: Decodable {
     let images: Images
     let day: String
     let page: Int
+    let boardType : String
     struct Images: Decodable {
         let imageName: String
         let imageUrl: String
@@ -30,7 +31,6 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     var posts : [MyWritePost] = [
-        MyWritePost(boardId: 0, title: "제목1", content: "내용1", images: MyWritePost.Images(imageName: "", imageUrl: ""), day: "2023-10-09", page: 0)
     ]
     override func viewDidLoad() {
         super .viewDidLoad()
@@ -105,22 +105,30 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let post = posts[indexPath.row]
-        showPostDetail(post: post)
+        let postboardType = post.boardType
+        showPostDetail(post: post, boardType: postboardType)
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
     //셀을 선택했을 때 해당 게시물의 상세 내용을 보여주기 위함
-    func showPostDetail(post: MyWritePost){
-        let detailViewController = MyWriteDetailViewController(post: post)
-        //게시글의 상세 글 볼때 탭바 숨기기
-        tabBarController?.tabBar.isHidden = true
-        navigationController?.pushViewController(detailViewController, animated: true)
+    func showPostDetail(post: MyWritePost, boardType: String){
+        if boardType == "Free" {
+            let detailViewController = MyWriteDetailViewController(post: post)
+            //게시글의 상세 글 볼때 탭바 숨기기
+            tabBarController?.tabBar.isHidden = true
+            navigationController?.pushViewController(detailViewController, animated: true)
+        }else{
+            let detailViewController = MyWriteVoteViewController(post: post)
+            //게시글의 상세 글 볼때 탭바 숨기기
+            tabBarController?.tabBar.isHidden = true
+            navigationController?.pushViewController(detailViewController, animated: true)
+        }
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
     func fetchPosts(page: Int, completion: @escaping ([MyWritePost]?, Error?) -> Void) {
-        guard let url = URL(string: "") else { return }
+        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/user/boards?page=\(page)") else { return }
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
@@ -141,7 +149,7 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let result = json?["result"] as? [String: Any], let boards = result["boards"] as? [[String: Any]] {
+                if let result = json?["result"] as? [String: Any], let boards = result["boardList"] as? [[String: Any]] {
                     var posts = [MyWritePost]()
                     for board in boards {
                         if let title = board["title"] as? String,
@@ -151,9 +159,10 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
 //                           let images = board["images"] as? [String: Any],
 //                           let imageUrls = images["imageUrl"] as? String,
 //                           let imageNames = images["imageName"] as? String,
-                           let day = board["createdTime"] as? String
+                           let day = board["createdTime"] as? String,
+                           let boardType = board["boardType"] as? String
                         {
-                            let post = MyWritePost(boardId: boardId, title: title, content: content, images: MyWritePost.Images(imageName: "", imageUrl: ""), day: day, page: page)
+                            let post = MyWritePost(boardId: boardId, title: title, content: content, images: MyWritePost.Images(imageName: "", imageUrl: ""), day: day, page: page, boardType: boardType)
                             posts.append(post)
                         }
                     }

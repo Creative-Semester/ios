@@ -12,16 +12,9 @@ import SwiftKeychainWrapper
 import Kingfisher //url - > image 변환 라이브러리
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
 struct MyCommentPost: Decodable {
-    let boardId: Int
-    let title: String
     let content: String
-    let images: Images
     let day: String
-    let page: Int
-    struct Images: Decodable {
-        let imageName: String
-        let imageUrl: String
-    }
+    let boardId : Int
 }
 class MyCommentViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     //페이지 번호와 크기
@@ -30,13 +23,14 @@ class MyCommentViewController : UIViewController, UITableViewDelegate, UITableVi
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     var posts : [MyCommentPost] = [
-        MyCommentPost(boardId: 0, title: "제목1", content: "내용1", images: MyCommentPost.Images(imageName: "", imageUrl: ""), day: "2023-10-09", page: 0)
     ]
     override func viewDidLoad() {
         super .viewDidLoad()
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
         title = "댓글 단 글"
+        tableView.estimatedRowHeight = 100 // 예상 높이 (원하는 초기 높이)
+        tableView.rowHeight = UITableView.automaticDimension
         // 로딩 인디케이터 뷰 초기 설정
         activityIndicator.color = .gray
         activityIndicator.center = view.center
@@ -68,7 +62,7 @@ class MyCommentViewController : UIViewController, UITableViewDelegate, UITableVi
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         //UITableView에 셀 등록
-        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CustomCommentTableViewCell.self, forCellReuseIdentifier: "cell")
         view.addSubview(tableView)
     }
     // MARK: - UITableViewDataSource
@@ -79,23 +73,12 @@ class MyCommentViewController : UIViewController, UITableViewDelegate, UITableVi
     }
     //cellForRowAt 메서드 각 셀에 해당하는 게시물의 제목 표시
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CustomCommentTableViewCell
         let post = posts[indexPath.row]
-        cell.titleLabel.text = post.title
+//        cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
         cell.DayLabel.text = post.day
         
-        //MARK: - URL to Image Conversion
-        // 첫 번째 이미지가 nil이면 안함.
-        if !post.images.imageUrl.isEmpty {
-            // 이미지 URL 가져오기
-            if let imageUrl = URL(string: post.images.imageUrl) {
-                // KingFisher를 사용하여 이미지 로드 및 표시
-                print("이미지를 가져옵니다. - \(post.images.imageUrl)")
-                print("이미지를 post 합니다. \(imageUrl)")
-                cell.postImageView.kf.setImage(with: imageUrl)
-            }
-        }
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -106,9 +89,9 @@ class MyCommentViewController : UIViewController, UITableViewDelegate, UITableVi
         let post = posts[indexPath.row]
         showPostDetail(post: post)
     }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 100
+//    }
     //셀을 선택했을 때 해당 게시물의 상세 내용을 보여주기 위함
     func showPostDetail(post: MyCommentPost){
         let detailViewController = MyCommentDetailViewController(post: post)
@@ -119,7 +102,7 @@ class MyCommentViewController : UIViewController, UITableViewDelegate, UITableVi
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
     func fetchPosts(page: Int, completion: @escaping ([MyCommentPost]?, Error?) -> Void) {
-        guard let url = URL(string: "") else { return }
+        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/user/comment?page=\(page)") else { return }
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
@@ -140,19 +123,14 @@ class MyCommentViewController : UIViewController, UITableViewDelegate, UITableVi
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let result = json?["result"] as? [String: Any], let boards = result["boards"] as? [[String: Any]] {
+                if let result = json?["result"] as? [String: Any], let boards = result["comment"] as? [[String: Any]] {
                     var posts = [MyCommentPost]()
                     for board in boards {
-                        if let title = board["title"] as? String,
-                           let content = board["content"] as? String,
-                           let boardId = board["boardId"] as? Int,
-                           // 이미지 가져오기 수정해야함.
-//                           let images = board["images"] as? [String: Any],
-//                           let imageUrls = images["imageUrl"] as? String,
-//                           let imageNames = images["imageName"] as? String,
-                           let day = board["createdTime"] as? String
+                        if let content = board["text"] as? String,
+                           let day = board["createdTime"] as? String,
+                           let boardId = board["boardId"] as? Int
                         {
-                            let post = MyCommentPost(boardId: boardId, title: title, content: content, images: MyCommentPost.Images(imageName: "", imageUrl: ""), day: day, page: page)
+                            let post = MyCommentPost(content: content, day: day, boardId: boardId)
                             posts.append(post)
                         }
                     }

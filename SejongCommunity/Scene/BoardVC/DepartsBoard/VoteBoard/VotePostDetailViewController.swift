@@ -684,7 +684,7 @@ extension VotePostDetailViewController {
         disagreeCountLabel.text = "반대: \(disagreeCount)"
         updateRatioLabel()
         updateProgressViews()
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(post.page)")!
+        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)

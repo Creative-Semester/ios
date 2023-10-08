@@ -1,9 +1,10 @@
 //
-//  MyWriteDetailViewController.swift
+//  MyWriteVoteViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/10/03.
+//  Created by 정성윤 on 2023/10/09.
 //
+
 import Foundation
 import UIKit
 import SnapKit
@@ -11,15 +12,31 @@ import SwiftKeychainWrapper
 import Kingfisher //url - > image 변환 라이브러리
 //게시글의 구조체 정의(게시물을 정보를 담기 위함)
 //댓글 창
-struct MyWriteComment : Decodable{
+struct MyVoteComment : Decodable{
     let day : String // 생성 날짜
     let commentId : Int // 댓글 고유 ID
     let comment : String // 댓글 내용
     let commentIsMine : Bool // 내 댓글인지 확인
 }
-//게시물의 상세 내용을 보여주는 UIViewController
-class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
+class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+    //투표기능 변수
+    var agreeCount = 0
+    var disagreeCount = 0
+    //투표 중복 여부
+    var isAgreed = false
+    var isDisagreed = false
+    //투표 버튼, 라벨, 비율
+    let agreeButton = UIButton()
+    let disagreeButton = UIButton()
+    let agreeCountLabel = UILabel()
+    let disagreeCountLabel = UILabel()
+    let ratioLabel = UILabel()
+    //투표 막대그래프
+    let agreeProgressView = UIProgressView()
+    let disagreeProgressView = UIProgressView()
+    // 댓글 테이블
     var CommentTableView = UITableView()
+    // 좋아요 버튼
     private let GreatBtn = UIButton()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     //페이지 번호와 크기
@@ -27,7 +44,8 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
     //해당 게시글 작성자와 사용자가 동일한지 비교하기 위해 전역변수 선언
     var IsMine = false
     // 댓글을 저장할 배열
-    var comments : [MyWriteComment] = [
+    // 댓글을 저장할 배열
+    var comments : [MyVoteComment] = [
     ]
     let post : MyWritePost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
@@ -45,15 +63,22 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
     var StackView = UIStackView()
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
-        title = post.title
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-        let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
-        navigationItem.rightBarButtonItem = toolBtn
         CommentTableView.estimatedRowHeight = 100 // 예상 높이 (원하는 초기 높이)
         CommentTableView.rowHeight = UITableView.automaticDimension
         BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
+        // 로딩 인디케이터 뷰 초기 설정
+        activityIndicator.color = .gray
+        activityIndicator.center = view.center
+        // 처음 들어오면 투표를 조회해서 찬성, 반대 수 가져오기
+        //사용자가 이미 투표한 경우 투표를 못하게 해야함.
+        VoteStatusCheck()
+        agreeCountLabel.text = "찬성: \(agreeCount)"
+        disagreeCountLabel.text = "반대: \(disagreeCount)"
+        updateRatioLabel()
+        updateProgressViews()
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
@@ -72,9 +97,9 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
                     print("Error fetching initial data: \(error.localizedDescription)")
                 }
             }
-        // 로딩 인디케이터 뷰 초기 설정
-        activityIndicator.color = .gray
-        activityIndicator.center = view.center
+        title = post.title
+        let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
+        navigationItem.rightBarButtonItem = toolBtn
         vview = UIView()
         vview.backgroundColor = .white
         vview.layer.borderWidth = 0.2
@@ -117,13 +142,15 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
             make.bottom.equalToSuperview()
         }
         setupView()
+        updateRatioLabel()
+        updateProgressViews()
         setupTapGesture()
     }
     func setupView(){
         //각 뷰들을 넣을 스크롤뷰 생성
         ScrollView.backgroundColor = .white
         ScrollView.isScrollEnabled = true
-        ScrollView.showsHorizontalScrollIndicator = true
+        ScrollView.showsHorizontalScrollIndicator = false
         //스택뷰를 이용해 오토레이아웃 설정
         StackView.axis = .vertical
         StackView.distribution = .fill
@@ -181,11 +208,96 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
                 make.leading.equalToSuperview().offset(30)
                     }
         }
+        
+        //투표 구성
+        // 찬성 버튼
+        agreeButton.setTitle("찬성", for: .normal)
+        agreeButton.setTitleColor(.darkGray, for: .normal)
+        agreeButton.backgroundColor = isAgreed ? #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1) : #colorLiteral(red: 0.9472638965, green: 0.953559339, blue: 0.953448236, alpha: 1)
+        agreeButton.layer.cornerRadius = 20
+        agreeButton.layer.masksToBounds = true
+        agreeButton.addTarget(self, action: #selector(agreeButtonTapped), for: .touchUpInside)
+                
+        // 반대 버튼
+        disagreeButton.setTitle("반대", for: .normal)
+        disagreeButton.setTitleColor(.darkGray, for: .normal)
+        disagreeButton.backgroundColor = isDisagreed ? #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1) : #colorLiteral(red: 0.9472638965, green: 0.953559339, blue: 0.953448236, alpha: 1)
+        disagreeButton.layer.cornerRadius = 20
+        disagreeButton.layer.masksToBounds = true
+        disagreeButton.addTarget(self, action: #selector(disagreeButtonTapped), for: .touchUpInside)
+                
+        // 찬성 수 표시 라벨
+        agreeCountLabel.text = "찬성: \(agreeCount)"
+        agreeCountLabel.textColor = .black
+                
+        // 반대 수 표시 라벨
+        disagreeCountLabel.text = "반대: \(disagreeCount)"
+        disagreeCountLabel.textColor = .black
+        // 비율 표시 라벨
+        ratioLabel.textColor = .black
+        
+        //그래프 표시
+        agreeProgressView.tintColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+        disagreeProgressView.tintColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+        
+        // 스택뷰를 이용한 레이아웃 설정
+        let VoteView = UIView()
+        VoteView.backgroundColor = .white
+        VoteView.addSubview(agreeButton)
+        VoteView.addSubview(agreeCountLabel)
+        VoteView.addSubview(disagreeButton)
+        VoteView.addSubview(disagreeCountLabel)
+        VoteView.addSubview(ratioLabel)
+        VoteView.addSubview(agreeProgressView)
+        VoteView.addSubview(disagreeProgressView)
+        //Snapkit 오토레이아웃 설정
+        agreeButton.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 4)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.leading.equalToSuperview().offset(0)
+        }
+        agreeCountLabel.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 7)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.leading.equalTo(agreeButton.snp.trailing).offset(10)
+        }
+        disagreeCountLabel.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 7)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.trailing.equalToSuperview().offset(-10)
+        }
+        disagreeButton.snp.makeConstraints{ (make) in
+            make.width.equalTo(self.view.frame.width / 4)
+            make.height.equalTo(40)
+            make.top.equalToSuperview().offset(0)
+            make.trailing.equalTo(disagreeCountLabel.snp.leading).offset(-10)
+        }
+        ratioLabel.snp.makeConstraints{(make) in
+            make.top.equalTo(agreeButton.snp.bottom).offset(20)
+        }
+        agreeProgressView.snp.makeConstraints{(make) in
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-20)
+            make.top.equalTo(ratioLabel.snp.bottom).offset(20)
+            make.height.equalTo(30)
+        }
+        disagreeProgressView.snp.makeConstraints{(make) in
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-20)
+            make.top.equalTo(agreeProgressView.snp.bottom).offset(20)
+            make.height.equalTo(30)
+        }
+        
+        
         //게시물의 댓글을 나열 할 뷰
         CommentTableView.backgroundColor = .white
         CommentTableView.delegate = self
         CommentTableView.dataSource = self
         CommentTableView.frame = view.bounds
+        CommentTableView.isScrollEnabled = false
         CommentTableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         CommentTableView.showsHorizontalScrollIndicator = false
         CommentTableView.isScrollEnabled = false
@@ -193,6 +305,7 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
         
         
         StackView.addArrangedSubview(DetailView)
+        StackView.addArrangedSubview(VoteView)
         StackView.addArrangedSubview(CommentTableView)
         ScrollView.addSubview(StackView)
         ScrollView.delegate = self
@@ -230,15 +343,76 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
             }
             make.leading.equalToSuperview().offset(20)
         }
+        VoteView.snp.makeConstraints{ (make) in
+            make.top.equalTo(DetailView.snp.bottom).offset(20)
+            if(post.images.imageUrl.isEmpty){
+                print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
+            }else{
+                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + ImageView.frame.height + 400)
+            }
+            make.leading.equalToSuperview().offset(20)
+        }
         CommentTableView.snp.makeConstraints{ (make) in
-            make.top.equalTo(DetailView.snp.bottom).offset(0)
+            make.top.equalTo(VoteView.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview().offset(0)
         }
         // 댓글 입력 필드에 대한 Notification Observer 등록
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+
     }
+    //투표 비율
+    func updateRatioLabel() {
+        let totalVotes = agreeCount + disagreeCount
+                if totalVotes > 0 {
+                    let agreeRatio = Double(agreeCount) / Double(totalVotes) * 100
+                    let disagreeRatio = Double(disagreeCount) / Double(totalVotes) * 100
+                    ratioLabel.text = String(format: "찬성 비율: %.2f%% | 반대 비율: %.2f%%", agreeRatio, disagreeRatio)
+                } else {
+                    ratioLabel.text = "투표 없음"
+                }
+    }
+    //투표 비율에 따른 그래프
+    func updateProgressViews() {
+        let totalVotes = agreeCount + disagreeCount
+                if totalVotes > 0 {
+                    let agreeRatio = Float(agreeCount) / Float(totalVotes)
+                    let disagreeRatio = Float(disagreeCount) / Float(totalVotes)
+                    agreeProgressView.progress = agreeRatio
+                    disagreeProgressView.progress = disagreeRatio
+                } else {
+                    agreeProgressView.progress = 0
+                    disagreeProgressView.progress = 0
+                }
+    }
+    //찬성버튼을 눌렀을때 메서드
+    @objc func agreeButtonTapped() {
+            if !isAgreed {
+                print("agreeButtonTapped - Not pushed isAgreed")
+                VoteBtnClicked(VoteType: "AGREE")
+                isAgreed = true
+                // 투표를 조회해서 찬성, 반대 수 가져오기
+                VoteStatusCheck()
+                agreeCountLabel.text = "찬성: \(agreeCount)"
+                updateRatioLabel()
+                updateProgressViews()
+            }
+        }
+    //반대버튼을 눌렀을때 메서드
+    @objc func disagreeButtonTapped() {
+            if !isDisagreed {
+                print("disagreeButtonTapped - Not pushed isDisgreed")
+                VoteBtnClicked(VoteType: "OPPOSE")
+                isDisagreed = true
+                // 투표를 조회해서 찬성, 반대 수 가져오기
+                VoteStatusCheck()
+                disagreeCountLabel.text = "반대: \(disagreeCount)"
+                updateRatioLabel()
+                updateProgressViews()
+            }
+        }
     //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
     func setupTapGesture(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
@@ -494,17 +668,23 @@ class MyWriteDetailViewController : UIViewController, UITableViewDelegate, UITab
     }
     override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
-            //부모로 이동했을때 탭바를 다시 켬
-            if isMovingFromParent {
-                print("Back 버튼 클릭됨")
-                tabBarController?.tabBar.isHidden = false
-            }
+            //부모로 이동해도 새로운 탭바를 사용할 것이기 때문에 기존의 탭바를 켤 필요 없음
+//            if isMovingFromParent {
+//                print("Back 버튼 클릭됨")
+//                tabBarController?.tabBar.isHidden = false
+//            }
         }
 }
-extension MyWriteDetailViewController {
+extension MyWriteVoteViewController {
     //MARK: - 서버에서 데이터 가져오기 -> 댓글 조회
-    func fetchPosts(page: Int, completion: @escaping ([MyWriteComment]?, Error?) -> Void) {
-        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(post.page)") else { return  }
+    func fetchPosts(page: Int, completion: @escaping ([MyVoteComment]?, Error?) -> Void) {
+        // 투표를 조회해서 찬성, 반대 수 가져오기
+        VoteStatusCheck()
+        agreeCountLabel.text = "찬성: \(agreeCount)"
+        disagreeCountLabel.text = "반대: \(disagreeCount)"
+        updateRatioLabel()
+        updateProgressViews()
+        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(post.page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
@@ -526,7 +706,7 @@ extension MyWriteDetailViewController {
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                 if let result = json?["result"] as? [String: Any], let comments = result["commentList"] as? [[String: Any]] {
-                    var posts = [MyWriteComment]()
+                    var posts = [MyVoteComment]()
                     for comment in comments {
                         if
                             let day = comment["createdTime"] as? String,
@@ -534,7 +714,7 @@ extension MyWriteDetailViewController {
                             let commentText = comment["text"] as? String,
                             let isMine = comment["isMine"] as? Bool
                         {
-                            let post = MyWriteComment(day: day, commentId: commentId, comment: commentText, commentIsMine: isMine)
+                            let post = MyVoteComment(day: day, commentId: commentId, comment: commentText, commentIsMine: isMine)
                             posts.append(post)
                         }
                     }
@@ -551,8 +731,8 @@ extension MyWriteDetailViewController {
     @objc func BoardDetailShow() {
         print("BoardDetailShow() - called()")
         // 서버 API 엔드포인트 및 요청 생성
-        guard let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)") else { return }
-        var request = URLRequest(url: apiUrl)
+        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)")
+        var request = URLRequest(url: apiUrl!)
         request.httpMethod = "GET"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
@@ -771,5 +951,136 @@ extension MyWriteDetailViewController {
             }
         }
         task.resume()
+    }
+    //투표 메서드
+    //투표 버튼 클릭 메서드
+    @objc func VoteBtnClicked(VoteType : String) {
+        print("VoteBtnClicked - called()")
+        var status = 0
+        var message = ""
+        print("찬성인가요 반대인가요 - \(VoteType)")
+        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote?voteType=\(VoteType)")
+        var request = URLRequest(url: apiUrl!)
+        request.httpMethod = "POST"
+        if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
+        let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
+        //헤더와 인증토큰 설정
+        request.setValue(acToken, forHTTPHeaderField: "accessToken")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        //서버로 요청 보내기
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            // 서버 응답 처리
+            if let error = error {
+                    print("Error: \(error.localizedDescription)")
+            } else if let data = data {
+            // 서버 응답 데이터 처리 (만약 필요하다면)
+            if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+            // 서버로부터 받은 JSON 데이터 처리
+                print("Response JSON: \(responseJSON)")
+                status = responseJSON["status"] as? Int ?? 0
+                message = responseJSON["message"] as? String ?? ""
+                }
+            }
+            if status == 200 {
+                // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
+                print("투표 전송이 성공했습니다.")
+                DispatchQueue.main.async {
+                    //메인스레드에서 실행할 기능
+                    if VoteType == "AGREE" {
+                        self.agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+                        self.agreeButton.isEnabled = false
+
+                    }else if VoteType == "OPPOSE"{
+                        self.disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+                        self.disagreeButton.isEnabled = false
+                    }
+                }
+            }else if message == "이미 투표를 완료한 사용자입니다."{
+                DispatchQueue.main.async {
+                    //메인스레드에서 실행할 기능
+                    //이미 투표를 완료했음을 알림
+                    self.AlreadyVote()
+                    if VoteType == "AGREE" {
+                        self.agreeButton.isEnabled = false
+                    }else if VoteType == "OPPOSE"{
+                        self.disagreeButton.isEnabled = false
+                    }
+                }
+            }else if message == "해당 게시물에는 투표기능이 존재하지 않습니다." {
+                DispatchQueue.main.async {
+                    //투표 기능이 없음을 알림
+                    self.isNotVotePage()
+                }
+            }
+        }.resume()
+    }
+    //게시글의 투표 상태 조회
+    @objc func VoteStatusCheck() {
+        print("VoteStatusCheck - called()")
+        var status = 0
+        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote")
+        var request = URLRequest(url: apiUrl!)
+        request.httpMethod = "GET"
+        if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
+        let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
+        //헤더와 인증토큰 설정
+        request.setValue(acToken, forHTTPHeaderField: "accessToken")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        //서버로 요청 보내기
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            // 서버 응답 처리
+            if let error = error {
+                    print("Error: \(error.localizedDescription)")
+            } else if let data = data {
+            // 서버 응답 데이터 처리 (만약 필요하다면)
+            if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+            // 서버로부터 받은 JSON 데이터 처리
+                print("Response JSON: \(responseJSON)")
+                status = responseJSON["status"] as? Int ?? 0
+                if let result = responseJSON["result"] as? [String:Any],
+                   let agreeCnt = result["agreeCnt"] as? Int,
+                   let opposeCnt = result["opposeCnt"] as? Int{
+                    DispatchQueue.main.async {
+                        //메인스레드에서 실행할 기능
+                        self.agreeCount = agreeCnt //찬성
+                        self.disagreeCount = opposeCnt //반대
+                        }
+                    }
+                }
+            }
+            if status == 200 {
+                // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
+                DispatchQueue.main.async {
+                    self.agreeCountLabel.text = "찬성: \(self.agreeCount)"
+                    self.disagreeCountLabel.text = "반대: \(self.disagreeCount)"
+                    self.updateRatioLabel()
+                    self.updateProgressViews()
+                }
+            }
+        }.resume()
+    }
+    //투표를 했음을 알림
+    func AlreadyVote() {
+        print("AlreadyVote - called()")
+        DispatchQueue.main.async {
+                let Alert = UIAlertController(title: "이미 투표를 했습니다.", message: nil, preferredStyle: .alert)
+                let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
+                    // 메서드
+                }
+                Alert.addAction(Ok)
+            self.present(Alert, animated: true)
+            }
+    }
+    //해당 게시물은 투표기능이 없음. 공지사항 게시물임
+    func isNotVotePage() {
+        print("isNotVotePage - called()")
+        DispatchQueue.main.async {
+                let Alert = UIAlertController(title: "해당 게시물은 투표 기능이 없습니다.", message: "공지사항 게시물", preferredStyle: .alert)
+                let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
+                    // 메서드
+                }
+                Alert.addAction(Ok)
+            self.present(Alert, animated: true)
+            }
     }
 }

@@ -181,17 +181,20 @@ class MypageViewController: UIViewController{
     }
     //학생의 이름, 과 정보를 가져올 메서드
     func SetStudentInfo() {
-        Studenttitle.text = "박정곤"
-        StudentInfo.text = "지능기전공학부 무인이동체공학과"
-        let urlString = "https://example.com/login"
+        Studenttitle.text = "Name"
+        StudentInfo.text = "DepartMent"
+        let urlString = "http://15.164.161.53:8082/api/v1/user/info"
         guard let url = URL(string: urlString)else{
             return //유효한 URL 인가?
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
         do{
-            // HTTP 요청 헤더 설정
+            if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
+            let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue(acToken, forHTTPHeaderField: "accessToken")
             // URLSession을 사용하여 요청 전송
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 if let error = error {
@@ -210,7 +213,14 @@ class MypageViewController: UIViewController{
                         if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                             print("Response: \(jsonResponse)")
                             // 서버로부터 받은 응답 데이터를 파싱하여 로그인 결과 처리
-                            
+                            if let result = jsonResponse["result"] as? [String:Any],
+                            let StudentTitle = result["name"] as? String,
+                            let Studentinfo = result["majorName"] as? String{
+                                DispatchQueue.main.async {
+                                    self.Studenttitle.text = StudentTitle
+                                    self.StudentInfo.text = Studentinfo
+                                }
+                            }
                         }else{
                             
                         }
