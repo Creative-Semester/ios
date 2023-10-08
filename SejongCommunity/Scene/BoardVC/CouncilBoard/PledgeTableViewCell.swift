@@ -9,8 +9,6 @@ import UIKit
 
 class PledgeTableViewCell: UITableViewCell {
     
-    var isCompletion: Bool = false
-    
     private let pledgeTitleLabel: UILabel = {
         let label = UILabel()
         
@@ -33,7 +31,7 @@ class PledgeTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .default // 선택되었을때 효과
         
-        setup()
+        setupLayout()
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -51,11 +49,10 @@ class PledgeTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setup() {
+    func configure(departmentPromises: DepartmentPromises) {
         
-        checkBoxImage.image = isCompletion ? UIImage(systemName: "checkmark.square") : UIImage(systemName: "square")
-        
-        setupLayout()
+        checkBoxImage.image = departmentPromises.implementation ? UIImage(systemName: "checkmark.square") : UIImage(systemName: "square")
+        pledgeTitleLabel.text = departmentPromises.contents
     }
     
     func setupLayout() {
