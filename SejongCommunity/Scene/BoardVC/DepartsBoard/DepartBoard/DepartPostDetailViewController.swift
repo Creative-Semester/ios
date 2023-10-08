@@ -60,7 +60,6 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
                     // 테이블 뷰 갱신
                     DispatchQueue.main.async {
                         self.CommentTableView.reloadData()
-                        print("처음 가져오고 난 후 comments의 배열입니다. - \(self.comments)")
                     }
                     print("Initial data fetch - Success")
                 } else if let error = error {
@@ -72,6 +71,7 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         CommentTableView.estimatedRowHeight = 100 // 예상 높이 (원하는 초기 높이)
         CommentTableView.rowHeight = UITableView.automaticDimension
+        BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
         vview = UIView()
@@ -336,9 +336,6 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         cell.commentLabel.text = comment.comment
         cell.DayLabel.text = comment.day
         cell.commentLabel.sizeToFit()
-        // 업데이트가 완료된 후에 이 부분에서 셀 정보를 확인할 수 있습니다.
-        let cellText = cell.commentLabel.text ?? "No Text"
-        print("Cell at section \(indexPath.section), row \(indexPath.row): \(cellText)")
         return cell
     }
     // MARK: - UITableViewDelegate

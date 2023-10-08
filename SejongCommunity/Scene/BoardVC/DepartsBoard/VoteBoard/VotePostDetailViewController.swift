@@ -74,11 +74,6 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
         activityIndicator.center = view.center
         // 처음 들어오면 투표를 조회해서 찬성, 반대 수 가져오기
         //사용자가 이미 투표한 경우 투표를 못하게 해야함.
-        if true{
-            
-        }else{
-            
-        }
         VoteStatusCheck()
         agreeCountLabel.text = "찬성: \(agreeCount)"
         disagreeCountLabel.text = "반대: \(disagreeCount)"
@@ -400,7 +395,8 @@ class VotePostDetailViewController : UIViewController, UITableViewDelegate, UITa
                 isAgreed = true
                 // 투표를 조회해서 찬성, 반대 수 가져오기
                 VoteStatusCheck()
-                agreeCountLabel.text = "찬성: \(agreeCount)"                updateRatioLabel()
+                agreeCountLabel.text = "찬성: \(agreeCount)"
+                updateRatioLabel()
                 updateProgressViews()
             }
         }
@@ -963,7 +959,7 @@ extension VotePostDetailViewController {
         var status = 0
         var message = ""
         print("찬성인가요 반대인가요 - \(VoteType)")
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote?VoteType=\(VoteType)")
+        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote?voteType=\(VoteType)")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "POST"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -982,8 +978,8 @@ extension VotePostDetailViewController {
             // 서버로부터 받은 JSON 데이터 처리
                 print("Response JSON: \(responseJSON)")
                 status = responseJSON["status"] as? Int ?? 0
-                }
                 message = responseJSON["message"] as? String ?? ""
+                }
             }
             if status == 200 {
                 // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
@@ -991,28 +987,23 @@ extension VotePostDetailViewController {
                 DispatchQueue.main.async {
                     //메인스레드에서 실행할 기능
                     if VoteType == "AGREE" {
-                        agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
-                        agreeButton.isEnabled = false
+                        self.agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+                        self.agreeButton.isEnabled = false
 
                     }else if VoteType == "OPPOSE"{
-                        disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
-                        disagreeButton.isEnabled = false
+                        self.disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+                        self.disagreeButton.isEnabled = false
                     }
                 }
-            }else if message == "이미 투표를 완료한 사용자입니다"{
-                print("이미 투표를 완료한 사용자입니다.")
+            }else if message == "이미 투표를 완료한 사용자입니다."{
                 DispatchQueue.main.async {
                     //메인스레드에서 실행할 기능
+                    //이미 투표를 완료했음을 알림
+                    self.AlreadyVote()
                     if VoteType == "AGREE" {
-                        agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
-                        agreeButton.isEnabled = false
-                        //이미 투표를 완료했음을 알림
-                        
+                        self.agreeButton.isEnabled = false
                     }else if VoteType == "OPPOSE"{
-                        disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
-                        disagreeButton.isEnabled = false
-                        //이미 투표를 완료했음을 알림
-                        
+                        self.disagreeButton.isEnabled = false
                     }
                 }
             }
@@ -1055,9 +1046,24 @@ extension VotePostDetailViewController {
             if status == 200 {
                 // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
                 DispatchQueue.main.async {
-                    
+                    self.agreeCountLabel.text = "찬성: \(self.agreeCount)"
+                    self.disagreeCountLabel.text = "반대: \(self.disagreeCount)"
+                    self.updateRatioLabel()
+                    self.updateProgressViews()
                 }
             }
         }.resume()
+    }
+    //투표를 했음을 알림
+    func AlreadyVote() {
+        print("AlreadyVote - called()")
+        DispatchQueue.main.async {
+                let Alert = UIAlertController(title: "이미 투표를 했습니다.", message: nil, preferredStyle: .alert)
+                let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
+                    // 메서드
+                }
+                Alert.addAction(Ok)
+            self.present(Alert, animated: true)
+            }
     }
 }
