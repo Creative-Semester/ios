@@ -340,9 +340,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         cell.commentLabel.text = comment.comment
         cell.DayLabel.text = comment.day
         cell.commentLabel.sizeToFit()
-        // 업데이트가 완료된 후에 이 부분에서 셀 정보를 확인할 수 있습니다.
-        let cellText = cell.commentLabel.text ?? "No Text"
-        print("Cell at section \(indexPath.section), row \(indexPath.row): \(cellText)")
         return cell
     }
     // MARK: - UITableViewDelegate
