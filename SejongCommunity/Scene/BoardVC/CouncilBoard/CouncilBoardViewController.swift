@@ -153,6 +153,8 @@ class CouncilBoardViewController : UIViewController {
         
         // 데이터셋 생성
         let dataSet = BarChartDataSet(entries: entries, label: "공약 이행률")
+        dataSet.valueFont = UIFont.systemFont(ofSize: 12) // 글꼴 크기
+        dataSet.valueTextColor = .black // 글꼴 색상
         
         // 그래프 색상 설정
         dataSet.colors = ChartColorTemplates.colorful()
