@@ -125,7 +125,20 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     }
     //글쓰기 버튼을 누르면 글작성 뷰로 이동시킬 메서드
     @objc func WriteBtnTappend() {
-        navigationController?.pushViewController(OpenWriteViewController(), animated: true)
+        let Alert = UIAlertController(title: "글 작성 메뉴", message: nil, preferredStyle: .alert)
+        let Open = UIAlertAction(title: "자유게시판", style: .default){
+            (_) in
+            self.navigationController?.pushViewController(OpenWriteViewController(), animated: true)
+        }
+        let Vote = UIAlertAction(title: "투표", style: .default){ (_) in
+            self.navigationController?.pushViewController(VoteBoardWriteViewController(boardType: "Free"), animated: true)
+        }
+        let Ok = UIAlertAction(title: "취소", style: .default){ (_) in
+        }
+        Alert.addAction(Open)
+        Alert.addAction(Vote)
+        Alert.addAction(Ok)
+        present(Alert, animated: true)
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그

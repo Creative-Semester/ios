@@ -128,7 +128,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
             self.navigationController?.pushViewController(DepartOpenWriteViewController(), animated: true)
         }
         let Vote = UIAlertAction(title: "투표", style: .default){ (_) in
-            self.navigationController?.pushViewController(VoteBoardWriteViewController(), animated: true)
+            self.navigationController?.pushViewController(VoteBoardWriteViewController(boardType: "Council"), animated: true)
         }
         let Ok = UIAlertAction(title: "취소", style: .default){ (_) in
         }

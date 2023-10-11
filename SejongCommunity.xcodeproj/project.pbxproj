@@ -193,17 +193,6 @@
 			path = LoginVC;
 			sourceTree = "<group>";
 		};
-		E4021ED02A9F425C00FFEAB2 /* DepartBoard */ = {
-			isa = PBXGroup;
-			children = (
-				F1E547322A84C11B00671182 /* DepartBoardViewController.swift */,
-				F1E547342A84C13D00671182 /* DepartOpenWriteViewController.swift */,
-				F1E547362A84C15400671182 /* DepartPostDetailViewController.swift */,
-				E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */,
-			);
-			path = DepartBoard;
-			sourceTree = "<group>";
-		};
 		E472375F2AB83F2B003BD82B /* MainVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -270,7 +259,10 @@
 		F1E547312A84C0A900671182 /* DepartsBoard */ = {
 			isa = PBXGroup;
 			children = (
-				E4021ED02A9F425C00FFEAB2 /* DepartBoard */,
+				E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */,
+				F1E547322A84C11B00671182 /* DepartBoardViewController.swift */,
+				F1E547342A84C13D00671182 /* DepartOpenWriteViewController.swift */,
+				F1E547362A84C15400671182 /* DepartPostDetailViewController.swift */,
 			);
 			path = DepartsBoard;
 			sourceTree = "<group>";

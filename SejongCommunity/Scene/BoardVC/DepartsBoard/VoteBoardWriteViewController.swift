@@ -13,6 +13,15 @@ import Alamofire
 import PhotosUI
 
 class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
+    var boardType: String = "" // boardType을 저장할 변수
+    // 초기화 메서드
+    init(boardType: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.boardType = boardType
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     var tableView = UITableView()
     //Textview의 placeholder
     let placeholderText = "내용"
@@ -315,7 +324,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                 ]
             }
             //MARK: JSON 통신
-            let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Council&isVote=true"
+            let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=\(boardType)&isVote=true"
             guard let url = URL(string: urlString) else {
                     // 유효하지 않은 URL 처리
                     return
@@ -358,9 +367,16 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                     DispatchQueue.main.async{
                         let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
                         let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
-                            // OpenBoardViewController로 이동
-                            if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is DepartBoardViewController }) {
-                                self.navigationController?.popToViewController(openboardViewController, animated: true)
+                            if self.boardType == "Free" {
+                                // OpenBoardViewController로 이동
+                                if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+                                    self.navigationController?.popToViewController(openboardViewController, animated: true)
+                                }
+                            }else if self.boardType == "Council" {
+                                // DepartBoardViewController로 이동
+                                if let departBoardViewController = self.navigationController?.viewControllers.first(where: { $0 is DepartBoardViewController }) {
+                                    self.navigationController?.popToViewController(departBoardViewController, animated: true)
+                                }
                             }
                         }
                         alertController.addAction(CancelController)
