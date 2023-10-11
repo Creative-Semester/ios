@@ -27,7 +27,6 @@
 		E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */; };
 		E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = E4D466592AB1B7DA003E5DD9 /* FSCalendar */; };
 		E4E9F6582AC85A2B00F8AEAD /* MyCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F6572AC85A2B00F8AEAD /* MyCommentViewController.swift */; };
-		E4E9F65C2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */; };
 		E4E9F65E2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F65D2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift */; };
 		E4E9F6622AD06C5200F8AEAD /* CustomCommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F6612AD06C5200F8AEAD /* CustomCommentTableViewCell.swift */; };
 		E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E9F6632AD32E2200F8AEAD /* MyWriteVoteViewController.swift */; };
@@ -84,7 +83,6 @@
 		E47237622ABC0823003BD82B /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		E4E9F6572AC85A2B00F8AEAD /* MyCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCommentViewController.swift; sourceTree = "<group>"; };
-		E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWriteDetailViewController.swift; sourceTree = "<group>"; };
 		E4E9F65D2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCommentDetailViewController.swift; sourceTree = "<group>"; };
 		E4E9F6612AD06C5200F8AEAD /* CustomCommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCommentTableViewCell.swift; sourceTree = "<group>"; };
 		E4E9F6632AD32E2200F8AEAD /* MyWriteVoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyWriteVoteViewController.swift; sourceTree = "<group>"; };
@@ -233,7 +231,6 @@
 			isa = PBXGroup;
 			children = (
 				E47237602AB972DE003BD82B /* MyWriteViewController.swift */,
-				E4E9F65B2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift */,
 				E4E9F6632AD32E2200F8AEAD /* MyWriteVoteViewController.swift */,
 			);
 			path = MyWriteVC;
@@ -523,7 +520,6 @@
 				F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */,
 				F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
-				E4E9F65C2ACBF68F00F8AEAD /* MyWriteDetailViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
 				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,

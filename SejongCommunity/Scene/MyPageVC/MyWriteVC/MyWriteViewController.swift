@@ -27,6 +27,7 @@ struct MyWritePost: Decodable {
 class MyWriteViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     //페이지 번호와 크기
     var currentPage = 0
+    var detailViewController = UIViewController()
     //내가 쓴 글에 대해서 보여줄 TableView 전역 선언
     let tableView = UITableView()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
@@ -113,17 +114,21 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
     }
     //셀을 선택했을 때 해당 게시물의 상세 내용을 보여주기 위함
     func showPostDetail(post: MyWritePost, boardType: String){
-        if boardType == "Free" {
-            let detailViewController = MyWriteDetailViewController(post: post)
-            //게시글의 상세 글 볼때 탭바 숨기기
-            tabBarController?.tabBar.isHidden = true
-            navigationController?.pushViewController(detailViewController, animated: true)
-        }else{
             let detailViewController = MyWriteVoteViewController(post: post)
             //게시글의 상세 글 볼때 탭바 숨기기
             tabBarController?.tabBar.isHidden = true
             navigationController?.pushViewController(detailViewController, animated: true)
-        }
+//        if boardType == "Free" {
+//            let detailViewController = MyWriteDetailViewController(post: post)
+//            //게시글의 상세 글 볼때 탭바 숨기기
+//            tabBarController?.tabBar.isHidden = true
+//            navigationController?.pushViewController(detailViewController, animated: true)
+//        }else{
+//            let detailViewController = MyWriteVoteViewController(post: post)
+//            //게시글의 상세 글 볼때 탭바 숨기기
+//            tabBarController?.tabBar.isHidden = true
+//            navigationController?.pushViewController(detailViewController, animated: true)
+//        }
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그

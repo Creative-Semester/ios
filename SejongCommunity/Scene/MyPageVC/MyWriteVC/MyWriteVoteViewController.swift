@@ -61,6 +61,10 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
     var vview = UIView()
     var ScrollView = UIScrollView()
     var StackView = UIStackView()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
@@ -146,6 +150,7 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         updateProgressViews()
         setupTapGesture()
     }
+    let VoteView = UIView()
     func setupView(){
         //각 뷰들을 넣을 스크롤뷰 생성
         ScrollView.backgroundColor = .white
@@ -241,7 +246,6 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         disagreeProgressView.tintColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
         
         // 스택뷰를 이용한 레이아웃 설정
-        let VoteView = UIView()
         VoteView.backgroundColor = .white
         VoteView.addSubview(agreeButton)
         VoteView.addSubview(agreeCountLabel)
@@ -290,8 +294,6 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
             make.top.equalTo(agreeProgressView.snp.bottom).offset(20)
             make.height.equalTo(30)
         }
-        
-        
         //게시물의 댓글을 나열 할 뷰
         CommentTableView.backgroundColor = .white
         CommentTableView.delegate = self
@@ -684,7 +686,7 @@ extension MyWriteVoteViewController {
         disagreeCountLabel.text = "반대: \(disagreeCount)"
         updateRatioLabel()
         updateProgressViews()
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(post.page)")!
+        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
@@ -751,6 +753,16 @@ extension MyWriteVoteViewController {
             // 서버로부터 받은 JSON 데이터 처리
                 print("Response JSON: \(responseJSON)")
                 // 형식은 수정해줘야함.
+                let result = responseJSON["result"] as? [String: Any]
+                let voteDetail = result?["voteDetail"] as? [String:Any]
+                print("게시글의 투표가 있는지? - \(voteDetail)")
+                if voteDetail == nil {
+                    DispatchQueue.main.async {
+                        self.VoteView.snp.remakeConstraints{(make) in
+                            make.height.equalTo(0)
+                        }
+                    }
+                }
                 if let result = responseJSON["result"] as? [String: Any],
                    let ismine = result["isMine"] as? Bool{
                      self.IsMine = ismine //게시글 작성자와 사용자가 동일한지 판별
@@ -1075,7 +1087,7 @@ extension MyWriteVoteViewController {
     func isNotVotePage() {
         print("isNotVotePage - called()")
         DispatchQueue.main.async {
-                let Alert = UIAlertController(title: "해당 게시물은 투표 기능이 없습니다.", message: "공지사항 게시물", preferredStyle: .alert)
+                let Alert = UIAlertController(title: "해당 게시물은 투표 기능이 없습니다.", message: nil, preferredStyle: .alert)
                 let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
                     // 메서드
                 }
