@@ -364,8 +364,6 @@ class MainViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSo
     //학생회공지사항, 투표 버튼 액션 처리
     @objc func DepartBoardBtnTapped() {
         self.navigationController?.pushViewController(DepartBoardViewController(), animated: true)
-        //상세페이지로 들어갈때 탭바 숨기기
-        tabBarController?.tabBar.isHidden = true
     }
     //수업게시판 버튼 액션 처리
     @objc func ClassBoardBtnTapped() {

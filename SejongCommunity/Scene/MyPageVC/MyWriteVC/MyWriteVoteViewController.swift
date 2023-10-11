@@ -321,7 +321,7 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         StackView.snp.makeConstraints{ (make) in
             if (comments.count < 5 && post.images.imageUrl.isEmpty) {
                 make.height.equalTo(ScrollView.snp.height)
-                make.bottom.equalToSuperview().offset(-10)
+                make.bottom.equalToSuperview().offset(-(comments.count + 2) * 100)
             }else if(post.images.imageUrl.isEmpty){ // 수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
@@ -603,7 +603,7 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
                     self.StackView.snp.remakeConstraints{ (make) in
                         if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
                             make.height.equalTo(self.ScrollView.snp.height)
-                            make.bottom.equalToSuperview().offset(-10)
+                            make.bottom.equalToSuperview().offset(-(self.comments.count + 2) * 100)
                         }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
                             print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                             make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
@@ -644,7 +644,7 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
                     self.StackView.snp.remakeConstraints{ (make) in
                         if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
                             make.height.equalTo(self.ScrollView.snp.height)
-                            make.bottom.equalToSuperview().offset(-10)
+                            make.bottom.equalToSuperview().offset(-(self.comments.count + 2) * 100)
                         }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
                             print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                             make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
@@ -670,11 +670,11 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
     }
     override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
-            //부모로 이동해도 새로운 탭바를 사용할 것이기 때문에 기존의 탭바를 켤 필요 없음
-//            if isMovingFromParent {
-//                print("Back 버튼 클릭됨")
-//                tabBarController?.tabBar.isHidden = false
-//            }
+            //부모로 이동했을때 탭바를 다시 켬
+            if isMovingFromParent {
+                print("Back 버튼 클릭됨")
+                tabBarController?.tabBar.isHidden = false
+            }
         }
 }
 extension MyWriteVoteViewController {
@@ -813,6 +813,21 @@ extension MyWriteVoteViewController {
                 DispatchQueue.main.async {
                     self.commentField.text = ""
                     self.CommentTableView.reloadData()
+                    self.StackView.snp.remakeConstraints{ (make) in
+                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
+                            make.height.equalTo(self.ScrollView.snp.height)
+                            make.bottom.equalToSuperview().offset(-(self.comments.count + 2) * 100)
+                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
+                            print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                            make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
+                            make.bottom.equalToSuperview().offset(-0)
+                        }else{
+                            make.height.equalTo( CGFloat((self.comments.count + 4) * 100))
+                            make.bottom.equalToSuperview().offset(-0)
+                        }
+                        make.width.equalTo(self.ScrollView.snp.width)
+                        make.top.equalToSuperview().offset(0)
+                    }
                 }
             }
         }.resume()

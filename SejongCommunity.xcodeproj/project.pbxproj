@@ -16,8 +16,6 @@
 		E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */; };
 		E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021EC82A9208A000FFEAB2 /* LoginIntroViewController.swift */; };
 		E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ECA2A9208B100FFEAB2 /* LoginViewController.swift */; };
-		E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ECE2A9F3B6500FFEAB2 /* VoteViewController.swift */; };
-		E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */; };
 		E4021ED52A9F437200FFEAB2 /* VoteBoardWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */; };
 		E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */; };
 		E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E472375D2AB83DA5003BD82B /* WebViewController.swift */; };
@@ -74,8 +72,6 @@
 		E4021E7B2A76B7D300FFEAB2 /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
 		E4021EC82A9208A000FFEAB2 /* LoginIntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginIntroViewController.swift; sourceTree = "<group>"; };
 		E4021ECA2A9208B100FFEAB2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		E4021ECE2A9F3B6500FFEAB2 /* VoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteViewController.swift; sourceTree = "<group>"; };
-		E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotePostDetailViewController.swift; sourceTree = "<group>"; };
 		E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteBoardWriteViewController.swift; sourceTree = "<group>"; };
 		E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		E472375D2AB83DA5003BD82B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
@@ -203,18 +199,9 @@
 				F1E547322A84C11B00671182 /* DepartBoardViewController.swift */,
 				F1E547342A84C13D00671182 /* DepartOpenWriteViewController.swift */,
 				F1E547362A84C15400671182 /* DepartPostDetailViewController.swift */,
-			);
-			path = DepartBoard;
-			sourceTree = "<group>";
-		};
-		E4021ED12A9F426E00FFEAB2 /* VoteBoard */ = {
-			isa = PBXGroup;
-			children = (
-				E4021ECE2A9F3B6500FFEAB2 /* VoteViewController.swift */,
-				E4021ED22A9F429000FFEAB2 /* VotePostDetailViewController.swift */,
 				E4021ED42A9F437200FFEAB2 /* VoteBoardWriteViewController.swift */,
 			);
-			path = VoteBoard;
+			path = DepartBoard;
 			sourceTree = "<group>";
 		};
 		E472375F2AB83F2B003BD82B /* MainVC */ = {
@@ -283,7 +270,6 @@
 		F1E547312A84C0A900671182 /* DepartsBoard */ = {
 			isa = PBXGroup;
 			children = (
-				E4021ED12A9F426E00FFEAB2 /* VoteBoard */,
 				E4021ED02A9F425C00FFEAB2 /* DepartBoard */,
 			);
 			path = DepartsBoard;
@@ -484,7 +470,6 @@
 				E4021E6B2A6F8B1000FFEAB2 /* OpenBoardViewController.swift in Sources */,
 				E4021E782A76414400FFEAB2 /* PostDetailViewController.swift in Sources */,
 				F1E5472C2A82680B00671182 /* OfficeDetailsTableViewCell.swift in Sources */,
-				E4021ED32A9F429000FFEAB2 /* VotePostDetailViewController.swift in Sources */,
 				F1E5478D2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift in Sources */,
 				F1E547962AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift in Sources */,
 				E4021ECB2A9208B100FFEAB2 /* LoginViewController.swift in Sources */,
@@ -502,7 +487,6 @@
 				E4E9F6582AC85A2B00F8AEAD /* MyCommentViewController.swift in Sources */,
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
-				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
 				F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */,
 				E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */,
 				E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */,

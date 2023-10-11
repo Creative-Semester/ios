@@ -23,26 +23,6 @@ struct DepartPost: Decodable {
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
 class DepartBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
-    private let CouncilButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("공지사항", for: .normal)
-        button.addTarget(self, action: #selector(CouncilBtnTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        button.setTitleColor(UIColor(red: 1, green: 0.271, blue: 0.417, alpha: 1), for: .normal)
-        return button
-    }()
-    
-    private let VoteButton: UIButton = {
-        let button = UIButton()
-        
-        button.setTitle("투표", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(VoteBtnTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        
-        return button
-    }()
     //페이지 번호와 크기
     var currentPage = 0
     
@@ -53,18 +33,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     ]
     override func viewDidLoad() {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-        self.navigationItem.setHidesBackButton(true, animated: false)
-        let closeIcon = UIImage(systemName: "chevron.backward")
-        let MainBackBtnLabel = UIButton()
-        MainBackBtnLabel.setTitle(" 메인페이지", for: .normal)
-        MainBackBtnLabel.setTitleColor(.red, for: .normal)
-        MainBackBtnLabel.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        MainBackBtnLabel.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        MainBackBtnLabel.addTarget(self, action: #selector(MainBackButtonTapped), for: .touchUpInside)
-        MainBackBtnLabel.tintColor = .red
-        let MainLabel = UIBarButtonItem(customView: MainBackBtnLabel)
-        self.navigationItem.leftBarButtonItems = [MainLabel]
-        
         self.navigationController?.navigationBar.tintColor = .red
         title = "학생회 공지사항"
         setupTableView()
@@ -94,17 +62,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
                     print("Error fetching initial data: \(error.localizedDescription)")
                 }
             }
-        //학생회 공지사항, 투표를 할 뷰를 나눌 탭바를 새로 생성
-        setTabBarView()
-    }
-    //메인으로 돌아갈 백 버튼
-    @objc func MainBackButtonTapped() {
-        if let mainViewController = navigationController?.viewControllers.first(where: { $0 is MainViewController }) {
-            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-            navigationController?.popToViewController(mainViewController, animated: true)
-        }
-        //메인으로 이동했을때 탭바를 다시 켬
-        tabBarController?.tabBar.isHidden = false
     }
     //테이블뷰를 설정하는 메서드
     func setupTableView() {
@@ -114,8 +71,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         tableView.frame = view.bounds
         tableView.isScrollEnabled = true
         tableView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
-        // 탭 바의 높이만큼 상단 여백 추가
-        tableView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
         //UITableView에 셀 등록
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
         self.view.addSubview(tableView)
@@ -147,33 +102,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         }
         return cell
     }
-    //학생회 공지사항, 투표를 할 뷰를 나눌 탭바 메서드
-    func setTabBarView() {
-        //학생회 공지사항 게시글과, 투표글에 대해 뷰를 나눌 탭바설정
-        let stackView = UIStackView(arrangedSubviews: [CouncilButton, VoteButton])
-        
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .center
-        stackView.backgroundColor = UIColor(red: 1, green: 0.867, blue: 0.867, alpha: 1)
-        
-        view.addSubview(stackView)
-        
-        stackView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
-        }
-    }
-    //공지사항 버튼을 눌렀을때 액션
-    @objc func CouncilBtnTapped() {
-        navigationController?.pushViewController(DepartBoardViewController(), animated: false)
-    }
-    //투표 버튼을 눌렀을때 액션
-    @objc func VoteBtnTapped() {
-        navigationController?.pushViewController(VoteViewController(), animated: false)
-    }
-    
     // MARK: - UITableViewDelegate
     //테이블 뷰의 델리게이트 프로토콜을 구현
     //didselectRowAt 메서드 특정 게시물의 상세 내용을 보여주기 위함
@@ -194,7 +122,20 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     }
     //글쓰기 버튼을 누르면 글작성 뷰로 이동시킬 메서드
     @objc func WriteBtnTappend() {
-        navigationController?.pushViewController(DepartOpenWriteViewController(), animated: true)
+        let Alert = UIAlertController(title: "글 작성 메뉴", message: nil, preferredStyle: .alert)
+        let Depart = UIAlertAction(title: "학생회 공지", style: .default){
+            (_) in
+            self.navigationController?.pushViewController(DepartOpenWriteViewController(), animated: true)
+        }
+        let Vote = UIAlertAction(title: "투표", style: .default){ (_) in
+            self.navigationController?.pushViewController(VoteBoardWriteViewController(), animated: true)
+        }
+        let Ok = UIAlertAction(title: "취소", style: .default){ (_) in
+        }
+        Alert.addAction(Depart)
+        Alert.addAction(Vote)
+        Alert.addAction(Ok)
+        present(Alert, animated: true)
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그

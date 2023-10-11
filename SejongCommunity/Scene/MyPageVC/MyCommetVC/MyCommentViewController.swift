@@ -234,4 +234,12 @@ class MyCommentViewController : UIViewController, UITableViewDelegate, UITableVi
             self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
+    override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            //부모로 이동했을때 탭바를 다시 켬
+            if isMovingFromParent {
+                print("Back 버튼 클릭됨")
+                tabBarController?.tabBar.isHidden = false
+            }
+        }
 }

@@ -359,7 +359,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                         let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
                         let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                             // OpenBoardViewController로 이동
-                            if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is VoteViewController }) {
+                            if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is DepartBoardViewController }) {
                                 self.navigationController?.popToViewController(openboardViewController, animated: true)
                             }
                         }
