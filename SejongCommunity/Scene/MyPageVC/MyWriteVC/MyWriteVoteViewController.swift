@@ -488,12 +488,17 @@ extension MyWriteVoteViewController {
         cell.commentLabel.text = comment.comment
         cell.DayLabel.text = comment.day
         cell.commentLabel.sizeToFit()
-        //댓글 셀의 높이 초기화
-        cellHeights = []
         //댓글 셀의 높이 계산
         let cellHeight = calculateCommentCellHeight(for: comment)
         cellHeights.append(cellHeight)
         return cell
+    }
+    func updateTableViewHeight() {
+        let newHeight = CGFloat(comments.count * 100) // 100은 댓글 셀의 예상 높이
+        CommentTableView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
+        StackView.layoutIfNeeded() // UIStackView 업데이트
+        ScrollView.contentSize = CGSize(width: ScrollView.contentSize.width, height: newHeight)
+        print("updateTableViewHeight called. New height: \(newHeight)")
     }
     // MARK: - UITableViewDelegate
 //    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -540,6 +545,7 @@ extension MyWriteVoteViewController {
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
+            let commentCount = self.comments.count
             // 데이터를 비워줌
             self.comments.removeAll()
             if let newPosts = newPosts {
@@ -549,12 +555,17 @@ extension MyWriteVoteViewController {
                 // 테이블 뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
-                    self.StackView.snp.remakeConstraints{ (make) in
-                        let totalHeight = self.cellHeights.reduce(0, +)
-                        make.bottom.equalToSuperview().offset(-0)
-                        make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
-                        make.width.equalTo(self.ScrollView.snp.width)
-                        make.top.equalToSuperview().offset(0)
+                }
+                if commentCount < self.comments.count{
+                    DispatchQueue.main.async {
+                        self.CommentTableView.reloadData()
+                        self.StackView.snp.remakeConstraints{ (make) in
+                            let totalHeight = self.cellHeights.reduce(0, +)
+                            make.bottom.equalToSuperview().offset(-0)
+                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
+                            make.width.equalTo(self.ScrollView.snp.width)
+                            make.top.equalToSuperview().offset(0)
+                        }
                     }
                 }
                 print("updatePage - Success")
@@ -574,7 +585,6 @@ extension MyWriteVoteViewController {
         print("loadNextPage() - called")
         currentPage += 1
         //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
-
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
             if let newPosts = newPosts {
