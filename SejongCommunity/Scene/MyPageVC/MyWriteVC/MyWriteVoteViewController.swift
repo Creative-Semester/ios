@@ -19,6 +19,10 @@ struct MyVoteComment : Decodable{
     let commentIsMine : Bool // 내 댓글인지 확인
 }
 class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
+    var lastContentOffsetY : CGFloat = 0
+    var isScrollingDown = false
+    var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
+    var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
     //투표기능 변수
     var agreeCount = 0
     var disagreeCount = 0
@@ -36,6 +40,10 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
     let disagreeProgressView = UIProgressView()
     // 댓글 테이블
     var CommentTableView = UITableView()
+    var ImageStackView = UIStackView()
+    var DetailLabel = UILabel()
+    // 배열을 만들어 각 셀의 높이를 저장
+    var cellHeights: [CGFloat] = []
     // 좋아요 버튼
     private let GreatBtn = UIButton()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
@@ -319,19 +327,9 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
             make.trailing.leading.equalToSuperview().inset(0)
         }
         StackView.snp.makeConstraints{ (make) in
-            if (comments.count < 5 && post.images.imageUrl.isEmpty) {
-                make.height.equalTo(ScrollView.snp.height)
-                make.bottom.equalToSuperview().offset(-(comments.count + 2) * 100)
-            }else if(post.images.imageUrl.isEmpty){ // 수정필요
-                print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                make.height.equalTo(DetailLabel.frame.height + CGFloat((comments.count + 2) * 100))
-                make.bottom.equalToSuperview().offset(-0)
-            }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + CGFloat((comments.count + 4)
-                                                                                                     * 100))
-                
-                make.bottom.equalToSuperview().offset(-0)
-            }
+            let totalHeight = self.cellHeights.reduce(0, +)
+            make.bottom.equalToSuperview().offset(-0)
+            make.height.equalTo(self.view.frame.height + (DetailLabel.frame.height + ImageStackView.frame.height + totalHeight))
             make.width.equalTo(ScrollView.snp.width)
             make.top.equalToSuperview().offset(0)
         }
@@ -365,56 +363,45 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
 
     }
-    //투표 비율
-    func updateRatioLabel() {
-        let totalVotes = agreeCount + disagreeCount
-                if totalVotes > 0 {
-                    let agreeRatio = Double(agreeCount) / Double(totalVotes) * 100
-                    let disagreeRatio = Double(disagreeCount) / Double(totalVotes) * 100
-                    ratioLabel.text = String(format: "찬성 비율: %.2f%% | 반대 비율: %.2f%%", agreeRatio, disagreeRatio)
-                } else {
-                    ratioLabel.text = "투표 없음"
-                }
-    }
-    //투표 비율에 따른 그래프
-    func updateProgressViews() {
-        let totalVotes = agreeCount + disagreeCount
-                if totalVotes > 0 {
-                    let agreeRatio = Float(agreeCount) / Float(totalVotes)
-                    let disagreeRatio = Float(disagreeCount) / Float(totalVotes)
-                    agreeProgressView.progress = agreeRatio
-                    disagreeProgressView.progress = disagreeRatio
-                } else {
-                    agreeProgressView.progress = 0
-                    disagreeProgressView.progress = 0
-                }
-    }
-    //찬성버튼을 눌렀을때 메서드
-    @objc func agreeButtonTapped() {
-            if !isAgreed {
-                print("agreeButtonTapped - Not pushed isAgreed")
-                VoteBtnClicked(VoteType: "AGREE")
-                isAgreed = true
-                // 투표를 조회해서 찬성, 반대 수 가져오기
-                VoteStatusCheck()
-                agreeCountLabel.text = "찬성: \(agreeCount)"
-                updateRatioLabel()
-                updateProgressViews()
+    override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            //부모로 이동했을때 탭바를 다시 켬
+            if isMovingFromParent {
+                print("Back 버튼 클릭됨")
+                tabBarController?.tabBar.isHidden = false
             }
         }
-    //반대버튼을 눌렀을때 메서드
-    @objc func disagreeButtonTapped() {
-            if !isDisagreed {
-                print("disagreeButtonTapped - Not pushed isDisgreed")
-                VoteBtnClicked(VoteType: "OPPOSE")
-                isDisagreed = true
-                // 투표를 조회해서 찬성, 반대 수 가져오기
-                VoteStatusCheck()
-                disagreeCountLabel.text = "반대: \(disagreeCount)"
-                updateRatioLabel()
-                updateProgressViews()
+}
+//MARK: - ScrollDetect, SetKeyBoard
+extension MyWriteVoteViewController {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffsetY = scrollView.contentOffset.y
+        let screenHeight = scrollView.bounds.size.height
+        let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
+
+        if contentOffsetY >= 0 {
+            isScrollingDown = true
+        } else {
+            isScrollingDown = false
+        }
+
+        if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
+            if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
+                loadNextPageCalled = true // 호출되었다고 표시
+                
+                self.view.addSubview(activityIndicator)
+                activityIndicator.startAnimating() // 로딩 인디케이터 시작
+                loadNextPage()
+            }
+        } else if !isScrollingDown && contentOffsetY < threshold {
+            if !updatePageCalled { //호출되지 않은 경우에만 실행
+                updatePageCalled = true // 호출되었다고 표시
+                self.view.addSubview(activityIndicator)
+                activityIndicator.startAnimating() // 로딩 인디케이터 시작
+                updatePage()
             }
         }
+    }
     //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
     func setupTapGesture(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
@@ -466,44 +453,30 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
             make.height.equalTo(self.view.frame.height / 21) // 최소 높이
         }
     }
-
+    
     private func adjustCommentView(insets: UIEdgeInsets) {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self = self else { return }
             self.view.frame.origin.y = -insets.bottom
         }
     }
-    //게시글의 툴버튼을 눌렀을 때 팝업
-    @objc func toolBtnTapped() {
-        let alertController = UIAlertController(title: "게시글 메뉴", message: nil, preferredStyle: .alert)
-        let isMyPost = true //게시글의 작성자와 현재 사용자가 동일한지 판별
-        //ismine으로 수정해야함.
-        print("해당 게시물이 내 게시글인지 확인 - \(IsMine)")
-        //게시글의 작성자와 현재 사용자가 같을때
-        if IsMine {
-                    // 삭제
-            let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
-                self.PostDelete()
-                    }
-            alertController.addAction(deleteAction)
-        }else{ //게시글의 작성자와 현재 사용자가 다를때
-            //쪽지 보내기
-            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
-                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
-            }
-            alertController.addAction(SendMessageController)
-            //신고
-//            let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
-//
-//            }
-//            alertController.addAction(DeclarationController)
-        }
-        //취소
-        let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
-            
-        }
-        alertController.addAction(CancelController)
-        present(alertController, animated: true)
+}
+//MARK: - Set_TableView
+extension MyWriteVoteViewController {
+    func calculateCommentCellHeight(for comment: MyVoteComment) -> CGFloat {
+        // 여기에서 각 댓글 셀의 높이를 계산.
+        // 댓글 내용에 따라 높이가 동적으로 조정.
+        let content = comment.comment // 댓글 내용
+        let font = UIFont.systemFont(ofSize: 20) // 레이블 폰트
+        let cellWidth = CommentTableView.bounds.width - 20 // 셀의 폭에서 여백 제외
+        let label = UILabel()
+        label.font = font
+        label.numberOfLines = 0
+        label.text = content
+        let labelSize = label.sizeThatFits(CGSize(width: cellWidth, height: CGFloat.greatestFiniteMagnitude))
+        
+        // 레이블 내용에 따라 높이를 계산하고, 레이블 높이에 여백을 추가하여 반환
+        return labelSize.height + 20
     }
     // MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -515,6 +488,11 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         cell.commentLabel.text = comment.comment
         cell.DayLabel.text = comment.day
         cell.commentLabel.sizeToFit()
+        //댓글 셀의 높이 초기화
+        cellHeights = []
+        //댓글 셀의 높이 계산
+        let cellHeight = calculateCommentCellHeight(for: comment)
+        cellHeights.append(cellHeight)
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -551,38 +529,9 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         alertController.addAction(CancelController)
         present(alertController, animated: true)
     }
-    var lastContentOffsetY : CGFloat = 0
-    var isScrollingDown = false
-    var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
-    var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentOffsetY = scrollView.contentOffset.y
-        let screenHeight = scrollView.bounds.size.height
-        let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
-
-        if contentOffsetY >= 0 {
-            isScrollingDown = true
-        } else {
-            isScrollingDown = false
-        }
-
-        if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
-            if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
-                loadNextPageCalled = true // 호출되었다고 표시
-                
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating() // 로딩 인디케이터 시작
-                loadNextPage()
-            }
-        } else if !isScrollingDown && contentOffsetY < threshold {
-            if !updatePageCalled { //호출되지 않은 경우에만 실행
-                updatePageCalled = true // 호출되었다고 표시
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating() // 로딩 인디케이터 시작
-                updatePage()
-            }
-        }
-    }
+}
+//MARK: - Board_CommentHTTP
+extension MyWriteVoteViewController {
     //새로운 페이지 새로고침
     @objc func updatePage() {
         print("updatePage() - called")
@@ -601,17 +550,9 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
                     self.StackView.snp.remakeConstraints{ (make) in
-                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
-                            make.height.equalTo(self.ScrollView.snp.height)
-                            make.bottom.equalToSuperview().offset(-(self.comments.count + 2) * 100)
-                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
-                            print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                            make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
-                            make.bottom.equalToSuperview().offset(-0)
-                        }else{
-                            make.height.equalTo( CGFloat((self.comments.count + 4) * 100))
-                            make.bottom.equalToSuperview().offset(-0)
-                        }
+                        let totalHeight = self.cellHeights.reduce(0, +)
+                        make.bottom.equalToSuperview().offset(-0)
+                        make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
                         make.width.equalTo(self.ScrollView.snp.width)
                         make.top.equalToSuperview().offset(0)
                     }
@@ -642,17 +583,9 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
                     self.StackView.snp.remakeConstraints{ (make) in
-                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
-                            make.height.equalTo(self.ScrollView.snp.height)
-                            make.bottom.equalToSuperview().offset(-(self.comments.count + 2) * 100)
-                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
-                            print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                            make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
-                            make.bottom.equalToSuperview().offset(-0)
-                        }else{
-                            make.height.equalTo( CGFloat((self.comments.count + 4) * 100))
-                            make.bottom.equalToSuperview().offset(-0)
-                        }
+                        let totalHeight = self.cellHeights.reduce(0, +)
+                        make.bottom.equalToSuperview().offset(-0)
+                        make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
                         make.width.equalTo(self.ScrollView.snp.width)
                         make.top.equalToSuperview().offset(0)
                     }
@@ -668,16 +601,6 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
             self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
-    override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
-            //부모로 이동했을때 탭바를 다시 켬
-            if isMovingFromParent {
-                print("Back 버튼 클릭됨")
-                tabBarController?.tabBar.isHidden = false
-            }
-        }
-}
-extension MyWriteVoteViewController {
     //MARK: - 서버에서 데이터 가져오기 -> 댓글 조회
     func fetchPosts(page: Int, completion: @escaping ([MyVoteComment]?, Error?) -> Void) {
         // 투표를 조회해서 찬성, 반대 수 가져오기
@@ -758,9 +681,7 @@ extension MyWriteVoteViewController {
                 print("게시글의 투표가 있는지? - \(voteDetail)")
                 if voteDetail == nil {
                     DispatchQueue.main.async {
-                        self.VoteView.snp.remakeConstraints{(make) in
-                            make.height.equalTo(0)
-                        }
+                        self.VoteView.removeFromSuperview()
                     }
                 }
                 if let result = responseJSON["result"] as? [String: Any],
@@ -813,21 +734,6 @@ extension MyWriteVoteViewController {
                 DispatchQueue.main.async {
                     self.commentField.text = ""
                     self.CommentTableView.reloadData()
-                    self.StackView.snp.remakeConstraints{ (make) in
-                        if (self.comments.count < 5 && self.post.images.imageUrl.isEmpty) {
-                            make.height.equalTo(self.ScrollView.snp.height)
-                            make.bottom.equalToSuperview().offset(-(self.comments.count + 2) * 100)
-                        }else if(self.post.images.imageUrl.isEmpty){ // 수정필요
-                            print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                            make.height.equalTo(CGFloat((self.comments.count + 2) * 100))
-                            make.bottom.equalToSuperview().offset(-0)
-                        }else{
-                            make.height.equalTo( CGFloat((self.comments.count + 4) * 100))
-                            make.bottom.equalToSuperview().offset(-0)
-                        }
-                        make.width.equalTo(self.ScrollView.snp.width)
-                        make.top.equalToSuperview().offset(0)
-                    }
                 }
             }
         }.resume()
@@ -979,6 +885,59 @@ extension MyWriteVoteViewController {
         }
         task.resume()
     }
+}
+//MARK: - SetVote_HTTP
+extension MyWriteVoteViewController{
+    //투표 비율
+    func updateRatioLabel() {
+        let totalVotes = agreeCount + disagreeCount
+                if totalVotes > 0 {
+                    let agreeRatio = Double(agreeCount) / Double(totalVotes) * 100
+                    let disagreeRatio = Double(disagreeCount) / Double(totalVotes) * 100
+                    ratioLabel.text = String(format: "찬성 비율: %.2f%% | 반대 비율: %.2f%%", agreeRatio, disagreeRatio)
+                } else {
+                    ratioLabel.text = "투표 없음"
+                }
+    }
+    //투표 비율에 따른 그래프
+    func updateProgressViews() {
+        let totalVotes = agreeCount + disagreeCount
+                if totalVotes > 0 {
+                    let agreeRatio = Float(agreeCount) / Float(totalVotes)
+                    let disagreeRatio = Float(disagreeCount) / Float(totalVotes)
+                    agreeProgressView.progress = agreeRatio
+                    disagreeProgressView.progress = disagreeRatio
+                } else {
+                    agreeProgressView.progress = 0
+                    disagreeProgressView.progress = 0
+                }
+    }
+    //찬성버튼을 눌렀을때 메서드
+    @objc func agreeButtonTapped() {
+            if !isAgreed {
+                print("agreeButtonTapped - Not pushed isAgreed")
+                VoteBtnClicked(VoteType: "AGREE")
+                isAgreed = true
+                // 투표를 조회해서 찬성, 반대 수 가져오기
+                VoteStatusCheck()
+                agreeCountLabel.text = "찬성: \(agreeCount)"
+                updateRatioLabel()
+                updateProgressViews()
+            }
+        }
+    //반대버튼을 눌렀을때 메서드
+    @objc func disagreeButtonTapped() {
+            if !isDisagreed {
+                print("disagreeButtonTapped - Not pushed isDisgreed")
+                VoteBtnClicked(VoteType: "OPPOSE")
+                isDisagreed = true
+                // 투표를 조회해서 찬성, 반대 수 가져오기
+                VoteStatusCheck()
+                disagreeCountLabel.text = "반대: \(disagreeCount)"
+                updateRatioLabel()
+                updateProgressViews()
+            }
+        }
     //투표 메서드
     //투표 버튼 클릭 메서드
     @objc func VoteBtnClicked(VoteType : String) {
@@ -1085,6 +1044,41 @@ extension MyWriteVoteViewController {
                 }
             }
         }.resume()
+    }
+}
+//MARK: - Alert
+extension MyWriteVoteViewController{
+    //게시글의 툴버튼을 눌렀을 때 팝업
+    @objc func toolBtnTapped() {
+        let alertController = UIAlertController(title: "게시글 메뉴", message: nil, preferredStyle: .alert)
+        let isMyPost = true //게시글의 작성자와 현재 사용자가 동일한지 판별
+        //ismine으로 수정해야함.
+        print("해당 게시물이 내 게시글인지 확인 - \(IsMine)")
+        //게시글의 작성자와 현재 사용자가 같을때
+        if IsMine {
+                    // 삭제
+            let deleteAction = UIAlertAction(title: "삭제", style: .default) { (_) in
+                self.PostDelete()
+                    }
+            alertController.addAction(deleteAction)
+        }else{ //게시글의 작성자와 현재 사용자가 다를때
+            //쪽지 보내기
+            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+            }
+            alertController.addAction(SendMessageController)
+            //신고
+//            let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
+//
+//            }
+//            alertController.addAction(DeclarationController)
+        }
+        //취소
+        let CancelController = UIAlertAction(title: "취소", style: .default) { (_) in
+            
+        }
+        alertController.addAction(CancelController)
+        present(alertController, animated: true)
     }
     //투표를 했음을 알림
     func AlreadyVote() {
