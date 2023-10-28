@@ -279,8 +279,8 @@ class OpenWriteViewController : UIViewController, UITextViewDelegate {
         }else{
             //MARK: image 통신
             // 이미지 배열을 서버로 업로드, 바디에 들어갈 imageInfoArray 업데이트
-            print("이미지를 첨부하지 않습니까? - \(AddImageView[0].image)")
-            if AddImageView[0].image != nil { //첫 번째 이미지가 비어있지 않을때
+            print("이미지를 첨부하지 않습니까? - \(AddImageView.count)")
+            if AddImageView.count != 0 { //첫 번째 이미지가 비어있지 않을때
                 uploadImagesToServer(images: AddImageView.compactMap { $0.image })
                 print("추가된 이미지 배열입니다. \(imageInfoArray)")
             }else{ //이미지를 업로드 하지 않는다면
@@ -354,7 +354,7 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
         print("UploadImageTapped - called()")
         if(imageNum >= 5){
             // 최대 5장으로 제한! Alert
-            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드할 수 있습니다!", message: nil, preferredStyle: .alert)
+            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드 할 수 있습니다!", message: nil, preferredStyle: .alert)
             let OkAction = UIAlertAction(title: "확인", style: .default) { (_) in
                 //확인 액션
             }
@@ -502,13 +502,13 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
     }
     func uploadImagesToServer(images: [UIImage]){
         let uploadURLString = "http://15.164.161.53:8082/api/v1/image"
-        print("이미지를 서버로 보내봅시다 \(images)")
         //액세스 토큰 헤더에 추가
         if let accesToken = KeychainWrapper.standard.string(forKey: "AuthToken") {
             let headers: HTTPHeaders = [
                 "Content-Type" : "multipart/form-data",
                 "Authorization" : "\(accesToken)"
             ]
+            print("서버로 보낼 이미지 갯수 : \(images.count)")
             // Alamofire 사용. 업로드 이미지들을 서버로 전송
             AF.upload(multipartFormData: { multipartFormData in
                 for (index, image) in images.enumerated(){
@@ -516,8 +516,11 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
                         let imageName = "image\(index).jpg"
                         // 내용을 추가하기 전에 로그에 출력
                         print("Adding image with name: \(imageName)")
-                        multipartFormData.append(imageData, withName: "image\(index)", fileName: "image\(index).jpg", mimeType: "image/jpeg") //이미지 서버필드이름 물어보기.
-                        
+                        multipartFormData.append(imageData, withName: "image\(index)", fileName: "image\(index).jpg", mimeType: "image/jpeg")
+                        //서버와의 맞춤 필요
+//                        withname – 서버에서 요구하는 key값
+//                        fileName – 전송될 파일이름
+//                        mimeType – 타입에맞게 image/jpg, image/png, text/plain, 등 타입
                     }
                 }
             }, to: uploadURLString, method: .post, headers: headers)

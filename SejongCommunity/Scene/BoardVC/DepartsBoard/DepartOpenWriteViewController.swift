@@ -278,8 +278,8 @@ class DepartOpenWriteViewController : UIViewController, UITextViewDelegate {
         }else{
             //MARK: image 통신
             // 이미지 배열을 서버로 업로드, 바디에 들어갈 imageInfoArray 업데이트
-            print("이미지를 첨부하지 않습니까? - \(AddImageView[0].image)")
-            if AddImageView[0].image != nil { //첫 번째 이미지가 비어있지 않을때
+            print("이미지를 첨부하지 않습니까? - \(AddImageView.count)")
+            if AddImageView.count != 0 { //첫 번째 이미지가 비어있지 않을때
                 uploadImagesToServer(images: AddImageView.compactMap { $0.image })
                 print("추가된 이미지 배열입니다. \(imageInfoArray)")
             }else{ //이미지를 업로드 하지 않는다면
@@ -353,7 +353,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
         print("UploadImageTapped - called()")
         if(imageNum >= 5){
             // 최대 5장으로 제한! Alert
-            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드할 수 있습니다!", message: nil, preferredStyle: .alert)
+            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드 할 수 있습니다!", message: nil, preferredStyle: .alert)
             let OkAction = UIAlertAction(title: "확인", style: .default) { (_) in
                 //확인 액션
             }
