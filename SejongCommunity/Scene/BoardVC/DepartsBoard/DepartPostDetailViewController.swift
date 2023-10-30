@@ -193,26 +193,28 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         ImageStackView.distribution = .fill
         ImageStackView.backgroundColor = .white
         let ImageView = UIImageView()
-        print("post.image가 nil인가? : \(String(describing: post.images.imageUrl.isEmpty))") //수정필요
-        if(post.images.imageUrl.isEmpty) { //수정필요
+        print("post.image가 nil인가? : \(String(describing: post.images.isEmpty))") //수정필요
+        if(post.images.isEmpty) { //수정필요
             print("post.image가 nil인데 화면의 크기의 조정이 필요합니다.")
         }else{
             // 게시글의 이미지 URL 배열에서 이미지를 가져와 처리
-            for imageUrlStsring in post.images.imageUrl {//수정필요
-                if let imageUrl = URL(string: imageUrlStsring as? String ?? ""){
-                    print("이미지들 Url 입니다. - \(imageUrl)")
-                    // Kingfisher를 사용하여 이미지를 다운로드하고 처리
+            for image in post.images {
+                let imageUrlString = image.imageUrl
+                if !imageUrlString.isEmpty, let imageUrl = URL(string: imageUrlString) {
                     let imageView = UIImageView()
                     imageView.kf.setImage(with: imageUrl)
-                    
                     imageView.contentMode = .scaleAspectFit
                     imageView.backgroundColor = .white
-                    
+
+                    print("이미지를 가져옵니다. - \(imageUrlString)")
+                    print("이미지를 post 합니다. \(imageUrl)")
+
                     // 이미지 뷰를 스택뷰에 추가
                     ImageStackView.addArrangedSubview(imageView)
                     // 이미지 뷰에 오토레이아웃 설정
-                    ImageView.snp.makeConstraints{ (make) in
-                        make.height.equalTo(200)
+                    imageView.snp.makeConstraints { (make) in
+                        make.height.equalTo(300)
+                        make.leading.trailing.equalToSuperview().inset(20)
                     }
                 }
             }
@@ -337,7 +339,7 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            if(post.images.imageUrl.isEmpty){ //수정필요
+            if(post.images.isEmpty){ //수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + 100)
             }else{
@@ -347,11 +349,12 @@ class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UI
         }
         VoteView.snp.makeConstraints{ (make) in
             make.top.equalTo(DetailView.snp.bottom).offset(20)
-            if(post.images.imageUrl.isEmpty){
+            if(post.images.isEmpty){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
             }else{
                 make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + ImageView.frame.height + 400)
+                make.top.equalTo(ImageStackView.snp.bottom).offset(40)
             }
             make.leading.equalToSuperview().offset(20)
         }
