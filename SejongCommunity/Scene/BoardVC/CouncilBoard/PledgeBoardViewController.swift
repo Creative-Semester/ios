@@ -11,7 +11,9 @@ import SnapKit
 class PledgeBoardViewController: UIViewController {
     
     private var isEditingMode: Bool = false
-    private let menuItems = ["복지행사", "문화행사", "학술행사", "건강행사", "아무거나"]
+    private var menuItems = [DepartmentInfo]()
+    private var pledegeMenus = [DepartmentPromises]()
+    private var presentPageId: Int = 0
     
     private let menuCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -54,6 +56,7 @@ class PledgeBoardViewController: UIViewController {
         view.backgroundColor = .white
         
         setupNavigationBar()
+        getDepartmentData()
         
         self.title = "공약전체보기"
         
@@ -61,13 +64,77 @@ class PledgeBoardViewController: UIViewController {
         menuCollectionView.delegate = self
         menuCollectionView.register(PledgeBoardMenuCollectionViewCell.self, forCellWithReuseIdentifier: "PledgeBoardMenuCollectionViewCell")
         
-        pledgeTitleLabel.text = menuItems[0] + " 공약"
         
         pledgeTableView.dataSource = self
         pledgeTableView.delegate = self
         pledgeTableView.register(PledgeTableViewCell.self, forCellReuseIdentifier: "PledgeTableViewCell")
         
         setupLayout()
+    }
+    
+    func getDepartmentData() {
+        
+        DepartmentService.shared.getDepartmentInfo() { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? DepartmentResponse else { return }
+                self.menuItems = infoData.result
+                self.pledgeTitleLabel.text = infoData.result[0].name + " 공약"
+                self.menuCollectionView.reloadData()
+                self.presentPageId = infoData.result[0].id
+                self.getDepartmentPromisesData(departmentId: self.presentPageId)
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func getDepartmentPromisesData(departmentId: Int) {
+        
+        DepartmentPromisesService.shared.getDepartmentPromises(departmentId: departmentId) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? DepartmentPromisesResponse else { return }
+                self.pledegeMenus = infoData.result
+                self.pledgeTableView.reloadData()
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func getPromiseCheck(promiseId: Int) {
+        
+        PromiseCheckService.shared.getPromiseCheck(promiseId: promiseId) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? PromiseCheckResponse else { return }
+                print(infoData.message)
+                self.getDepartmentPromisesData(departmentId: self.presentPageId)
+            default:
+                let alertController = UIAlertController(title: "수정 권한이 없습니다.", message: "공약 이행 수정은 학생회만 가능합니다.", preferredStyle: .alert)
+
+                let okAction = UIAlertAction(title: "확인", style: .default) { (action) in }
+
+                alertController.addAction(okAction)
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
     }
     
     func setupLayout() {
@@ -97,13 +164,14 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 15
+        return pledegeMenus.count
     }
     
     // 각 센션 마다 사용할 cell의 종류
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "PledgeTableViewCell", for: indexPath) as! PledgeTableViewCell
+        cell.configure(departmentPromises: pledegeMenus[indexPath.row])
         
         return cell
     }
@@ -115,17 +183,8 @@ extension PledgeBoardViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 사용자가 셀을 선택했을 때 호출되는 메서드
-        // indexPath를 사용하여 선택된 셀의 정보를 가져올 수 있음
         
-        let selectedRow = indexPath.row
-        print("Selected row: \(selectedRow)")
-        
-        if let cell = tableView.cellForRow(at: indexPath) as? PledgeTableViewCell {
-            // isSelected 값을 토글
-            cell.isCompletion.toggle()
-            // 선택된 셀의 레이아웃을 업데이트
-            cell.setup()
-        }
+        getPromiseCheck(promiseId: pledegeMenus[indexPath.row].promiseId)
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -164,7 +223,7 @@ extension PledgeBoardViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PledgeBoardMenuCollectionViewCell", for: indexPath) as! PledgeBoardMenuCollectionViewCell
         
-        cell.configure(with: menuItems[indexPath.item])
+        cell.configure(with: menuItems[indexPath.item].name)
         
         return cell
     }
@@ -186,8 +245,10 @@ extension PledgeBoardViewController: UICollectionViewDelegateFlowLayout {
     
     // 셀 선택 시 호출되는 메서드
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        pledgeTitleLabel.text = menuItems[indexPath.item] + " 공약"
+        pledgeTitleLabel.text = menuItems[indexPath.item].name + " 공약"
         // 선택한 셀의 색상을 변경
+        presentPageId = menuItems[indexPath.item].id
+        getDepartmentPromisesData(departmentId: menuItems[indexPath.item].id)
         if let selectedCell = collectionView.cellForItem(at: indexPath) {
             selectedCell.layer.cornerRadius = 15
             selectedCell.contentView.backgroundColor = UIColor(red: 1, green: 0.788, blue: 0.788, alpha: 1)
@@ -221,6 +282,22 @@ private extension PledgeBoardViewController {
     
     @objc func editButtonTapped() {
         isEditingMode.toggle()
+        
+        if isEditingMode {
+            let alertController = UIAlertController(title: "공약 이행 수정모드", message: "공약 이행이 변경된 사항을 클릭하여 수정할 수 있습니다.", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "확인", style: .default) { (action) in }
+
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        } else {
+            let alertController = UIAlertController(title: "공약 이행 수정완료", message: "공약 이행이 수정 완료되었습니다.", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "확인", style: .default) { (action) in }
+
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        }
         
         // 네비게이션 바 우측 버튼 텍스트 변경
         setupNavigationBar()
