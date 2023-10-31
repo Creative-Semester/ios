@@ -33,27 +33,28 @@ class AuthenticationManager {
         var Expiration = ""
         var Message = ""
         var isValid = true
+        let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
+        let rfToken = KeychainWrapper.standard.string(forKey: "refreshToken")
         //코드가 만료되었는지 확인 -> 리프레시 재발급
         var urlString = "http://15.164.161.53:8082/api/v1/auth/reissue"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return false
             }
-        let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
-        let rfToken = KeychainWrapper.standard.string(forKey: "refreshToken")
-        let requestBody : [String : Any] = [
-            "accessToken" : acToken,
-            "refreshToken" : rfToken
-        ]
+//        let requestBody : [String : Any] = [
+//            "accessToken" : acToken,
+//            "refreshToken" : rfToken
+//        ]
         var request = URLRequest(url: url)
-        if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
-            request.httpBody = jsonData
-        }
+//        if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
+//            request.httpBody = jsonData
+//        }
         request.httpMethod = "POST"
         
         // HTTP 요청 헤더 설정 (Content-Type: application/json)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(acToken, forHTTPHeaderField: "Authorization")
+        request.setValue(acToken, forHTTPHeaderField: "accessToken")
+        request.setValue(rfToken, forHTTPHeaderField: "refreshToken")
         //URLSession을 사용하여 서버와 통신
         let task = URLSession.shared.dataTask(with: request) { (data, response,error) in
             if let error = error {

@@ -10,11 +10,42 @@ import UIKit
 import SnapKit
 import SwiftKeychainWrapper
 import Alamofire
+import PhotosUI
 
 class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
+    var boardType: String = "" // boardType을 저장할 변수
+    // 초기화 메서드
+    init(boardType: String) {
+        super.init(nibName: nil, bundle: nil)
+        self.boardType = boardType
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     var tableView = UITableView()
     //Textview의 placeholder
     let placeholderText = "내용"
+    //마감기한. DatePicker를 전역 변수로 선언
+    // DatePicker를 지연 초기화
+    lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.datePickerMode = .dateAndTime
+        picker.locale = Locale(identifier: "ko_KR")
+        picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        return picker
+    }()
+    @objc func datePickerValueChanged() {
+            updateDateLabel()
+    }
+    var deadLine = ""
+    func updateDateLabel() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let selectedDate = datePicker.date
+        let formattedDate = dateFormatter.string(from: selectedDate)
+        deadLine = formattedDate
+        print("데드라인 - \(deadLine)")
+    }
     //익명 표시
     let anonymousView : UIView = {
         let view = UIView()
@@ -25,7 +56,6 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         StudentLabel.text = "익명"
         StudentLabel.textColor = .black
         StudentLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        
         //StackView를 이용해 오토레이아웃 설정
         let StackView = UIStackView()
         StackView.axis = .horizontal
@@ -67,6 +97,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
     // 로딩 인디케이터
     var loadingIndicator: UIActivityIndicatorView!
     override func viewDidLoad(){
+        super.viewDidLoad()
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
@@ -194,6 +225,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         StackView.alignment = .fill
         StackView.backgroundColor = .white
         StackView.addArrangedSubview(anonymousView)
+        StackView.addSubview(datePicker)
         StackView.addArrangedSubview(OpenWriteView)
         ScrollView.addSubview(StackView)
         self.view.addSubview(ScrollView)
@@ -214,11 +246,14 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         anonymousView.snp.makeConstraints{ (make) in
 //            make.top.equalToSuperview().offset(50)
             make.height.equalTo(StackView.snp.height).dividedBy(10)
-            make.leading.trailing.equalToSuperview().inset(0)
+            make.leading.equalToSuperview().inset(0)
+        }
+        datePicker.snp.makeConstraints{ (make) in
+            make.trailing.equalToSuperview().offset(0)
         }
         OpenWriteView.snp.makeConstraints{ (make) in
             make.leading.trailing.equalToSuperview().offset(0)
-            make.top.equalTo(anonymousView.snp.bottom).offset(20)
+            make.top.equalTo(datePicker.snp.bottom).offset(20)
         }
         setupTapGesture()
     }
@@ -274,66 +309,74 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
             alertController.addAction(CancelController)
             present(alertController, animated: true)
         }else{
-            //적절할때 업로드 완료 팝업
-            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
-            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
-                // OpenBoardViewController로 이동
-                if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
-                    self.navigationController?.popToViewController(openboardViewController, animated: true)
-                }
-            }
-            alertController.addAction(CancelController)
-            present(alertController, animated: true)
-            // 나중에 순서 바꾸기, 통신이 완료되면 >> 업로드 완료 게시
             //MARK: image 통신
             // 이미지 배열을 서버로 업로드, 바디에 들어갈 imageInfoArray 업데이트
-            uploadImagesToServer(images: AddImageView.compactMap { $0.image })
-            //MARK: JSON 통신
-            let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=Free"
-            guard let url = URL(string: urlString) else {
+            print("이미지를 첨부하지 않습니까? - \(AddImageView.count)")
+            uploadImagesToServer(images: AddImageView.compactMap { $0.image }){
+                print("추가된 이미지 배열입니다. \(self.imageInfoArray)")
+                //MARK: JSON 통신
+                let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=\(self.boardType)&isVote=true"
+                guard let url = URL(string: urlString) else {
                     // 유효하지 않은 URL 처리
                     return
                 }
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            //적절할때 통신
-            //적절할때 통신
-            let requestBody: [String: Any] = [
-                "content": messageText, //내용
-                "deadLine":"",//자유게시판은 투표글이 아님. 데드라인 없음.
-                "image": imageInfoArray, //이미지 이름, 이미지 Url이 있는 배열들
-                "title": titleText //제목
-            ]
-            // JSON 데이터를 HTTP 요청 바디에 설정
-            
-            if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
-                request.httpBody = jsonData
-            }
-            // HTTP 요성 헤더 설정(필요에 따라 추가)
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            if let token = KeychainWrapper.standard.string(forKey: "AuthToken") {
-                //키체인에 저장된 토큰값이 있을때
-                print("토큰 값 : \(token)")
-                // 통신 인증. AccesToken
-                request.setValue(token, forHTTPHeaderField: "Authorization")
-            }else{
-                print("토큰 값이 없습니다.")
-            }
-            
-            // URLSession을 사용하여 서버와 통신
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                        // 서버 응답 처리
-                if let error = error {
-                    print("Error: \(error.localizedDescription)")
-                } else if let data = data {
-                // 서버 응답 데이터 처리 (만약 필요하다면)
-                if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    // 서버로부터 받은 JSON 데이터 처리
-                    print("Response JSON: \(responseJSON)")
+                var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                //적절할때 통신
+                let requestBody: [String: Any] = [
+                    "content": messageText, //내용 //자유게시판은 투표글이 아님. 데드라인 없음.
+                    "image": self.imageInfoArray, //이미지 이름, 이미지 Url이 있는 배열들
+                    "title": titleText, //제목
+                    "deadLine" : self.deadLine //데드라인
+                ]
+                print("바디 값입니다. - \(requestBody)")
+                // JSON 데이터를 HTTP 요청 바디에 설정
+                
+                if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: []){
+                    request.httpBody = jsonData
+                }
+                // HTTP 요성 헤더 설정(필요에 따라 추가)
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                let token = KeychainWrapper.standard.string(forKey: "AuthToken")
+                request.setValue(token, forHTTPHeaderField: "accessToken")
+                var status = 200
+                // URLSession을 사용하여 서버와 통신
+                let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                    // 서버 응답 처리
+                    if let error = error {
+                        print("Error: \(error.localizedDescription)")
+                    } else if let data = data {
+                        // 서버 응답 데이터 처리 (만약 필요하다면)
+                        if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                            // 서버로부터 받은 JSON 데이터 처리
+                            print("Response JSON: \(responseJSON)")
+                            status = responseJSON["status"] as? Int ?? 0
+                        }
+                    }
+                    if status == 200 {
+                        //적절할때. 업로드 완료가 되었을때. 팝업. reload
+                        DispatchQueue.main.async{
+                            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
+                            let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                                if self.boardType == "Free" {
+                                    // OpenBoardViewController로 이동
+                                    if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
+                                        self.navigationController?.popToViewController(openboardViewController, animated: true)
+                                    }
+                                }else if self.boardType == "Council" {
+                                    // DepartBoardViewController로 이동
+                                    if let departBoardViewController = self.navigationController?.viewControllers.first(where: { $0 is DepartBoardViewController }) {
+                                        self.navigationController?.popToViewController(departBoardViewController, animated: true)
+                                    }
+                                }
+                            }
+                            alertController.addAction(CancelController)
+                            self.present(alertController, animated: true)
+                        }
                     }
                 }
+                task.resume() // 요청 보내기
             }
-            task.resume() // 요청 보내기
         }
     }
 }
@@ -375,19 +418,8 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
             // 선택한 이미지를 어딘가에 저장하는 등 작업 수행
             addImage = selectedImage
             AddImage()
-            if let imageString = convertImageToBase64(selectedImage) {
-//                print("Base64 Image String: \(imageString)")
-            }
         }
         picker.dismiss(animated: true, completion: nil)
-    }
-    // 이미지를 String 형태로 서버 전송을 위한 변환 메서드
-    func convertImageToBase64(_ image: UIImage?) -> String? {
-        if let image = image, let imageData = image.jpegData(compressionQuality: 0.8){
-            let base64String = imageData.base64EncodedString()
-            return base64String
-        }
-        return nil
     }
     //AddImageView에 이미지 추가 메서드
     func AddImage() {
@@ -500,38 +532,83 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
             make.width.equalTo(imageframe)
         }
     }
-    func uploadImagesToServer(images: [UIImage]){
-        let uploadURLString = "http://15.164.161.53:8082"
-        print("이미지를 서버로 보내봅시다 \(images)")
-        // Alamofire 사용. 업로드 이미지들을 서버로 전송
-        AF.upload(multipartFormData: { multipartFormData in
-            for (index, image) in images.enumerated(){
-                if let imageData = image.jpegData(compressionQuality: 0.8){
-                    multipartFormData.append(imageData, withName: "image\(index)", fileName: "image\(index).jpg", mimeType: "image/jpeg")
+    func uploadImagesToServer(images: [UIImage],completion: @escaping () -> Void){
+        let uploadURLString = "http://15.164.161.53:8082/api/v1/file"
+        //액세스 토큰 헤더에 추가
+        if let accesToken = KeychainWrapper.standard.string(forKey: "AuthToken") {
+            let headers: HTTPHeaders = [
+                "Content-Type" : "multipart/form-data",
+                "accessToken" : "\(accesToken)"
+            ]
+            print("서버로 보낼 이미지 갯수 : \(images.count)")
+            if(images.count == 0) {
+                self.imageInfoArray = []
+                completion()
+                return
+            }
+            // Alamofire 사용. 업로드 이미지들을 서버로 전송
+            AF.upload(multipartFormData: { multipartFormData in
+                for (index, image) in images.enumerated(){
+                    if let imageData = image.pngData(){
+                        let imageName = "image\(index).jpg"
+                        // 내용을 추가하기 전에 로그에 출력
+                        print("Adding image with name: \(imageName)")
+                        multipartFormData.append(imageData, withName: "files", fileName: "image\(index).jpg", mimeType: "image/jpeg")
+                        //서버와의 맞춤 필요
+//                        withname – 서버에서 요구하는 key값
+//                        fileName – 전송될 파일이름
+//                        mimeType – 타입에맞게 image/jpg, image/png, text/plain, 등 타입
+                    }
+                }
+            }, to: uploadURLString, method: .post, headers: headers)
+            .response { response in
+                // 업로드 완료 후의 응답 처리
+                switch response.result {
+                case .success(let data):
+                    if let data {
+                        print("업로드 성공: \(data)")
+                    }else{}
+                    // 업로드 성공 후의 처리
+                    //imageName, imageUrl
+                    if let data = data {
+                        do {
+                            if let responseData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                                print("업로드 결과 입니다. \(responseData)")
+                                // JSON 파싱 성공
+                                if let resultArray = responseData["result"] as? [[String: Any]] {
+                                        for result in resultArray {
+                                            if let imageName = result["imageName"] as? String,
+                                               let imageUrl = result["imageUrl"] as? String {
+                                                // imageName과 imageUrl을 사용
+                                                let imageInfo = ["imageName": imageName, "imageUrl": imageUrl]
+                                                self.imageInfoArray.append(imageInfo)
+                                                print("이미지 배열 입니다. \(self.imageInfoArray)")
+                                            } else {
+                                                print("imageName 또는 imageUrl을 찾을 수 없습니다.")
+                                            }
+                                        }
+                                        completion()
+                                    } else {
+                                        print("result 배열을 찾을 수 없습니다.")
+                                    }
+                            } else {
+                                print("JSON 파싱 실패")
+                            }
+                        } catch {
+                            print("JSON 파싱 오류: \(error)")
+                        }
+                    } else {
+                        // data가 nil일 때 처리할 내용을 여기에 작성하세요.
+                        print("데이터가 nil입니다.")
+                    }
+                case .failure(let error):
+                    print("업로드 실패: \(error)")
+                    // 업로드 실패 시의 처리
                 }
             }
-        }, to: uploadURLString, method: .post, headers: nil)
-        .response { response in
-            // 업로드 완료 후의 응답 처리
-            switch response.result {
-            case .success(let data):
-                print("업로드 성공: \(data)")
-                // 업로드 성공 후의 처리
-                if let responseData = try? JSONSerialization.jsonObject(with: data ?? Data()) as? [String: Any] {
-                            // responseData를 사용하여 필요한 작업을 수행
-                            if let imageInfoArrayResponse = responseData["imageInfoArray"] as? [[String: String]] {
-                                // 이미지 정보 배열을 가져와서 사용
-                                self.imageInfoArray = imageInfoArrayResponse
-                            } else {
-                                print("imageInfoArray를 찾을 수 없습니다.")
-                            }
-                        } else {
-                            print("JSON 파싱 오류")
-                        }
-            case .failure(let error):
-                print("업로드 실패: \(error)")
-                // 업로드 실패 시의 처리
-            }
+        }else{
+            //액세스토큰 유효처리. 재발급
+            if AuthenticationManager.isTokenValid() {}else {}
         }
     }
 }

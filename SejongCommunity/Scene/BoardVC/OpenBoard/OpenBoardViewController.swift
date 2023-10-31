@@ -15,8 +15,9 @@ struct Post: Decodable {
     let boardId: Int
     let title: String
     let content: String
-    let images: Images
+    let images: [Images]
     let day: String
+    let page: Int
     struct Images: Decodable {
         let imageName: String
         let imageUrl: String
@@ -90,18 +91,29 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         cell.titleLabel.text = post.title
         cell.commentLabel.text = post.content
         cell.DayLabel.text = post.day
-        
+        // 이미지 뷰 초기화 또는 placeholder 이미지 설정
+        cell.postImageView.image = UIImage(named: "placeholderImage")
         //MARK: - URL to Image Conversion
         // 첫 번째 이미지가 nil이면 안함.
-        if !post.images.imageUrl.isEmpty {
-            // 이미지 URL 가져오기
-            if let imageUrl = URL(string: post.images.imageUrl) {
-                // KingFisher를 사용하여 이미지 로드 및 표시
-                print("이미지를 가져옵니다. - \(post.images.imageUrl)")
-                print("이미지를 post 합니다. \(imageUrl)")
-                cell.postImageView.kf.setImage(with: imageUrl)
+        if !post.images.isEmpty {
+                let firstImageIndex = 0
+                if firstImageIndex < post.images.count {
+                    let imageUrlString = post.images[firstImageIndex].imageUrl
+                    if !imageUrlString.isEmpty, let imageUrl = URL(string: imageUrlString) {
+                        cell.postImageView.kf.setImage(with: imageUrl) { result in
+                            switch result {
+                            case .success(_):
+                                // 이미지 로딩이 완료된 후에 현재 셀의 인덱스와 indexPath.row를 비교하여 이미지를 설정
+                                if let visibleIndexPaths = tableView.indexPathsForVisibleRows, visibleIndexPaths.contains(indexPath) {
+                                    tableView.reloadRows(at: [indexPath], with: .none)
+                                }
+                            case .failure(_):
+                                break // 이미지 로딩 실패 시 처리
+                            }
+                        }
+                    }
+                }
             }
-        }
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -124,19 +136,32 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     }
     //글쓰기 버튼을 누르면 글작성 뷰로 이동시킬 메서드
     @objc func WriteBtnTappend() {
-        navigationController?.pushViewController(OpenWriteViewController(), animated: true)
+        let Alert = UIAlertController(title: "글 작성 메뉴", message: nil, preferredStyle: .alert)
+        let Open = UIAlertAction(title: "자유게시판", style: .default){
+            (_) in
+            self.navigationController?.pushViewController(OpenWriteViewController(), animated: true)
+        }
+        let Vote = UIAlertAction(title: "투표", style: .default){ (_) in
+            self.navigationController?.pushViewController(VoteBoardWriteViewController(boardType: "Free"), animated: true)
+        }
+        let Ok = UIAlertAction(title: "취소", style: .default){ (_) in
+        }
+        Alert.addAction(Open)
+        Alert.addAction(Vote)
+        Alert.addAction(Ok)
+        present(Alert, animated: true)
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
     func fetchPosts(page: Int, completion: @escaping ([Post]?, Error?) -> Void) {
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards?page=\(page)")!
+        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards?page=\(page)&boardType=Free")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(acToken, forHTTPHeaderField: "accessToken")
-
+        var page = currentPage
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completion(nil, error)
@@ -153,16 +178,21 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
                 if let result = json?["result"] as? [String: Any], let boards = result["boards"] as? [[String: Any]] {
                     var posts = [Post]()
                     for board in boards {
-                        if
-                            let boardId = board["boardId"] as? Int,
-                            let title = board["title"] as? String,
-                            let content = board["content"] as? String,
-                            let day = board["day"] as? String,
-                            let images = board["images"] as? [String: Any],
-                            let imageUrls = images["imageUrl"] as? String,
-                            let imageNames = images["imageName"] as? String
+                        if let title = board["title"] as? String,
+                           let content = board["content"] as? String,
+                           let boardId = board["boardId"] as? Int,
+                           let imagesArray = board["images"] as? [[String: Any]],
+                           let day = board["createdTime"] as? String
                         {
-                            let post = Post(boardId: boardId, title: title, content: content, images: Post.Images(imageName: imageNames, imageUrl: imageUrls), day: day)
+                            var images = [Post.Images]()
+                            for imageInfo in imagesArray {
+                                if let imageName = imageInfo["imageName"],
+                                    let imageUrl = imageInfo["imageUrl"] {
+                                    let image = Post.Images(imageName: imageName as! String, imageUrl: imageUrl as! String)
+                                    images.append(image)
+                                }
+                            }
+                            let post = Post(boardId: boardId, title: title, content: content, images: images, day: day, page:page)
                             posts.append(post)
                         }
                     }
@@ -212,11 +242,17 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     //새로운 페이지 새로고침
     @objc func updatePage() {
         print("updatePage() - called")
+        if isLoading {
+                return // 이미 로딩 중이면 중복 로딩 방지
+            }
+            
+        isLoading = true
         currentPage = 0 //처음 페이지부터 다시 시작
         //스크롤을 감지해서 인디케이터가 시작되면 종료가 되면 로딩인디케이터를 멈처야함
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
+            self.isLoading = false // 로딩 완료
             // 데이터를 비워줌
             self.posts.removeAll()
             if let newPosts = newPosts {
@@ -243,11 +279,15 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
     func loadNextPage() {
         print("loadNextPage() - called")
         currentPage += 1
+        if isLoading {
+                return // 이미 로딩 중이면 중복 로딩 방지
+            }
         isLoading = true
         //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
 
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
+            self.isLoading = false // 로딩 완료
             if let newPosts = newPosts {
                 self.posts += newPosts
                 // 테이블뷰 갱신

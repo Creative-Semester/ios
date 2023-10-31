@@ -1,8 +1,8 @@
 //
-//  PostDetailViewController.swift
+//  DepartPostDetailViewController.swift
 //  SejongCommunity
 //
-//  Created by 정성윤 on 2023/07/30.
+//  Created by 정성윤 on 2023/08/09.
 //
 
 import Foundation
@@ -10,16 +10,15 @@ import UIKit
 import SnapKit
 import SwiftKeychainWrapper
 import Kingfisher //url - > image 변환 라이브러리
-//게시글의 구조체 정의(게시물을 정보를 담기 위함)
 //댓글 창
-struct Comment : Decodable{
+struct DepartComment : Decodable{
     let day : String // 생성 날짜
     let commentId : Int // 댓글 고유 ID
     let comment : String // 댓글 내용
     let commentIsMine : Bool // 내 댓글인지 확인
 }
 //게시물의 상세 내용을 보여주는 UIViewController
-class PostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate{
+class DepartPostDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     var CommentTableView = UITableView()
     var ImageStackView = UIStackView()
     var DetailLabel = UILabel()
@@ -27,6 +26,8 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     var cellHeights: [CGFloat] = []
     private let GreatBtn = UIButton()
     let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
+    //페이지 번호와 크기
+    var currentPage = 0
     //투표기능 변수
     var agreeCount = 0
     var disagreeCount = 0
@@ -47,16 +48,14 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
     var isScrollingDown = false
     var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
     var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
-    //페이지 번호와 크기
-    var currentPage = 0
     //해당 게시글 작성자와 사용자가 동일한지 비교하기 위해 전역변수 선언
     var IsMine = false
     // 댓글을 저장할 배열
-    var comments : [Comment] = [
+    var comments : [DepartComment] = [
     ]
-    let post : Post
+    let post : DepartPost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
-    init(post: Post) {
+    init(post: DepartPost) {
         self.post = post
         super.init(nibName: nil, bundle: nil)
     }
@@ -84,9 +83,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         view.backgroundColor = .white
         self.navigationController?.navigationBar.tintColor = .red
-        CommentTableView.estimatedRowHeight = 100 // 예상 높이 (원하는 초기 높이)
-        CommentTableView.rowHeight = UITableView.automaticDimension
-        BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
+        BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기
         //사용자가 이미 투표한 경우 투표를 못하게 해야함.
         VoteStatusCheck()
         agreeCountLabel.text = "찬성: \(agreeCount)"
@@ -106,7 +103,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                     // 테이블 뷰 갱신
                     DispatchQueue.main.async {
                         self.CommentTableView.reloadData()
-                        print("처음 가져오고 난 후 comments의 배열입니다. - \(self.comments)")
                     }
                     print("Initial data fetch - Success")
                 } else if let error = error {
@@ -116,6 +112,9 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
             }
         title = post.title
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        CommentTableView.estimatedRowHeight = 100 // 예상 높이 (원하는 초기 높이)
+        CommentTableView.rowHeight = UITableView.automaticDimension
+        BoardDetailShow() // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
         let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
         navigationItem.rightBarButtonItem = toolBtn
         vview = UIView()
@@ -169,7 +168,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         //각 뷰들을 넣을 스크롤뷰 생성
         ScrollView.backgroundColor = .white
         ScrollView.isScrollEnabled = true
-        ScrollView.showsHorizontalScrollIndicator = true
+        ScrollView.showsHorizontalScrollIndicator = false
         //스택뷰를 이용해 오토레이아웃 설정
         StackView.axis = .vertical
         StackView.distribution = .fill
@@ -219,7 +218,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                     }
                 }
             }
-
             DetailView.addSubview(ImageStackView)
             // 오토레이아웃 설정
             ImageStackView.snp.makeConstraints { (make) in
@@ -228,6 +226,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                 make.leading.equalToSuperview().offset(30)
                     }
         }
+        
         //투표 구성
         // 찬성 버튼
         agreeButton.setTitle("찬성", for: .normal)
@@ -369,35 +368,19 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 }
-//UITextView 서브클래스 정의
-class ExpandingTextView: UITextView {
-    //UITextView의 내용의 크기, 텍스트가 입력 될때마다 내용 크기가 변경
-    override var contentSize: CGSize {
-        //변경 감지를 위해 didSet
-        didSet {
-            invalidateIntrinsicContentSize()
-        }
-    }
-    //UIView의 내용의 크기 : 다른 레이아웃 구성요소, 해당 뷰의 적절한 크기를 알려줌
-    override var intrinsicContentSize: CGSize {
-        //noIntrinsicMetric 텍스트 뷰의 폭이 무제한, 높이는 내용에 따라 자동 조절
-        let size = CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
-        return size
-    }
-}
 //MARK: - ScrollDetect, SetKeyBoard
-extension PostDetailViewController {
+extension DepartPostDetailViewController {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentOffsetY = scrollView.contentOffset.y
         let screenHeight = scrollView.bounds.size.height
         let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
-        
+
         if contentOffsetY >= 0 {
             isScrollingDown = true
         } else {
             isScrollingDown = false
         }
-        
+
         if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
             if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
                 loadNextPageCalled = true // 호출되었다고 표시
@@ -453,6 +436,7 @@ extension PostDetailViewController {
             }
         }
     }
+
     @objc private func keyboardWillHide(_ notification: Notification) {
         let contentInsets = UIEdgeInsets.zero
         adjustCommentView(insets: contentInsets)
@@ -465,6 +449,7 @@ extension PostDetailViewController {
             make.height.equalTo(self.view.frame.height / 21) // 최소 높이
         }
     }
+
     private func adjustCommentView(insets: UIEdgeInsets) {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self = self else { return }
@@ -473,8 +458,8 @@ extension PostDetailViewController {
     }
 }
 //MARK: - Set_TableView
-extension PostDetailViewController {
-    func calculateCommentCellHeight(for comment: Comment) -> CGFloat {
+extension DepartPostDetailViewController{
+    func calculateCommentCellHeight(for comment: DepartComment) -> CGFloat {
         // 여기에서 각 댓글 셀의 높이를 계산.
         // 댓글 내용에 따라 높이가 동적으로 조정.
         let content = comment.comment // 댓글 내용
@@ -494,7 +479,6 @@ extension PostDetailViewController {
         CommentTableView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
         StackView.layoutIfNeeded() // UIStackView 업데이트
         ScrollView.contentSize = CGSize(width: ScrollView.contentSize.width, height: newHeight)
-        print("updateTableViewHeight called. New height: \(newHeight)")
     }
     // MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -547,8 +531,7 @@ extension PostDetailViewController {
     }
 }
 //MARK: - Board_CommentHTTP
-extension PostDetailViewController {
-    //새로운 페이지 새로고침
+extension DepartPostDetailViewController{
     @objc func updatePage() {
         print("updatePage() - called")
         currentPage = 0 //처음 페이지부터 다시 시작
@@ -556,8 +539,8 @@ extension PostDetailViewController {
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            // 데이터를 비워줌
             let commentCount = self.comments.count
+            // 데이터를 비워줌
             self.comments.removeAll()
             if let newPosts = newPosts {
                 // 새로운 데이터를 기존 데이터와 병합
@@ -570,10 +553,10 @@ extension PostDetailViewController {
                 if commentCount < self.comments.count{
                     DispatchQueue.main.async {
                         self.CommentTableView.reloadData()
-                        self.StackView.snp.updateConstraints{ (make) in
+                        self.StackView.snp.remakeConstraints{ (make) in
                             let totalHeight = self.cellHeights.reduce(0, +)
                             make.bottom.equalToSuperview().offset(-0)
-                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + (totalHeight)))
+                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
                             make.width.equalTo(self.ScrollView.snp.width)
                             make.top.equalToSuperview().offset(0)
                         }
@@ -596,7 +579,6 @@ extension PostDetailViewController {
         print("loadNextPage() - called")
         currentPage += 1
         //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
-
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
             if let newPosts = newPosts {
@@ -604,7 +586,7 @@ extension PostDetailViewController {
                 // 테이블뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
-                    self.StackView.snp.updateConstraints{ (make) in
+                    self.StackView.snp.remakeConstraints{ (make) in
                         let totalHeight = self.cellHeights.reduce(0, +)
                         make.bottom.equalToSuperview().offset(-0)
                         make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
@@ -624,7 +606,7 @@ extension PostDetailViewController {
         }
     }
     //MARK: - 서버에서 데이터 가져오기 -> 댓글 조회
-    func fetchPosts(page: Int, completion: @escaping ([Comment]?, Error?) -> Void) {
+    func fetchPosts(page: Int, completion: @escaping ([DepartComment]?, Error?) -> Void) {
         let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
@@ -647,7 +629,7 @@ extension PostDetailViewController {
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                 if let result = json?["result"] as? [String: Any], let comments = result["commentList"] as? [[String: Any]] {
-                    var posts = [Comment]()
+                    var posts = [DepartComment]()
                     for comment in comments {
                         if
                             let day = comment["createdTime"] as? String,
@@ -655,7 +637,7 @@ extension PostDetailViewController {
                             let commentText = comment["text"] as? String,
                             let isMine = comment["isMine"] as? Bool
                         {
-                            let post = Comment(day: day, commentId: commentId, comment: commentText, commentIsMine: isMine)
+                            let post = DepartComment(day: day, commentId: commentId, comment: commentText, commentIsMine: isMine)
                             posts.append(post)
                         }
                     }
@@ -903,7 +885,7 @@ extension PostDetailViewController {
     }
 }
 //MARK: - SetVote_HTTP
-extension PostDetailViewController {
+extension DepartPostDetailViewController {
     //투표 비율
     func updateRatioLabel() {
         let totalVotes = agreeCount + disagreeCount
@@ -1063,12 +1045,10 @@ extension PostDetailViewController {
     }
 }
 //MARK: - Alert
-extension PostDetailViewController {
+extension DepartPostDetailViewController {
     //게시글의 툴버튼을 눌렀을 때 팝업
     @objc func toolBtnTapped() {
         let alertController = UIAlertController(title: "게시글 메뉴", message: nil, preferredStyle: .alert)
-        let isMyPost = true //게시글의 작성자와 현재 사용자가 동일한지 판별
-        //ismine으로 수정해야함.
         print("해당 게시물이 내 게시글인지 확인 - \(IsMine)")
         //게시글의 작성자와 현재 사용자가 같을때
         if IsMine {
