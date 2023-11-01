@@ -11,6 +11,8 @@ import UIKit
 class LoginViewController : UIViewController {
     // 보여지는 버튼 플래그
     var showflag = 0
+    // 로딩 인디케이터
+    var loadingIndicator: UIActivityIndicatorView!
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated) // 백 버튼 숨기기
@@ -29,6 +31,10 @@ class LoginViewController : UIViewController {
         print("LoginViewController - called()")
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        loadingIndicator = UIActivityIndicatorView(style: .large)
+        loadingIndicator.color = .gray
+        loadingIndicator.center = self.view.center
+        self.view.addSubview(loadingIndicator)
         setupTapGesture()
         setUpAutoLayout()
     }
@@ -94,6 +100,7 @@ class LoginViewController : UIViewController {
         let id = idText.text ?? "" //아이디 가져오기
         let password = passwordText.text ?? "" //비밀번호 가져오기
         print("LoginBtnTapped - Called \(id), \(password)")
+        self.loadingIndicator.startAnimating()
         // 이후 서버와 통신하기 위한 URL 설정
         let urlString = "http://15.164.161.53:8082/api/v1/auth/login"
         guard let url = URL(string: urlString) else {
@@ -147,6 +154,9 @@ class LoginViewController : UIViewController {
                                         if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                                             sceneDeleagate.window?.makeKeyAndVisible()
                                         }
+                                    }
+                                    DispatchQueue.main.async {
+                                        self.loadingIndicator.stopAnimating()
                                     }
                                 }
                             } else {

@@ -285,6 +285,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         let messageText = messageTextView?.text ?? ""
                 
         print("UploadBtnTapped() - \(titleText), \(messageText)")
+        self.loadingIndicator.startAnimating()
         if(titleText == ""){
             if(messageText == "내용"){
                 //둘다 없을때
@@ -356,6 +357,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                     if status == 200 {
                         //적절할때. 업로드 완료가 되었을때. 팝업. reload
                         DispatchQueue.main.async{
+                            self.loadingIndicator.stopAnimating()
                             let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
                             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                                 if self.boardType == "Free" {

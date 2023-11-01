@@ -32,7 +32,6 @@ struct MycommentPost {
 //게시물의 상세 내용을 보여주는 UIViewController
 class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
     var lastContentOffsetY : CGFloat = 0
-    var DetailView = UIView()
     var isScrollingDown = false
     var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
     var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
@@ -59,7 +58,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
     //해당 게시글 작성자와 사용자가 동일한지 비교하기 위해 전역변수 선언
     var IsMine = false
     var ImageStackView = UIStackView()
-    var DetailLabel = UILabel()
+    var DetailLabel = UITextView()
     // 배열을 만들어 각 셀의 높이를 저장
     var cellHeights: [CGFloat] = []
     // 댓글을 저장할 배열
@@ -188,18 +187,28 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         StackView.alignment = .fill
         StackView.spacing = 20
 
-        //게시물의 상세내용을 넣을 뷰
+        // 게시물의 상세내용을 넣을 뷰
+        let DetailView = UIView()
         DetailView.backgroundColor = .white
         DetailLabel.text = commentpost.content
         DetailLabel.textColor = .black
         DetailLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        DetailLabel.isScrollEnabled = false // 스크롤 비활성화
+        DetailLabel.translatesAutoresizingMaskIntoConstraints = false
         DetailView.addSubview(DetailLabel)
-        DetailLabel.snp.makeConstraints{ (make) in
+
+        // 레이블에 설정된 텍스트와 글꼴 정보를 기반으로 예상 높이를 계산
+        let estimatedLabelSize = DetailLabel.sizeThatFits(CGSize(width: DetailLabel.frame.size.width, height: .greatestFiniteMagnitude))
+
+        // DetailLabel의 높이를 계산된 높이에 따라 설정
+        DetailLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
-            make.height.equalTo(40)
+            make.height.equalTo(estimatedLabelSize.height)
         }
         //이미지를 넣을 뷰
+        // 이미지 스택 뷰 초기화
+        ImageStackView = UIStackView()
         ImageStackView.spacing = 10
         ImageStackView.axis = .vertical
         ImageStackView.distribution = .fill
@@ -232,6 +241,8 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
                     }
                 }
             }
+            // 이전 ImageStackView를 제거하고 새로 초기화한 ImageStackView를 DetailView에 추가
+            ImageStackView.removeFromSuperview()
             DetailView.addSubview(ImageStackView)
             // 오토레이아웃 설정
             ImageStackView.snp.makeConstraints { (make) in
@@ -346,27 +357,26 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         StackView.snp.makeConstraints{ (make) in
             let totalHeight = self.cellHeights.reduce(0, +)
             make.bottom.equalToSuperview().offset(-0)
-            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
+            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
             make.width.equalTo(self.ScrollView.snp.width)
             make.top.equalToSuperview().offset(0)
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            if commentpost.images.isEmpty { //수정필요
+            if(commentpost.images.isEmpty){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                make.height.equalTo(DetailLabel.frame.height + 100)
+                make.height.equalTo(DetailLabel.snp.height).offset(100)
             }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + 300)
+                make.height.equalTo(DetailLabel.snp.height).offset(CGFloat(ImageStackView.arrangedSubviews.count * 300))
             }
             make.leading.equalToSuperview().offset(20)
         }
         VoteView.snp.makeConstraints{ (make) in
-            if commentpost.images.isEmpty {
+            make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
+            if(commentpost.images.isEmpty){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                make.top.equalTo(DetailView.snp.bottom).offset(20)
-                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
+                make.top.equalTo(DetailView.snp.bottom).offset(40)
             }else{
-                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + ImageStackView.frame.height + 400)
                 make.top.equalTo(ImageStackView.snp.bottom).offset(40)
             }
             make.leading.equalToSuperview().offset(20)
@@ -580,7 +590,7 @@ extension MyCommentDetailViewController{
                         self.StackView.snp.updateConstraints{ (make) in
                             let totalHeight = self.cellHeights.reduce(0, +)
                             make.bottom.equalToSuperview().offset(-0)
-                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
+                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
                             make.width.equalTo(self.ScrollView.snp.width)
                             make.top.equalToSuperview().offset(0)
                         }
@@ -603,6 +613,12 @@ extension MyCommentDetailViewController{
         print("loadNextPage() - called")
         currentPage += 1
         //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
+        self.StackView.snp.updateConstraints{ (make) in
+            let totalHeight = self.cellHeights.reduce(0, +)
+            make.bottom.equalToSuperview().offset(-0)
+            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
+            make.width.equalTo(self.ScrollView.snp.width)
+            make.top.equalToSuperview().offset(0)}
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
             if let newPosts = newPosts {
@@ -610,13 +626,6 @@ extension MyCommentDetailViewController{
                 // 테이블뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
-                    self.StackView.snp.updateConstraints{ (make) in
-                        let totalHeight = self.cellHeights.reduce(0, +)
-                        make.bottom.equalToSuperview().offset(-0)
-                        make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
-                        make.width.equalTo(self.ScrollView.snp.width)
-                        make.top.equalToSuperview().offset(0)
-                    }
                 }
                 print("loadNextPage - Success")
             } else if let error = error {
@@ -966,11 +975,6 @@ extension MyCommentDetailViewController{
                 print("agreeButtonTapped - Not pushed isAgreed")
                 VoteBtnClicked(VoteType: "AGREE")
                 isAgreed = true
-                // 투표를 조회해서 찬성, 반대 수 가져오기
-                VoteStatusCheck()
-                agreeCountLabel.text = "찬성: \(agreeCount)"
-                updateRatioLabel()
-                updateProgressViews()
             }
         }
     //반대버튼을 눌렀을때 메서드
@@ -979,11 +983,6 @@ extension MyCommentDetailViewController{
                 print("disagreeButtonTapped - Not pushed isDisgreed")
                 VoteBtnClicked(VoteType: "OPPOSE")
                 isDisagreed = true
-                // 투표를 조회해서 찬성, 반대 수 가져오기
-                VoteStatusCheck()
-                disagreeCountLabel.text = "반대: \(disagreeCount)"
-                updateRatioLabel()
-                updateProgressViews()
             }
         }
     //투표 메서드
@@ -1016,37 +1015,33 @@ extension MyCommentDetailViewController{
                 }
             }
             if status == 200 {
-                // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
-                print("투표 전송이 성공했습니다.")
-                DispatchQueue.main.async {
-                    //메인스레드에서 실행할 기능
-                    if VoteType == "AGREE" {
-                        self.agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
-                        self.agreeButton.isEnabled = false
-
-                    }else if VoteType == "OPPOSE"{
-                        self.disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
-                        self.disagreeButton.isEnabled = false
+                        // 투표 전송이 성공했습니다.
+                        print("투표 전송이 성공했습니다.")
+                        DispatchQueue.main.async {
+                            self.updateUIAfterVote(VoteType: VoteType)
+                        }
+                    } else if message == "이미 투표를 완료한 사용자입니다." {
+                        DispatchQueue.main.async {
+                            self.AlreadyVote(VoteType: VoteType)
+                        }
+                    } else if message == "해당 게시물에는 투표기능이 존재하지 않습니다." {
+                        DispatchQueue.main.async {
+                            self.isNotVotePage()
+                        }
                     }
-                }
-            }else if message == "이미 투표를 완료한 사용자입니다."{
-                DispatchQueue.main.async {
-                    //메인스레드에서 실행할 기능
-                    //이미 투표를 완료했음을 알림
-                    self.AlreadyVote()
-                    if VoteType == "AGREE" {
-                        self.agreeButton.isEnabled = false
-                    }else if VoteType == "OPPOSE"{
-                        self.disagreeButton.isEnabled = false
-                    }
-                }
-            }else if message == "해당 게시물에는 투표기능이 존재하지 않습니다." {
-                DispatchQueue.main.async {
-                    //투표 기능이 없음을 알림
-                    self.isNotVotePage()
-                }
-            }
         }.resume()
+    }
+    // 투표 결과에 따라 UI를 업데이트하는 메서드
+    func updateUIAfterVote(VoteType: String) {
+        if VoteType == "AGREE" {
+            agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+            agreeButton.isEnabled = false
+        } else if VoteType == "OPPOSE" {
+            disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+            disagreeButton.isEnabled = false
+        }
+        
+        VoteStatusCheck()
     }
     //게시글의 투표 상태 조회
     @objc func VoteStatusCheck() {
@@ -1129,9 +1124,14 @@ extension MyCommentDetailViewController{
         present(alertController, animated: true)
     }
     //투표를 했음을 알림
-    func AlreadyVote() {
+    func AlreadyVote(VoteType: String) {
         print("AlreadyVote - called()")
         DispatchQueue.main.async {
+            if VoteType == "AGREE" {
+                self.agreeButton.isEnabled = false
+                } else if VoteType == "OPPOSE" {
+                    self.disagreeButton.isEnabled = false
+                }
                 let Alert = UIAlertController(title: "이미 투표를 했습니다.", message: nil, preferredStyle: .alert)
                 let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
                     // 메서드
