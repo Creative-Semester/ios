@@ -22,16 +22,17 @@ struct MyComment : Decodable{
 struct MycommentPost {
     let title: String
     let content: String
-    let images: Images
+    let images: [Images]
     let page: Int
     struct Images: Decodable {
-        let imageName: String
-        let imageUrl: String
+        let imageName: String?
+        let imageUrl: String?
     }
 }
 //게시물의 상세 내용을 보여주는 UIViewController
 class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UITableViewDataSource{
     var lastContentOffsetY : CGFloat = 0
+    var DetailView = UIView()
     var isScrollingDown = false
     var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
     var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
@@ -64,7 +65,16 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
     // 댓글을 저장할 배열
     var comments : [MyComment] = [
     ]
-    var commentpost = MycommentPost(title: "게시글 1", content: "내용 1", images: MycommentPost.Images(imageName: "", imageUrl: ""), page: 1)
+    // MycommentPost 구조체 초기화
+    var commentpost = MycommentPost(
+        title: "",
+        content: "",
+        images: [
+            MycommentPost.Images(imageName: nil, imageUrl: nil)
+            // 원하는 만큼 이미지를 추가할 수 있습니다.
+        ],
+        page: 1
+    )
     let post : MyCommentPost
     //이니셜라이저를 사용하여 Post 객체를 전달받아 post 속성에 저장
     init(post: MyCommentPost) {
@@ -161,7 +171,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
             make.leading.trailing.equalToSuperview().inset(0)
             make.bottom.equalToSuperview()
         }
-        setupView()
+//        setupView()
         setupTapGesture()
         updateRatioLabel()
         updateProgressViews()
@@ -179,7 +189,6 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         StackView.spacing = 20
 
         //게시물의 상세내용을 넣을 뷰
-        let DetailView = UIView()
         DetailView.backgroundColor = .white
         DetailLabel.text = commentpost.content
         DetailLabel.textColor = .black
@@ -195,27 +204,31 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         ImageStackView.axis = .vertical
         ImageStackView.distribution = .fill
         ImageStackView.backgroundColor = .white
-        let ImageView = UIImageView()
-        print("post.image가 nil인가? : \(String(describing: commentpost.images.imageUrl.isEmpty))") //수정필요
-        if(commentpost.images.imageUrl.isEmpty) { //수정필요
+        if commentpost.images.isEmpty { //수정필요
             print("post.image가 nil인데 화면의 크기의 조정이 필요합니다.")
         }else{
+            print("이미지를 해석 \(commentpost.images)")
             // 게시글의 이미지 URL 배열에서 이미지를 가져와 처리
-            for imageUrlStsring in commentpost.images.imageUrl {//수정필요
-                if let imageUrl = URL(string: imageUrlStsring as? String ?? ""){
-                    print("이미지들 Url 입니다. - \(imageUrl)")
-                    // Kingfisher를 사용하여 이미지를 다운로드하고 처리
+            for image in commentpost.images {
+                let imageUrlString = image.imageUrl
+                if let imageUrlString = image.imageUrl,
+                   !imageUrlString.isEmpty,
+                   let imageUrl = URL(string: imageUrlString) {
+                    // imageUrl 사용 가능
                     let imageView = UIImageView()
                     imageView.kf.setImage(with: imageUrl)
-
+                    // 나머지 이미지 처리 코드
                     imageView.contentMode = .scaleAspectFit
                     imageView.backgroundColor = .white
+                    print("이미지를 가져옵니다. - \(imageUrlString)")
+                    print("이미지를 post 합니다. \(imageUrl)")
 
                     // 이미지 뷰를 스택뷰에 추가
                     ImageStackView.addArrangedSubview(imageView)
                     // 이미지 뷰에 오토레이아웃 설정
-                    ImageView.snp.makeConstraints{ (make) in
-                        make.height.equalTo(200)
+                    imageView.snp.makeConstraints { (make) in
+                        make.height.equalTo(300)
+                        make.leading.trailing.equalToSuperview().inset(20)
                     }
                 }
             }
@@ -227,8 +240,6 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
                 make.leading.equalToSuperview().offset(30)
                     }
         }
-        
-        
         //투표 구성
         // 찬성 버튼
         agreeButton.setTitle("찬성", for: .normal)
@@ -341,7 +352,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            if(commentpost.images.imageUrl.isEmpty){ //수정필요
+            if commentpost.images.isEmpty { //수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
                 make.height.equalTo(DetailLabel.frame.height + 100)
             }else{
@@ -350,12 +361,13 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
             make.leading.equalToSuperview().offset(20)
         }
         VoteView.snp.makeConstraints{ (make) in
-            make.top.equalTo(DetailView.snp.bottom).offset(20)
-            if(commentpost.images.imageUrl.isEmpty){
+            if commentpost.images.isEmpty {
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
+                make.top.equalTo(DetailView.snp.bottom).offset(20)
                 make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
             }else{
-                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + ImageView.frame.height + 400)
+                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + ImageStackView.frame.height + 400)
+                make.top.equalTo(ImageStackView.snp.bottom).offset(40)
             }
             make.leading.equalToSuperview().offset(20)
         }
@@ -685,36 +697,48 @@ extension MyCommentDetailViewController{
             if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             // 서버로부터 받은 JSON 데이터 처리
                 print("Response JSON: \(responseJSON)")
-                let result = responseJSON["result"] as? [String: Any]
-                let voteDetail = result?["voteDetail"] as? [String:Any]
-                print("게시글의 투표가 있는지? - \(voteDetail)")
-                if voteDetail == nil {
-                    DispatchQueue.main.async {
-                        self.VoteView.removeFromSuperview()
-                    }
-                }
-                // 형식은 수정해줘야함.
-                if let result = responseJSON["result"] as? [String: Any],
-                   let title = result["title"] as? String,
-                      let content = result["content"] as? String,
-                      // 이미지 가져오기 수정해야함.
-//                           let images = board["images"] as? [String: Any],
-//                           let imageUrls = images["imageUrl"] as? String,
-//                           let imageNames = images["imageName"] as? String,
-                   let ismine = result["isMine"] as? Bool{
-                     self.IsMine = ismine //게시글 작성자와 사용자가 동일한지 판별
-                    DispatchQueue.main.async{
-                        self.commentpost = MycommentPost(title: title, content: content, images: MycommentPost.Images(imageName: "", imageUrl: ""), page: 0) //페이지 수정해야함.
-                        // 네비게이션 바의 title을 설정
+                if let result = responseJSON["result"] as? [String: Any] {
+                    print("통신 결과 \(result)")
+                    // 게시글 내용 및 이미지 처리
+                    if let title = result["title"] as? String,
+                       let content = result["content"] as? String,
+                       let imagesArray = result["images"] as? [[String: Any]],
+                       let ismine = result["isMine"] as? Bool {
+                        self.IsMine = ismine // 게시글 작성자와 사용자가 동일한지 판별
+                        // 이미지 배열 초기화
+                        var images = [MycommentPost.Images]()
+                        for imageInfo in imagesArray {
+                            if let imageName = imageInfo["imageName"] as? String,
+                               let imageUrl = imageInfo["imageUrl"] as? String {
+                                let image = MycommentPost.Images(imageName: imageName, imageUrl: imageUrl)
+                                images.append(image)
+                            }
+                        }
+                        // 게시글 정보 업데이트
+                        DispatchQueue.main.async {
+                            self.commentpost = MycommentPost(title: title, content: content, images: images, page: 0) // 페이지 수정 필요
+                            
+                            // 네비게이션 바의 title을 설정
                             self.navigationItem.title = self.commentpost.title
-                        self.DetailLabel.text = self.commentpost.content
-                        print("commentpost - \(self.commentpost)")
+                            self.DetailLabel.text = self.commentpost.content
+                            print("commentpost - \(self.commentpost)")
+                            // 여기에서 이미지 뷰 업데이트 또는 다른 UI 업데이트 작업을 수행
+                            self.setupView()
                         }
                     }
+                    // 게시글의 투표가 있는지 확인
+                    if let voteDetail = result["voteDetail"] as? [String: Any] {
+                        print("게시글의 투표가 있는지? - \(voteDetail)")
+                    } else {
+                        // 게시글에 투표가 없는 경우 VoteView 제거
+                        DispatchQueue.main.async {
+                            self.VoteView.removeFromSuperview()
+                        }
+                    }
+                }
                 }else{ print("게시글 상세내용 조회 - JSON 파싱 오류") }
             }
         }.resume()
-        
     }
     //댓글 작성 메서드
     @objc func CommentBtnTapped() {

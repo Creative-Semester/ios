@@ -15,7 +15,7 @@ struct MyWritePost: Decodable {
     let boardId: Int
     let title: String
     let content: String
-    let images: Images
+    let images: [Images]
     let day: String
     let page: Int
     let boardType : String
@@ -87,17 +87,29 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
         cell.commentLabel.text = post.content
         cell.DayLabel.text = post.day
         
+        // 이미지 뷰 초기화 또는 placeholder 이미지 설정
+        cell.postImageView.image = UIImage(named: "placeholderImage")
         //MARK: - URL to Image Conversion
         // 첫 번째 이미지가 nil이면 안함.
-        if !post.images.imageUrl.isEmpty {
-            // 이미지 URL 가져오기
-            if let imageUrl = URL(string: post.images.imageUrl) {
-                // KingFisher를 사용하여 이미지 로드 및 표시
-                print("이미지를 가져옵니다. - \(post.images.imageUrl)")
-                print("이미지를 post 합니다. \(imageUrl)")
-                cell.postImageView.kf.setImage(with: imageUrl)
+        if !post.images.isEmpty {
+                let firstImageIndex = 0
+                if firstImageIndex < post.images.count {
+                    let imageUrlString = post.images[firstImageIndex].imageUrl
+                    if !imageUrlString.isEmpty, let imageUrl = URL(string: imageUrlString) {
+                        cell.postImageView.kf.setImage(with: imageUrl) { result in
+                            switch result {
+                            case .success(_):
+                                // 이미지 로딩이 완료된 후에 현재 셀의 인덱스와 indexPath.row를 비교하여 이미지를 설정
+                                if let visibleIndexPaths = tableView.indexPathsForVisibleRows, visibleIndexPaths.contains(indexPath) {
+                                    tableView.reloadRows(at: [indexPath], with: .none)
+                                }
+                            case .failure(_):
+                                break // 이미지 로딩 실패 시 처리
+                            }
+                        }
+                    }
+                }
             }
-        }
         return cell
     }
     // MARK: - UITableViewDelegate
@@ -160,14 +172,19 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
                         if let title = board["title"] as? String,
                            let content = board["content"] as? String,
                            let boardId = board["boardId"] as? Int,
-                           // 이미지 가져오기 수정해야함.
-//                           let images = board["images"] as? [String: Any],
-//                           let imageUrls = images["imageUrl"] as? String,
-//                           let imageNames = images["imageName"] as? String,
+                           let imagesArray = board["images"] as? [[String: Any]],
                            let day = board["createdTime"] as? String,
                            let boardType = board["boardType"] as? String
                         {
-                            let post = MyWritePost(boardId: boardId, title: title, content: content, images: MyWritePost.Images(imageName: "", imageUrl: ""), day: day, page: page, boardType: boardType)
+                            var images = [MyWritePost.Images]()
+                            for imageInfo in imagesArray {
+                                if let imageName = imageInfo["imageName"],
+                                    let imageUrl = imageInfo["imageUrl"] {
+                                    let image = MyWritePost.Images(imageName: imageName as! String, imageUrl: imageUrl as! String)
+                                    images.append(image)
+                                }
+                            }
+                            let post = MyWritePost(boardId: boardId, title: title, content: content, images: images, day: day, page:page, boardType: boardType)
                             posts.append(post)
                         }
                     }

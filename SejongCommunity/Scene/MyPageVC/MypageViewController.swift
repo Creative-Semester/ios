@@ -103,14 +103,10 @@ class MypageViewController: UIViewController{
         }
         return View
     }()
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        SetStudentInfo()
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        
+        SetStudentInfo()
         //StackView를 이용해 오토레이아웃 설정
         let ScrollView = UIScrollView()
         ScrollView.showsHorizontalScrollIndicator = false
@@ -185,8 +181,6 @@ class MypageViewController: UIViewController{
     }
     //학생의 이름, 과 정보를 가져올 메서드
     func SetStudentInfo() {
-        Studenttitle.text = "Name"
-        StudentInfo.text = "DepartMent"
         let urlString = "http://15.164.161.53:8082/api/v1/user/info"
         guard let url = URL(string: urlString)else{
             return //유효한 URL 인가?

@@ -219,7 +219,6 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
                     }
                 }
             }
-
             DetailView.addSubview(ImageStackView)
             // 오토레이아웃 설정
             ImageStackView.snp.makeConstraints { (make) in
