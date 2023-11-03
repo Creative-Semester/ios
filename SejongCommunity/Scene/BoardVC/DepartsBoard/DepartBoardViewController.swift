@@ -151,7 +151,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
     func fetchPosts(page: Int, completion: @escaping ([DepartPost]?, Error?) -> Void) {
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards?page=\(page)&boardType=Council")!
+        let url = URL(string: "https://keep-ops.shop/api/v1/boards?page=\(page)&boardType=Council")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)

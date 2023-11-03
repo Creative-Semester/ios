@@ -626,7 +626,7 @@ extension MyWriteVoteViewController {
         disagreeCountLabel.text = "반대: \(disagreeCount)"
         updateRatioLabel()
         updateProgressViews()
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
+        let url = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
@@ -673,7 +673,7 @@ extension MyWriteVoteViewController {
     @objc func BoardDetailShow() {
         print("BoardDetailShow() - called()")
         // 서버 API 엔드포인트 및 요청 생성
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "GET"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -717,7 +717,7 @@ extension MyWriteVoteViewController {
             return // 댓글 내용이 비어 있으면 아무 작업도 하지 않음
         }
         // 서버 API 엔드포인트 및 요청 생성
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/comment")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "POST"
         let body : [String : Any] = [
@@ -760,7 +760,7 @@ extension MyWriteVoteViewController {
         print("PostDelete - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)") else { return }
+        guard let url = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)") else { return }
         print("삭제하려는데 몇번 게시물인가요? - \(post.boardId)")
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -813,7 +813,7 @@ extension MyWriteVoteViewController {
         print("CommentDelete - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/comment/\(commentId)") else { return }
+        guard let url = URL(string: "https://keep-ops.shop/api/v1/comment/\(commentId)") else { return }
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -862,7 +862,7 @@ extension MyWriteVoteViewController {
         print("CommentDeclaration - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/comment/\(commentId)/report") else { return }
+        guard let url = URL(string: "https://keep-ops.shop/api/v1/comment/\(commentId)/report") else { return }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -952,7 +952,7 @@ extension MyWriteVoteViewController{
         var status = 0
         var message = ""
         print("찬성인가요 반대인가요 - \(VoteType)")
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote?voteType=\(VoteType)")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/vote?voteType=\(VoteType)")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "POST"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -1007,7 +1007,7 @@ extension MyWriteVoteViewController{
     @objc func VoteStatusCheck() {
         print("VoteStatusCheck - called()")
         var status = 0
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/vote")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "GET"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사

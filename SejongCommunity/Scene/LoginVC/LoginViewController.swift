@@ -11,6 +11,9 @@ import UIKit
 class LoginViewController : UIViewController {
     // 보여지는 버튼 플래그
     var showflag = 0
+    // 아이디와 비밀번호 입력 필드 선언
+    private let idText = UITextField()
+    private let passwordText = UITextField()
     // 로딩 인디케이터
     var loadingIndicator: UIActivityIndicatorView!
     override func viewWillAppear(_ animated: Bool) {
@@ -47,9 +50,6 @@ class LoginViewController : UIViewController {
         View.backgroundColor = .white
         return View
     }()
-    // 아이디와 비밀번호 입력 필드 선언
-    private let idText = UITextField()
-    private let passwordText = UITextField()
     //아이디,비밀번호 입력 창
     private let TextView : UIStackView = {
         let StackView = UIStackView()
@@ -102,7 +102,7 @@ class LoginViewController : UIViewController {
         print("LoginBtnTapped - Called \(id), \(password)")
         self.loadingIndicator.startAnimating()
         // 이후 서버와 통신하기 위한 URL 설정
-        let urlString = "http://15.164.161.53:8082/api/v1/auth/login"
+        let urlString = "https://keep-ops.shop/api/v1/auth/login"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return
