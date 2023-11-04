@@ -209,7 +209,7 @@ class MypageViewController: UIViewController{
                 if let data = data {
                     do {
                         if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                            print("Response: \(jsonResponse)")
+//                            print("Response: \(jsonResponse)")
                             // 서버로부터 받은 응답 데이터를 파싱하여 로그인 결과 처리
                             if let result = jsonResponse["result"] as? [String:Any],
                             let StudentTitle = result["name"] as? String,
@@ -285,7 +285,7 @@ class MypageViewController: UIViewController{
             } else if let data = data {
                 if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
                     //서버로부터 받은 JSON 데이터 처리
-                    print("Response JSON: \(responseJSON)")
+//                    print("Response JSON: \(responseJSON)")
                     print("로그아웃에 성공했습니다.")
                 }
             }

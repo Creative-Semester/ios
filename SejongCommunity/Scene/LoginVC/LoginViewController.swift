@@ -137,14 +137,14 @@ class LoginViewController : UIViewController {
                     if let data = data {
                         do {
                             if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                                print("Response: \(jsonResponse)")
+//                                print("Response: \(jsonResponse)")
                                 // 서버로부터 받은 응답 데이터를 파싱하여 로그인 결과 처리
                                 // 예: 로그인 성공 또는 실패 처리
                                 if let result = jsonResponse["result"] as? [String: Any],
                                    let accessToken = result["accessToken"] as? String,
                                    let refreshToken = result["refreshToken"] as? String {
-                                    print("검사들어갑니다")
-                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
+//                                    print("검사들어갑니다")
+//                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
                                     // 토큰 저장
                                     AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
                                     DispatchQueue.main.async {

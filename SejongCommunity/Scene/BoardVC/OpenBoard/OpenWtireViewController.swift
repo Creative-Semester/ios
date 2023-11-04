@@ -444,8 +444,8 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
                                 // JSON 파싱 성공
                                 if let resultArray = responseData["result"] as? [[String: Any]] {
                                         for result in resultArray {
-                                            if let imageName = result["imageName"] as? String,
-                                               let imageUrl = result["imageUrl"] as? String {
+                                            if let imageName = result["fileName"] as? String,
+                                               let imageUrl = result["fileUrl"] as? String {
                                                 // imageName과 imageUrl을 사용
                                                 let imageInfo = ["imageName": imageName, "imageUrl": imageUrl]
                                                 self.imageInfoArray.append(imageInfo)

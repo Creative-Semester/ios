@@ -350,7 +350,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                         // 서버 응답 데이터 처리 (만약 필요하다면)
                         if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                             // 서버로부터 받은 JSON 데이터 처리
-                            print("Response JSON: \(responseJSON)")
+//                            print("Response JSON: \(responseJSON)")
                             status = responseJSON["status"] as? Int ?? 0
                         }
                     }
@@ -415,7 +415,7 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]){
         loadingIndicator.stopAnimating()
         if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            print("imagePickerController - \(selectedImage)")
+//            print("imagePickerController - \(selectedImage)")
             // 선택한 이미지를 업로드하거나 다른 처리를 수행
             // 선택한 이미지를 어딘가에 저장하는 등 작업 수행
             addImage = selectedImage
@@ -431,7 +431,7 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
             AddImageView = Array(repeating: UIImageView(), count: 5)
         }
         if imageNum >= 0 && imageNum < AddImageView.count {
-            print("이미지를 추가합니다. AddimageView : \(AddImageView.count), imageNum : \(imageNum)")
+//            print("이미지를 추가합니다. AddimageView : \(AddImageView.count), imageNum : \(imageNum)")
             AddImageView[imageNum] = UIImageView(image: addImage)
             // 이미지뷰와 삭제 버튼을 포함하는 뷰 생성
             let imageContainerView = UIView()
@@ -492,7 +492,7 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
     // 삭제 메서드
     @objc func deleteImage(_ sender: UIButton) {
         let indexToDelete = sender.tag
-        print("\(indexToDelete+1)번째 이미지가 삭제되었습니다.")
+//        print("\(indexToDelete+1)번째 이미지가 삭제되었습니다.")
         AddImageView = Array(repeating: UIImageView(), count: imageNum)
         if indexToDelete >= 0 && indexToDelete < AddImageView.count {
             // 이미지뷰와 삭제 버튼을 포함하는 뷰를 가져옴
@@ -505,12 +505,12 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
                 imageStack.removeArrangedSubview(imageContainerView)
                 imageNum -= 1
                 imageframe -= 120
-                print("남은 이미지 개수입니다 - \(imageNum)개")
+//                print("남은 이미지 개수입니다 - \(imageNum)개")
                 // 이미지 스택의 너비 업데이트
                 updateImageStackWidth()
                 //AddImageView = Array(repeating: UIImageView(), count: 5)
                 // 삭제된 이미지 뒤의 이미지들의 인덱스를 업데이트
-                print("이미지 갯수 \(AddImageView.count)")
+//                print("이미지 갯수 \(AddImageView.count)")
                 // 이미지와 버튼의 태그 업데이트
                 for i in 0..<AddImageView.count {
                     if let imageContainerView = imageStack.arrangedSubviews[i] as? UIView {
@@ -522,10 +522,10 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
                         }
                     }
                 for i in (0..<AddImageView.count){
-                    print("현재 인덱스 번호입니다. \(i)\n")
+//                    print("현재 인덱스 번호입니다. \(i)\n")
                 }
             }else{
-                print("삭제할 이미지가 존재하지 않습니다. 인덱스: \(indexToDelete)")
+//                print("삭제할 이미지가 존재하지 않습니다. 인덱스: \(indexToDelete)")
             }
         }
     }
@@ -554,7 +554,7 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
                     if let imageData = image.pngData(){
                         let imageName = "image\(index).jpg"
                         // 내용을 추가하기 전에 로그에 출력
-                        print("Adding image with name: \(imageName)")
+//                        print("Adding image with name: \(imageName)")
                         multipartFormData.append(imageData, withName: "files", fileName: "image\(index).jpg", mimeType: "image/jpeg")
                         //서버와의 맞춤 필요
 //                        withname – 서버에서 요구하는 key값
@@ -575,12 +575,12 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
                     if let data = data {
                         do {
                             if let responseData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                                print("업로드 결과 입니다. \(responseData)")
+//                                print("업로드 결과 입니다. \(responseData)")
                                 // JSON 파싱 성공
                                 if let resultArray = responseData["result"] as? [[String: Any]] {
                                         for result in resultArray {
-                                            if let imageName = result["imageName"] as? String,
-                                               let imageUrl = result["imageUrl"] as? String {
+                                            if let imageName = result["fileName"] as? String,
+                                               let imageUrl = result["fileUrl"] as? String {
                                                 // imageName과 imageUrl을 사용
                                                 let imageInfo = ["imageName": imageName, "imageUrl": imageUrl]
                                                 self.imageInfoArray.append(imageInfo)

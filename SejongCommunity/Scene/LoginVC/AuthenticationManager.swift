@@ -62,14 +62,14 @@ class AuthenticationManager {
             } else if let data = data {
                 if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
                     //서버로부터 받은 JSON 데이터 처리
-                    print("Response JSON: \(responseJSON)")
+//                    print("Response JSON: \(responseJSON)")
                     //토큰이 만료 되었는지 확인
-                    print("토큰 유효성 검사 메서드에서의 status - \(responseJSON["status"]), code - \(responseJSON["code"]),  result - \(responseJSON["result"])")
+//                    print("토큰 유효성 검사 메서드에서의 status - \(responseJSON["status"]), code - \(responseJSON["code"]),  result - \(responseJSON["result"])")
                     if let serverResponseCode = responseJSON["code"] as? String,
                         let message = responseJSON["message"] as? String{
                         Expiration = serverResponseCode
                         Message = message
-                        print("토큰 유효성 검사 : \(Expiration), 메시지 : \(message)")
+//                        print("토큰 유효성 검사 : \(Expiration), 메시지 : \(message)")
                     }else{
                         print("토큰 유효성 검사 에러 - Invalid JSON response")
                     }
@@ -86,7 +86,7 @@ class AuthenticationManager {
                             let accessToken = result["accessToken"] as? String,
                             let refreshToken = result["refreshToken"] as? String{
                             
-                                print("refreshToken이 만료되지 않았습니다. 새로운 토큰을 발급받고 저장합니다. accessToken :  \(accessToken), refreshToken : \(refreshToken)")
+//                                print("refreshToken이 만료되지 않았습니다. 새로운 토큰을 발급받고 저장합니다. accessToken :  \(accessToken), refreshToken : \(refreshToken)")
                                 saveAuthToken(token: accessToken, refresh: refreshToken)
                         }else{
                             print("토큰 재발행 에러 - Invalid JSON response")

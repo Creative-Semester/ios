@@ -210,7 +210,7 @@ class CouncilRegisterViewController : UIViewController{
             // 서버 응답 데이터 처리 (만약 필요하다면)
             if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 // 서버로부터 받은 JSON 데이터 처리
-                print("Response JSON: \(responseJSON)")
+//                print("Response JSON: \(responseJSON)")
                 status = responseJSON["status"] as? Int ?? 0
                 }
             }

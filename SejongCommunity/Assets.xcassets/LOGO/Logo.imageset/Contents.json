@@ -1,15 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "logo 1.jpeg",
       "idiom" : "iphone",
       "scale" : "1x"
     },
     {
-      "filename" : "logo.jpeg",
+      "filename" : "logo@2x.jpeg",
       "idiom" : "iphone",
       "scale" : "2x"
     },
     {
+      "filename" : "logo@3x.jpeg",
       "idiom" : "iphone",
       "scale" : "3x"
     }

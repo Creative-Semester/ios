@@ -1,15 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "스크린샷 2023-09-25 오후 5.00.49 1.png",
       "idiom" : "iphone",
       "scale" : "1x"
     },
     {
-      "filename" : "스크린샷 2023-09-25 오후 5.00.49.png",
+      "filename" : "스크린샷 2023-09-25 오후 5.00.49@2x.png",
       "idiom" : "iphone",
       "scale" : "2x"
     },
     {
+      "filename" : "스크린샷 2023-09-25 오후 5.00.49@3x.png",
       "idiom" : "iphone",
       "scale" : "3x"
     }
