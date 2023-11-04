@@ -46,6 +46,8 @@
 		F19345B82AD0350100BB5D5E /* CouncilInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */; };
 		F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */; };
 		F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */; };
+		F1C838D52AF6614D00303D20 /* professorLectureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D42AF6614D00303D20 /* professorLectureModel.swift */; };
+		F1C838D72AF6631000303D20 /* ProfessorLectureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D62AF6631000303D20 /* ProfessorLectureService.swift */; };
 		F1D495532AD2A5C100078232 /* PromisesPercentageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */; };
 		F1D495552AD2A6D500078232 /* PromisesPercentageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */; };
 		F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */; };
@@ -116,6 +118,8 @@
 		F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilInfoModel.swift; sourceTree = "<group>"; };
 		F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoService.swift; sourceTree = "<group>"; };
 		F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoModel.swift; sourceTree = "<group>"; };
+		F1C838D42AF6614D00303D20 /* professorLectureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = professorLectureModel.swift; sourceTree = "<group>"; };
+		F1C838D62AF6631000303D20 /* ProfessorLectureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorLectureService.swift; sourceTree = "<group>"; };
 		F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesPercentageModel.swift; sourceTree = "<group>"; };
 		F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesPercentageService.swift; sourceTree = "<group>"; };
 		F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeTableViewCell.swift; sourceTree = "<group>"; };
@@ -298,6 +302,7 @@
 			isa = PBXGroup;
 			children = (
 				F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */,
+				F1C838D62AF6631000303D20 /* ProfessorLectureService.swift */,
 			);
 			path = ProfessorServices;
 			sourceTree = "<group>";
@@ -306,6 +311,7 @@
 			isa = PBXGroup;
 			children = (
 				F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */,
+				F1C838D42AF6614D00303D20 /* professorLectureModel.swift */,
 			);
 			path = ProfessorModels;
 			sourceTree = "<group>";
@@ -546,6 +552,7 @@
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
 				E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */,
+				F1C838D72AF6631000303D20 /* ProfessorLectureService.swift in Sources */,
 				E4E9F6622AD06C5200F8AEAD /* CustomCommentTableViewCell.swift in Sources */,
 				F1E547352A84C13D00671182 /* DepartOpenWriteViewController.swift in Sources */,
 				F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */,
@@ -584,6 +591,7 @@
 				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,
 				F1D495532AD2A5C100078232 /* PromisesPercentageModel.swift in Sources */,
 				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,
+				F1C838D52AF6614D00303D20 /* professorLectureModel.swift in Sources */,
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,
 				E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */,

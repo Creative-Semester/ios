@@ -72,4 +72,11 @@ class ProfessorClassTableViewCell: UITableViewCell {
         }
     }
     
+    func configure(professorLecture: ProfessorLecture) {
+        classTitleLabel.text = professorLecture.title
+        let classification: String = professorLecture.classification
+        let grade: String = professorLecture.grade
+        let score: String = professorLecture.score
+        classExpLabel.text = "\(grade)학년 \(classification) \(score)학점"
+    }
 }

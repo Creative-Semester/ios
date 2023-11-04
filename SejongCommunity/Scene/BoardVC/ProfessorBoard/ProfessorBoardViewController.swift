@@ -52,7 +52,6 @@ class ProfessorBoardViewController: UIViewController {
                 
             case .success(let data):
                 guard let infoData = data as? ProfessorInfoResponse else { return }
-                print(infoData)
                 self.professorInfoList = infoData.result.list
                 self.professorCollecionView.reloadData()
                 
@@ -87,6 +86,9 @@ extension ProfessorBoardViewController: UICollectionViewDataSource {
 extension ProfessorBoardViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = ProfessorInfoViewController()
+        if let data = professorInfoList?[indexPath.row] {
+            vc.professorId = professorInfoList?[indexPath.row].professorId
+        }
         navigationController?.pushViewController(vc, animated: true)
     }
 }

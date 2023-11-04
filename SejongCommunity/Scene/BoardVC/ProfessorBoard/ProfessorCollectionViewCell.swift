@@ -14,7 +14,6 @@ class ProfessorCollectionViewCell: UICollectionViewCell {
     private let professorImageView: UIImageView = {
         let imageView = UIImageView()
         
-        imageView.image = UIImage(named: "professor")
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .gray
         imageView.clipsToBounds = true
@@ -29,7 +28,6 @@ class ProfessorCollectionViewCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)//임시로 추가
         label.textColor = .black
         label.textAlignment = .left
-        label.text = "김세원"
         label.numberOfLines = 1
         
         return label
@@ -41,10 +39,6 @@ class ProfessorCollectionViewCell: UICollectionViewCell {
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)//임시로 추가
         label.textColor = .black
         label.textAlignment = .left
-        label.text = """
-        Autonomous Vessel Navigation Algorithm
-        Optimal Routing Algorithm 등을 연구하며 자율운항에 연구를 합니다.
-        """
         label.numberOfLines = 0
         
         return label
