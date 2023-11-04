@@ -28,6 +28,9 @@ struct APIConstants {
     //교수게시판 조회 api
     static let professorInfoURL = baseURL + "/api/v1/professor"
     
+    //사무내역 목록 조회 api
+    static let OfficeDetailURL = baseURL + "/api/v1/affair"
+    
     //파일 업로드, 삭제시 사용하는 api
     static let fileUploadURL = baseURL + "/api/v1/file"
 }
