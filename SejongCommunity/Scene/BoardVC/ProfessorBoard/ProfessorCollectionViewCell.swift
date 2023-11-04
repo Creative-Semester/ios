@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 class ProfessorCollectionViewCell: UICollectionViewCell {
@@ -82,6 +83,13 @@ class ProfessorCollectionViewCell: UICollectionViewCell {
             make.trailing.equalTo(contentView.snp.trailing).offset(-20)
             make.bottom.lessThanOrEqualTo(contentView.snp.bottom).offset(-10)
         }
+    }
+    
+    func configure(professorInfo: ProfessorInfo) {
+        let url = URL(string: professorInfo.image)
+        professorImageView.kf.setImage(with: url)
+        professorNameLabel.text = professorInfo.name
+        professorExpLabel.text = professorInfo.intro
     }
     
     required init?(coder: NSCoder) {

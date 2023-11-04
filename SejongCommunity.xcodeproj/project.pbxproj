@@ -44,6 +44,8 @@
 		F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16FE9EE2A70FEEE005F194C /* OfficeDetailsViewController.swift */; };
 		F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */; };
 		F19345B82AD0350100BB5D5E /* CouncilInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */; };
+		F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */; };
+		F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */; };
 		F1D495532AD2A5C100078232 /* PromisesPercentageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */; };
 		F1D495552AD2A6D500078232 /* PromisesPercentageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */; };
 		F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */; };
@@ -112,6 +114,8 @@
 		F16FE9EE2A70FEEE005F194C /* OfficeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailsViewController.swift; sourceTree = "<group>"; };
 		F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeBoardViewController.swift; sourceTree = "<group>"; };
 		F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilInfoModel.swift; sourceTree = "<group>"; };
+		F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoService.swift; sourceTree = "<group>"; };
+		F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoModel.swift; sourceTree = "<group>"; };
 		F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesPercentageModel.swift; sourceTree = "<group>"; };
 		F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesPercentageService.swift; sourceTree = "<group>"; };
 		F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeTableViewCell.swift; sourceTree = "<group>"; };
@@ -290,6 +294,22 @@
 			path = CouncilBoardModels;
 			sourceTree = "<group>";
 		};
+		F1C838CE2AF6539400303D20 /* ProfessorServices */ = {
+			isa = PBXGroup;
+			children = (
+				F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */,
+			);
+			path = ProfessorServices;
+			sourceTree = "<group>";
+		};
+		F1C838D12AF6541500303D20 /* ProfessorModels */ = {
+			isa = PBXGroup;
+			children = (
+				F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */,
+			);
+			path = ProfessorModels;
+			sourceTree = "<group>";
+		};
 		F1E547312A84C0A900671182 /* DepartsBoard */ = {
 			isa = PBXGroup;
 			children = (
@@ -305,8 +325,8 @@
 			isa = PBXGroup;
 			children = (
 				E4021ED62AA5BE4F00FFEAB2 /* NotificationViewController.swift */,
-				E4021EC72A92088400FFEAB2 /* LoginVC */,
 				E4021E722A6F8B6700FFEAB2 /* BoardVC */,
+				E4021EC72A92088400FFEAB2 /* LoginVC */,
 				F1E5473A2A84C37E00671182 /* Chat */,
 				E4021E732A750A2B00FFEAB2 /* MyPageVC */,
 			);
@@ -358,6 +378,7 @@
 			children = (
 				F1E547A12ACABED300671182 /* sampleModel.swift */,
 				F19345B62AD034EE00BB5D5E /* CouncilBoardModels */,
+				F1C838D12AF6541500303D20 /* ProfessorModels */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -368,6 +389,7 @@
 				F1E547A42ACABEF700671182 /* APIContants.swift */,
 				F12FE6B62AD0434C00B47DA0 /* NetworkResult.swift */,
 				F1EA83A52AD0252B006B9741 /* CouncilBoardServices */,
+				F1C838CE2AF6539400303D20 /* ProfessorServices */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -533,7 +555,6 @@
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				F1F91D462AD300EA009D95B0 /* PromiseCheckService.swift in Sources */,
-				E4021ECF2A9F3B6500FFEAB2 /* VoteViewController.swift in Sources */,
 				F12FE6B72AD0434C00B47DA0 /* NetworkResult.swift in Sources */,
 				F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */,
 				E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */,
@@ -557,7 +578,9 @@
 				F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
+				F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
+				F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */,
 				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,
 				F1D495532AD2A5C100078232 /* PromisesPercentageModel.swift in Sources */,
 				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,

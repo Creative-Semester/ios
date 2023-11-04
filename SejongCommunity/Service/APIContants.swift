@@ -9,7 +9,7 @@ import Foundation
 
 struct APIConstants {
     // Base URL
-    static let baseURL = "http://15.164.161.53:8082"
+    static let baseURL = "https://keep-ops.shop"
     
     // Feature URL
     
@@ -24,4 +24,10 @@ struct APIConstants {
     
     //학생회 공약 이행 체크 api
     static let promiseCheckURL = baseURL + "/api/v1/promise"
+    
+    //교수게시판 조회 api
+    static let professorInfoURL = baseURL + "/api/v1/professor"
+    
+    //파일 업로드, 삭제시 사용하는 api
+    static let fileUploadURL = baseURL + "/api/v1/file"
 }

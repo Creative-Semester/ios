@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 
 class ProfessorBoardViewController: UIViewController {
+    
+    private var professorInfoList: [ProfessorInfo]?
 
     private let professorCollecionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -29,6 +31,7 @@ class ProfessorBoardViewController: UIViewController {
         professorCollecionView.delegate = self
         professorCollecionView.dataSource = self
         
+        getProfessorInfoData()
         setupLayout()
     }
     
@@ -41,15 +44,41 @@ class ProfessorBoardViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
+    
+    func getProfessorInfoData() {
+        
+        ProfessorInfoService.shared.getProfessorInfo(page: 0) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorInfoResponse else { return }
+                print(infoData)
+                self.professorInfoList = infoData.result.list
+                self.professorCollecionView.reloadData()
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
 }
 
 extension ProfessorBoardViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return professorInfoList?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = professorCollecionView.dequeueReusableCell(withReuseIdentifier: "ProfessorCollectionViewCell", for: indexPath) as! ProfessorCollectionViewCell
+        
+        if let data = professorInfoList?[indexPath.row] {
+            cell.configure(professorInfo: data)
+        }
         
         return cell
     }
