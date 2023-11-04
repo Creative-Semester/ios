@@ -1027,11 +1027,11 @@ extension MyCommentDetailViewController{
                         DispatchQueue.main.async {
                             self.AlreadyVote(VoteType: VoteType)
                         }
-                    } else if message == "투표 기한이 마감되었습니다." {
+                    } else if message == "해당 게시물에는 투표기능이 존재하지 않습니다." {
                         DispatchQueue.main.async {
                             self.isNotVotePage()
                         }
-                    } else if message == "해당 투표는 기한이 지났습니다." {
+                    } else if message == "투표 기한이 마감되었습니다." {
                         DispatchQueue.main.async {
                             self.isDeadLine()
                         }
