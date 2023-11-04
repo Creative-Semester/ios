@@ -9,7 +9,10 @@ import UIKit
 import SnapKit
 
 class OfficeDetailsCellTappedViewController: UIViewController {
-
+    
+    var officeDetailList: OfficeDetailList?
+    var time: String?
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         
@@ -61,7 +64,6 @@ class OfficeDetailsCellTappedViewController: UIViewController {
     private let downloadButton: UIButton = {
         let button = UIButton(type: .system)
         
-        button.setTitle("사용내역 파일 다운로드", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         button.setTitleColor(.systemBlue, for: .normal)
         
@@ -72,11 +74,11 @@ class OfficeDetailsCellTappedViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        downloadButton.addTarget(self, action: #selector(downloadExcelFile), for: .touchUpInside)
+        downloadButton.addTarget(self, action: #selector(downloadFile), for: .touchUpInside)
         
         setupNavigation()
         setupLayout()
-        
+        setupConfigure()
     }
     
     func setupNavigation() {
@@ -84,37 +86,61 @@ class OfficeDetailsCellTappedViewController: UIViewController {
             navigationItem.rightBarButtonItem = editButton
     }
     
-    @objc func downloadExcelFile() {
+    func setupConfigure() {
+        guard let officeDetailList = officeDetailList else { return }
+        guard let time = time else { return }
+        titleLabel.text = officeDetailList.title
+        dateLabel.text = time
+        usedAmountLabel.text = "사용 금액 : " + officeDetailList.usedMoney + "원"
+        remainingAountLabel.text = "남은 금액 : " + officeDetailList.restMoney + "원"
+        let fileTitle: String = "\"\(officeDetailList.fileInfo.fileName)\" 파일 다운로드"
+        downloadButton.setTitle(fileTitle, for: .normal)
+    }
+    
+    @objc func downloadFile() {
         // 파일 다운로드 URL 또는 경로 설정
-        guard let fileURL = URL(string: "https://example.com/your-excel-file.xlsx") else {
+        guard let officeDetailList = officeDetailList,
+              let fileURL = URL(string: officeDetailList.fileInfo.fileUrl) else {
             print("Invalid file URL")
             return
         }
         
-        // 파일 다운로드 작업 시작
         URLSession.shared.downloadTask(with: fileURL) { (tempURL, response, error) in
             guard let tempURL = tempURL, error == nil else {
                 print("File download failed with error: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
             
+            // 원하는 파일 형식을 여기에서 확인합니다
+            let destinationURL: URL?
+            if fileURL.pathExtension.lowercased() == "xlsx" {
+                destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("your-excel-file.xlsx")
+            } else if fileURL.pathExtension.lowercased() == "pdf" {
+                destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("your-pdf-file.pdf")
+            } else {
+                print("Unsupported file type: \(fileURL.pathExtension)")
+                return
+            }
+            
+            guard let finalURL = destinationURL else {
+                print("Destination URL is nil")
+                return
+            }
+            
             do {
-                // 다운로드한 파일을 원하는 위치에 저장
-                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                let destinationURL = documentsDirectory.appendingPathComponent("your-excel-file.xlsx")
+                try FileManager.default.moveItem(at: tempURL, to: finalURL)
                 
-                try FileManager.default.moveItem(at: tempURL, to: destinationURL)
+                print("File downloaded to: \(finalURL)")
                 
                 // 다운로드 완료 후 원하는 동작 수행
-                print("File downloaded to: \(destinationURL)")
-                
                 // 예를 들어, 파일 다운로드 완료 후 다운로드한 파일을 열도록 설정할 수 있습니다.
-                // self.openDownloadedExcelFile(at: destinationURL)
+                // self.openDownloadedFile(at: finalURL)
             } catch {
                 print("File move error: \(error.localizedDescription)")
             }
         }.resume()
     }
+
     
     @objc func showPopup() {
         let alertController = UIAlertController(title: "글 편집", message: nil, preferredStyle: .actionSheet)

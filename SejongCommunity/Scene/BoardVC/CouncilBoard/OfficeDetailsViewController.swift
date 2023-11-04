@@ -103,6 +103,15 @@ extension OfficeDetailsViewController: UITableViewDelegate, UITableViewDataSourc
     //cell이 클릭되었을때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let nextViewController = OfficeDetailsCellTappedViewController()
+        if let officeDetailList = officeDetailListResponse?.result[indexPath.row] {
+            nextViewController.officeDetailList = officeDetailList
+            
+            guard let postTime = officeDetailListResponse?.time else { return }
+            if let index = postTime.firstIndex(of: "T") {
+                let dateSubstring = String(postTime[..<index])
+                nextViewController.time = dateSubstring
+            }
+        }
         
         navigationController?.pushViewController(nextViewController, animated: true)
     }
