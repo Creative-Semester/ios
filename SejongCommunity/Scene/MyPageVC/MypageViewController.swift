@@ -103,14 +103,10 @@ class MypageViewController: UIViewController{
         }
         return View
     }()
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        SetStudentInfo()
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = #colorLiteral(red: 0.9670587182, green: 0.9670587182, blue: 0.967058599, alpha: 1)
-        
+        SetStudentInfo()
         //StackView를 이용해 오토레이아웃 설정
         let ScrollView = UIScrollView()
         ScrollView.showsHorizontalScrollIndicator = false
@@ -185,9 +181,7 @@ class MypageViewController: UIViewController{
     }
     //학생의 이름, 과 정보를 가져올 메서드
     func SetStudentInfo() {
-        Studenttitle.text = "Name"
-        StudentInfo.text = "DepartMent"
-        let urlString = "http://15.164.161.53:8082/api/v1/user/info"
+        let urlString = "https://keep-ops.shop/api/v1/user/info"
         guard let url = URL(string: urlString)else{
             return //유효한 URL 인가?
         }
@@ -254,7 +248,7 @@ class MypageViewController: UIViewController{
     //로그아웃 버튼 메서드
     @objc func LogoutBtnTapped() {
         //로그아웃시 서버에 로그아웃 시키겠다는 통신을 해야함.
-        let urlString = "http://15.164.161.53:8082/api/v1/auth/logout"
+        let urlString = "https://keep-ops.shop/api/v1/auth/logout"
         //유효하지 않은 Url 처리
         guard let url = URL(string: urlString) else {
             return

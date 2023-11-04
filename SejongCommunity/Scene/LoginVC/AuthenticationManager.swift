@@ -36,7 +36,7 @@ class AuthenticationManager {
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         let rfToken = KeychainWrapper.standard.string(forKey: "refreshToken")
         //코드가 만료되었는지 확인 -> 리프레시 재발급
-        var urlString = "http://15.164.161.53:8082/api/v1/auth/reissue"
+        var urlString = "https://keep-ops.shop/api/v1/auth/reissue"
         guard let url = URL(string: urlString) else {
                 // 유효하지 않은 URL 처리
                 return false

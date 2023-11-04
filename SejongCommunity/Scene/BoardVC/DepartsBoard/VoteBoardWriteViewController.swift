@@ -285,6 +285,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
         let messageText = messageTextView?.text ?? ""
                 
         print("UploadBtnTapped() - \(titleText), \(messageText)")
+        self.loadingIndicator.startAnimating()
         if(titleText == ""){
             if(messageText == "내용"){
                 //둘다 없을때
@@ -315,7 +316,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
             uploadImagesToServer(images: AddImageView.compactMap { $0.image }){
                 print("추가된 이미지 배열입니다. \(self.imageInfoArray)")
                 //MARK: JSON 통신
-                let urlString = "http://15.164.161.53:8082/api/v1/boards?boardType=\(self.boardType)&isVote=true"
+                let urlString = "https://keep-ops.shop/api/v1/boards?boardType=\(self.boardType)&isVote=true"
                 guard let url = URL(string: urlString) else {
                     // 유효하지 않은 URL 처리
                     return
@@ -356,6 +357,7 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                     if status == 200 {
                         //적절할때. 업로드 완료가 되었을때. 팝업. reload
                         DispatchQueue.main.async{
+                            self.loadingIndicator.stopAnimating()
                             let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
                             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                                 if self.boardType == "Free" {
@@ -533,7 +535,7 @@ extension VoteBoardWriteViewController: UIImagePickerControllerDelegate, UINavig
         }
     }
     func uploadImagesToServer(images: [UIImage],completion: @escaping () -> Void){
-        let uploadURLString = "http://15.164.161.53:8082/api/v1/file"
+        let uploadURLString = "https://keep-ops.shop/api/v1/file"
         //액세스 토큰 헤더에 추가
         if let accesToken = KeychainWrapper.standard.string(forKey: "AuthToken") {
             let headers: HTTPHeaders = [

@@ -41,7 +41,7 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
     // 댓글 테이블
     var CommentTableView = UITableView()
     var ImageStackView = UIStackView()
-    var DetailLabel = UILabel()
+    var DetailLabel = UITextView()
     // 배열을 만들어 각 셀의 높이를 저장
     var cellHeights: [CGFloat] = []
     // 좋아요 버튼
@@ -172,44 +172,52 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         
         //게시물의 상세내용을 넣을 뷰
         let DetailView = UIView()
+        // 게시물의 상세내용을 넣을 뷰
         DetailView.backgroundColor = .white
-        let DetailLabel = UILabel()
         DetailLabel.text = post.content
         DetailLabel.textColor = .black
         DetailLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        DetailLabel.isScrollEnabled = false // 스크롤 비활성화
+        DetailLabel.translatesAutoresizingMaskIntoConstraints = false
         DetailView.addSubview(DetailLabel)
-        DetailLabel.snp.makeConstraints{ (make) in
+
+        // 레이블에 설정된 텍스트와 글꼴 정보를 기반으로 예상 높이를 계산
+        let estimatedLabelSize = DetailLabel.sizeThatFits(CGSize(width: DetailLabel.frame.size.width, height: .greatestFiniteMagnitude))
+
+        // DetailLabel의 높이를 계산된 높이에 따라 설정
+        DetailLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().offset(0)
             make.leading.trailing.equalToSuperview().inset(0)
-            make.height.equalTo(40)
+            make.height.equalTo(estimatedLabelSize.height)
         }
-        //이미지를 넣을 뷰
-        let ImageStackView = UIStackView()
+        
         ImageStackView.spacing = 10
         ImageStackView.axis = .vertical
         ImageStackView.distribution = .fill
         ImageStackView.backgroundColor = .white
         let ImageView = UIImageView()
-        print("post.image가 nil인가? : \(String(describing: post.images.imageUrl.isEmpty))") //수정필요
-        if(post.images.imageUrl.isEmpty) { //수정필요
+        print("post.image가 nil인가? : \(String(describing: post.images.isEmpty))") //수정필요
+        if(post.images.isEmpty) { //수정필요
             print("post.image가 nil인데 화면의 크기의 조정이 필요합니다.")
         }else{
             // 게시글의 이미지 URL 배열에서 이미지를 가져와 처리
-            for imageUrlStsring in post.images.imageUrl {//수정필요
-                if let imageUrl = URL(string: imageUrlStsring as? String ?? ""){
-                    print("이미지들 Url 입니다. - \(imageUrl)")
-                    // Kingfisher를 사용하여 이미지를 다운로드하고 처리
+            for image in post.images {
+                let imageUrlString = image.imageUrl
+                if !imageUrlString.isEmpty, let imageUrl = URL(string: imageUrlString) {
                     let imageView = UIImageView()
                     imageView.kf.setImage(with: imageUrl)
-                    
                     imageView.contentMode = .scaleAspectFit
                     imageView.backgroundColor = .white
-                    
+
+                    print("이미지를 가져옵니다. - \(imageUrlString)")
+                    print("이미지를 post 합니다. \(imageUrl)")
+
                     // 이미지 뷰를 스택뷰에 추가
                     ImageStackView.addArrangedSubview(imageView)
                     // 이미지 뷰에 오토레이아웃 설정
-                    ImageView.snp.makeConstraints{ (make) in
-                        make.height.equalTo(200)
+                    imageView.snp.makeConstraints { (make) in
+                        make.height.equalTo(300)
+                        make.leading.trailing.equalToSuperview().inset(20)
                     }
                 }
             }
@@ -221,7 +229,6 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
                 make.leading.equalToSuperview().offset(30)
                     }
         }
-        
         //투표 구성
         // 찬성 버튼
         agreeButton.setTitle("찬성", for: .normal)
@@ -329,27 +336,27 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         StackView.snp.makeConstraints{ (make) in
             let totalHeight = self.cellHeights.reduce(0, +)
             make.bottom.equalToSuperview().offset(-0)
-            make.height.equalTo(self.view.frame.height + (DetailLabel.frame.height + ImageStackView.frame.height + totalHeight))
+            make.height.equalTo(self.view.frame.height + (DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
             make.width.equalTo(ScrollView.snp.width)
             make.top.equalToSuperview().offset(0)
         }
         DetailView.snp.makeConstraints{ (make) in
             make.top.equalToSuperview().offset(20)
-            if(post.images.imageUrl.isEmpty){ //수정필요
+            if(post.images.isEmpty){ //수정필요
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                make.height.equalTo(DetailLabel.frame.height + 100)
+                make.height.equalTo(DetailLabel.snp.height).offset(100)
             }else{
-                make.height.equalTo(DetailLabel.frame.height + ImageStackView.frame.height + 300)
+                make.height.equalTo(DetailLabel.snp.height).offset(CGFloat(ImageStackView.arrangedSubviews.count * 300))
             }
             make.leading.equalToSuperview().offset(20)
         }
         VoteView.snp.makeConstraints{ (make) in
-            make.top.equalTo(DetailView.snp.bottom).offset(20)
-            if(post.images.imageUrl.isEmpty){
+            make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
+            if(post.images.isEmpty){
                 print("post.image가 nil이기 때문에 크기가 조정됩니다.")
-                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + 200)
+                make.top.equalTo(DetailView.snp.bottom).offset(40)
             }else{
-                make.height.equalTo(disagreeButton.frame.height + agreeButton.frame.height + ImageView.frame.height + 400)
+                make.top.equalTo(ImageStackView.snp.bottom).offset(40)
             }
             make.leading.equalToSuperview().offset(20)
         }
@@ -559,10 +566,10 @@ extension MyWriteVoteViewController {
                 if commentCount < self.comments.count{
                     DispatchQueue.main.async {
                         self.CommentTableView.reloadData()
-                        self.StackView.snp.remakeConstraints{ (make) in
+                        self.StackView.snp.updateConstraints{ (make) in
                             let totalHeight = self.cellHeights.reduce(0, +)
                             make.bottom.equalToSuperview().offset(-0)
-                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
+                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
                             make.width.equalTo(self.ScrollView.snp.width)
                             make.top.equalToSuperview().offset(0)
                         }
@@ -592,10 +599,10 @@ extension MyWriteVoteViewController {
                 // 테이블뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
-                    self.StackView.snp.remakeConstraints{ (make) in
+                    self.StackView.snp.updateConstraints{ (make) in
                         let totalHeight = self.cellHeights.reduce(0, +)
                         make.bottom.equalToSuperview().offset(-0)
-                        make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + self.ImageStackView.frame.height + totalHeight))
+                        make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
                         make.width.equalTo(self.ScrollView.snp.width)
                         make.top.equalToSuperview().offset(0)
                     }
@@ -619,7 +626,7 @@ extension MyWriteVoteViewController {
         disagreeCountLabel.text = "반대: \(disagreeCount)"
         updateRatioLabel()
         updateProgressViews()
-        let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
+        let url = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
         var request = URLRequest(url: url)
@@ -666,7 +673,7 @@ extension MyWriteVoteViewController {
     @objc func BoardDetailShow() {
         print("BoardDetailShow() - called()")
         // 서버 API 엔드포인트 및 요청 생성
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "GET"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -710,7 +717,7 @@ extension MyWriteVoteViewController {
             return // 댓글 내용이 비어 있으면 아무 작업도 하지 않음
         }
         // 서버 API 엔드포인트 및 요청 생성
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/comment")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/comment")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "POST"
         let body : [String : Any] = [
@@ -753,7 +760,7 @@ extension MyWriteVoteViewController {
         print("PostDelete - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)") else { return }
+        guard let url = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)") else { return }
         print("삭제하려는데 몇번 게시물인가요? - \(post.boardId)")
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -806,7 +813,7 @@ extension MyWriteVoteViewController {
         print("CommentDelete - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/comment/\(commentId)") else { return }
+        guard let url = URL(string: "https://keep-ops.shop/api/v1/comment/\(commentId)") else { return }
 
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -855,7 +862,7 @@ extension MyWriteVoteViewController {
         print("CommentDeclaration - called()")
         var status = 200
         // 서버에 삭제 요청을 보내는 예시
-        guard let url = URL(string: "http://15.164.161.53:8082/api/v1/comment/\(commentId)/report") else { return }
+        guard let url = URL(string: "https://keep-ops.shop/api/v1/comment/\(commentId)/report") else { return }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -928,11 +935,6 @@ extension MyWriteVoteViewController{
                 print("agreeButtonTapped - Not pushed isAgreed")
                 VoteBtnClicked(VoteType: "AGREE")
                 isAgreed = true
-                // 투표를 조회해서 찬성, 반대 수 가져오기
-                VoteStatusCheck()
-                agreeCountLabel.text = "찬성: \(agreeCount)"
-                updateRatioLabel()
-                updateProgressViews()
             }
         }
     //반대버튼을 눌렀을때 메서드
@@ -941,11 +943,6 @@ extension MyWriteVoteViewController{
                 print("disagreeButtonTapped - Not pushed isDisgreed")
                 VoteBtnClicked(VoteType: "OPPOSE")
                 isDisagreed = true
-                // 투표를 조회해서 찬성, 반대 수 가져오기
-                VoteStatusCheck()
-                disagreeCountLabel.text = "반대: \(disagreeCount)"
-                updateRatioLabel()
-                updateProgressViews()
             }
         }
     //투표 메서드
@@ -955,7 +952,7 @@ extension MyWriteVoteViewController{
         var status = 0
         var message = ""
         print("찬성인가요 반대인가요 - \(VoteType)")
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote?voteType=\(VoteType)")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/vote?voteType=\(VoteType)")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "POST"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -978,43 +975,39 @@ extension MyWriteVoteViewController{
                 }
             }
             if status == 200 {
-                // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
-                print("투표 전송이 성공했습니다.")
-                DispatchQueue.main.async {
-                    //메인스레드에서 실행할 기능
-                    if VoteType == "AGREE" {
-                        self.agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
-                        self.agreeButton.isEnabled = false
-
-                    }else if VoteType == "OPPOSE"{
-                        self.disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
-                        self.disagreeButton.isEnabled = false
+                        // 투표 전송이 성공했습니다.
+                        print("투표 전송이 성공했습니다.")
+                        DispatchQueue.main.async {
+                            self.updateUIAfterVote(VoteType: VoteType)
+                        }
+                    } else if message == "이미 투표를 완료한 사용자입니다." {
+                        DispatchQueue.main.async {
+                            self.AlreadyVote(VoteType: VoteType)
+                        }
+                    } else if message == "해당 게시물에는 투표기능이 존재하지 않습니다." {
+                        DispatchQueue.main.async {
+                            self.isNotVotePage()
+                        }
                     }
-                }
-            }else if message == "이미 투표를 완료한 사용자입니다."{
-                DispatchQueue.main.async {
-                    //메인스레드에서 실행할 기능
-                    //이미 투표를 완료했음을 알림
-                    self.AlreadyVote()
-                    if VoteType == "AGREE" {
-                        self.agreeButton.isEnabled = false
-                    }else if VoteType == "OPPOSE"{
-                        self.disagreeButton.isEnabled = false
-                    }
-                }
-            }else if message == "해당 게시물에는 투표기능이 존재하지 않습니다." {
-                DispatchQueue.main.async {
-                    //투표 기능이 없음을 알림
-                    self.isNotVotePage()
-                }
-            }
         }.resume()
+    }
+    // 투표 결과에 따라 UI를 업데이트하는 메서드
+    func updateUIAfterVote(VoteType: String) {
+        if VoteType == "AGREE" {
+            agreeButton.backgroundColor = #colorLiteral(red: 0.5941179991, green: 1, blue: 0.670129776, alpha: 1)
+            agreeButton.isEnabled = false
+        } else if VoteType == "OPPOSE" {
+            disagreeButton.backgroundColor = #colorLiteral(red: 1, green: 0.8256257772, blue: 0.8043001294, alpha: 1)
+            disagreeButton.isEnabled = false
+        }
+        
+        VoteStatusCheck()
     }
     //게시글의 투표 상태 조회
     @objc func VoteStatusCheck() {
         print("VoteStatusCheck - called()")
         var status = 0
-        let apiUrl = URL(string: "http://15.164.161.53:8082/api/v1/boards/\(post.boardId)/vote")
+        let apiUrl = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/vote")
         var request = URLRequest(url: apiUrl!)
         request.httpMethod = "GET"
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -1091,9 +1084,14 @@ extension MyWriteVoteViewController{
         present(alertController, animated: true)
     }
     //투표를 했음을 알림
-    func AlreadyVote() {
+    func AlreadyVote(VoteType: String) {
         print("AlreadyVote - called()")
         DispatchQueue.main.async {
+            if VoteType == "AGREE" {
+                self.agreeButton.isEnabled = false
+                } else if VoteType == "OPPOSE" {
+                    self.disagreeButton.isEnabled = false
+                }
                 let Alert = UIAlertController(title: "이미 투표를 했습니다.", message: nil, preferredStyle: .alert)
                 let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
                     // 메서드
