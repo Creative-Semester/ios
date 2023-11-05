@@ -19,6 +19,8 @@ class OfficeDetailsViewController: UIViewController {
         return tableView
     }()
     
+    let refreshControl = UIRefreshControl()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -30,6 +32,8 @@ class OfficeDetailsViewController: UIViewController {
         officeDetailsTableView.dataSource = self
         officeDetailsTableView.delegate = self
         officeDetailsTableView.register(OfficeDetailsTableViewCell.self, forCellReuseIdentifier: "OfficeDetailsTableViewCell")
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        officeDetailsTableView.refreshControl = refreshControl
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,6 +47,12 @@ class OfficeDetailsViewController: UIViewController {
             let writingButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(writingButtonTapped))
             self.navigationItem.rightBarButtonItem = writingButton
         }
+    }
+    
+    @objc func refreshTableView() {
+        
+        getOfficeDetailData()
+        officeDetailsTableView.refreshControl?.endRefreshing()
     }
     
     @objc func writingButtonTapped() {

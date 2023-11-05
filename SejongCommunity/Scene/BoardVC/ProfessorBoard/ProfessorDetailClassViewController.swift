@@ -42,12 +42,7 @@ class ProfessorDetailClassViewController: UIViewController {
         return button
     }()
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
-    }
-    
+    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +52,8 @@ class ProfessorDetailClassViewController: UIViewController {
         professorReviewTableView.dataSource = self
         professorReviewTableView.delegate = self
         professorReviewTableView.register(ProfessorReviewTableViewCell.self, forCellReuseIdentifier: "ProfessorReviewTableViewCell")
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        professorReviewTableView.refreshControl = refreshControl
         
         reviewTextView.delegate = self
         
@@ -66,6 +63,11 @@ class ProfessorDetailClassViewController: UIViewController {
         
         setupKeyboardDismissRecognizer()
         setupLayout()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -81,6 +83,11 @@ class ProfessorDetailClassViewController: UIViewController {
     private func setupKeyboardDismissRecognizer() {
        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func refreshTableView() {
+        //통신 다시 재 업로드 코드
+        professorReviewTableView.refreshControl?.endRefreshing()
     }
     
     @objc private func dismissKeyboard() {
