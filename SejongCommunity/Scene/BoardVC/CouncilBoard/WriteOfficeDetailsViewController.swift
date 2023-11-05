@@ -10,6 +10,16 @@ import SnapKit
 
 class WriteOfficeDetailsViewController: UIViewController {
 
+    var officeDetailPostMenu = OfficeDetailPostMenu(
+        affairName: "미입력",
+        affairUrl: "미입력",
+        restMoney: "미입력",
+        title: "미입력",
+        usedMoney: "미입력"
+    )
+    
+    private var fileName: String?
+    
     private let userImageView: UIImageView = {
         let imageView = UIImageView()
         
@@ -183,9 +193,40 @@ class WriteOfficeDetailsViewController: UIViewController {
     }
     
     @objc func completeButtonButtonTapped() {
-        //저장하는 통신 코드 추가해야합니다.
+        if let text = titleTextField.text {
+            officeDetailPostMenu.title = text
+        }
+        
+        if let text = usedAmountTextField.text {
+            officeDetailPostMenu.usedMoney = text
+        }
+        
+        if let text = remainingAmountTextField.text {
+            officeDetailPostMenu.restMoney = text
+        }
+        
         navigationController?.popViewController(animated: true)
     }
+    
+    func postOfficeDetailData() {
+        OfficeDetailPostService.shared.postOfficeDetailPost(officeDetailPostMenu: officeDetailPostMenu) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? OfficeDetailPostResponse else { return }
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    
     
     func setupLayout() {
         view.addSubview(userImageView)
@@ -271,13 +312,52 @@ extension WriteOfficeDetailsViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         if let selectedFileURL = urls.first {
             // 선택한 파일을 사용하거나 업로드할 수 있음
-            print("선택한 파일 경로: \(selectedFileURL)")
+            officeDetailPostMenu.affairUrl = "\(selectedFileURL)"
             fileUploadButton.setTitle("\(selectedFileURL)", for: .normal)
+            
+            let fileName = selectedFileURL.lastPathComponent
+            officeDetailPostMenu.affairName = "\(fileName)"
+            fileUploadButton.setTitle(fileName, for: .normal)
+            
+            func OfficeDetailFileUpload() {
+                OfficeFileUploadService.shared.postOfficeFileUpload(fileURL: selectedFileURL, fileName: fileName) { response in
+                    switch response {
+                        
+                    case .success(let data):
+                        guard let infoData = data as? OfficeFileUploadResponse else { return }
+                        self.fileName = infoData.result.imageName
+                        // 실패할 경우에 분기처리는 아래와 같이 합니다.
+                    case .pathErr :
+                        print("잘못된 파라미터가 있습니다.")
+                    case .serverErr :
+                        print("서버에러가 발생했습니다.")
+                    default:
+                        print("networkFail")
+                    }
+                }
+            }
         }
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         // 파일 선택이 취소된 경우 처리
-        print("파일 선택이 취소되었습니다.")
+        func deleteOfficeDetailFile() {
+            guard let fileName = fileName else { return }
+            OfficeFileDeleteService.shared.deleteOfficeDetailFile(fileName: fileName) { response in
+                switch response {
+                    
+                case .success(let data):
+                    guard let infoData = data as? OfficeDetailPostResponse else { return }
+                    print(infoData.message)
+                    // 실패할 경우에 분기처리는 아래와 같이 합니다.
+                case .pathErr :
+                    print("잘못된 파라미터가 있습니다.")
+                case .serverErr :
+                    print("서버에러가 발생했습니다.")
+                default:
+                    print("networkFail")
+                }
+            }
+        }
     }
 }
