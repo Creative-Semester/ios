@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import MobileCoreServices
 
 class WriteOfficeDetailsViewController: UIViewController {
 
@@ -34,7 +35,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let userNameLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "학생회 사무내역"
@@ -46,7 +47,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let titleLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "제목"
@@ -58,12 +59,17 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let titleTextField: UITextField = {
         let textField = UITextField()
         
-        textField.placeholder = "제목"
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 16)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "제목", attributes: placeholderAttributes)
+
         textField.borderStyle = .roundedRect
         textField.keyboardType = .default
         textField.font = UIFont.systemFont(ofSize: 18)
         textField.textColor = .black
-        
+        textField.backgroundColor = .white
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         textField.leftView = paddingView
         textField.leftViewMode = .always
@@ -74,7 +80,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let usedAmoutLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "사용 금액"
@@ -86,11 +92,14 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let usedAmountTextField: UITextField = {
         let textField = UITextField()
         
-        // 텍스트 필드의 스타일 설정
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 16)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "사용 금액", attributes: placeholderAttributes)
         textField.borderStyle = .roundedRect // 테두리 스타일
-        textField.placeholder = "사용 금액" // 플레이스홀더 텍스트
         textField.keyboardType = .decimalPad // 숫자 입력용 키보드
-        
+        textField.backgroundColor = .white
         // 금액 입력 시 패딩을 줄 수 있습니다.
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
         textField.leftView = paddingView
@@ -102,7 +111,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let remainingAmoutLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "남은 금액"
@@ -114,11 +123,14 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let remainingAmountTextField: UITextField = {
         let textField = UITextField()
         
-        // 텍스트 필드의 스타일 설정
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 16)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "남은 금액", attributes: placeholderAttributes)
         textField.borderStyle = .roundedRect // 테두리 스타일
-        textField.placeholder = "남은 금액" // 플레이스홀더 텍스트
         textField.keyboardType = .decimalPad // 숫자 입력용 키보드
-        
+        textField.backgroundColor = .white
         // 금액 입력 시 패딩을 줄 수 있습니다.
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
         textField.leftView = paddingView
@@ -177,7 +189,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     
     @objc func fileUploadButtonTapped() {
         // 파일 선택 기능 실행
-        let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.spreadsheetml.sheet"], in: .import)
+        let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypeItem as String], in: .import)
         documentPicker.delegate = self
         present(documentPicker, animated: true, completion: nil)
     }
@@ -204,11 +216,14 @@ class WriteOfficeDetailsViewController: UIViewController {
         if let text = remainingAmountTextField.text {
             officeDetailPostMenu.restMoney = text
         }
+        postOfficeDetailData()
         
         navigationController?.popViewController(animated: true)
     }
     
     func postOfficeDetailData() {
+        print("hello")
+        print(officeDetailPostMenu)
         OfficeDetailPostService.shared.postOfficeDetailPost(officeDetailPostMenu: officeDetailPostMenu) { response in
             switch response {
                 

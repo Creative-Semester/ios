@@ -27,10 +27,14 @@ class OfficeDetailsViewController: UIViewController {
         
         setupUI()
         setupNavigation()
-        getOfficeDetailData()
         officeDetailsTableView.dataSource = self
         officeDetailsTableView.delegate = self
         officeDetailsTableView.register(OfficeDetailsTableViewCell.self, forCellReuseIdentifier: "OfficeDetailsTableViewCell")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getOfficeDetailData()
     }
     
     func setupNavigation() {

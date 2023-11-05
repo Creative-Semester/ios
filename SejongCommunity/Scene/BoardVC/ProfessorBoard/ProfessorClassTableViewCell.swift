@@ -13,7 +13,7 @@ class ProfessorClassTableViewCell: UITableViewCell {
     private let classTitleLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "신호 및 시스템"
@@ -25,7 +25,7 @@ class ProfessorClassTableViewCell: UITableViewCell {
     private let classExpLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "2학년, 전선, 3학점"
@@ -37,6 +37,7 @@ class ProfessorClassTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .default // 선택되었을때 효과
+        backgroundColor = .white
         
         setupLayout()
     }
