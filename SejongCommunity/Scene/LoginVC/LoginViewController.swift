@@ -33,6 +33,8 @@ class LoginViewController : UIViewController {
     override func viewDidLoad() {
         print("LoginViewController - called()")
         super.viewDidLoad()
+        self.idText.backgroundColor = .black
+        self.passwordText.backgroundColor = .black
         self.view.backgroundColor = .white
         loadingIndicator = UIActivityIndicatorView(style: .large)
         loadingIndicator.color = .gray
