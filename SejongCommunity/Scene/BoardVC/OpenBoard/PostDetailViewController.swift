@@ -183,6 +183,7 @@ class PostDetailViewController : UIViewController, UITableViewDelegate, UITableV
         DetailView.backgroundColor = .white
         DetailLabel.text = post.content
         DetailLabel.textColor = .black
+        DetailLabel.isEditable = false
         DetailLabel.font = UIFont.boldSystemFont(ofSize: 18)
         DetailLabel.isScrollEnabled = false // 스크롤 비활성화
         DetailLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -806,7 +807,7 @@ extension PostDetailViewController {
             if status == 200 {
                 DispatchQueue.main.async {
                     // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
-                    let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다.", preferredStyle: .alert)
+                    let DeleteAlertController = UIAlertController(title: nil, message: "게시글이 삭제 되었습니다", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                         // 게시글이 삭제되면 Alert 팝업창과 함께 메인으로 돌아갑니다.
                         if let navigationController = self.navigationController {
@@ -860,7 +861,7 @@ extension PostDetailViewController {
             if status == 200 {
                 DispatchQueue.main.async {
                     // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
-                    let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다.", preferredStyle: .alert)
+                    let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                     }
                     DeleteAlertController.addAction(CancelController)
@@ -909,7 +910,7 @@ extension PostDetailViewController {
             if status == 200 {
                 DispatchQueue.main.async{
                     // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
-                    let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 신고 되었습니다.", preferredStyle: .alert)
+                    let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 신고 되었습니다", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                     }
                     DeleteAlertController.addAction(CancelController)
@@ -1117,7 +1118,7 @@ extension PostDetailViewController {
                 } else if VoteType == "OPPOSE" {
                     self.disagreeButton.isEnabled = false
                 }
-                let Alert = UIAlertController(title: "이미 투표를 했습니다.", message: nil, preferredStyle: .alert)
+                let Alert = UIAlertController(title: "이미 투표를 했습니다", message: nil, preferredStyle: .alert)
                 let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
                     // 메서드
                 }
@@ -1129,7 +1130,7 @@ extension PostDetailViewController {
     func isNotVotePage() {
         print("isNotVotePage - called()")
         DispatchQueue.main.async {
-                let Alert = UIAlertController(title: "해당 게시물은 투표 기능이 없습니다.", message: nil, preferredStyle: .alert)
+                let Alert = UIAlertController(title: "해당 게시물은 투표 기능이 없습니다", message: nil, preferredStyle: .alert)
                 let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
                     // 메서드
                 }
@@ -1140,7 +1141,7 @@ extension PostDetailViewController {
     func isDeadLine() {
         print("isDeadLine - called()")
         DispatchQueue.main.async {
-                let Alert = UIAlertController(title: "투표 기한이 마감되었습니다.", message: nil, preferredStyle: .alert)
+                let Alert = UIAlertController(title: "투표 기한이 마감되었습니다", message: nil, preferredStyle: .alert)
                 let Ok = UIAlertAction(title: "확인", style: .default) { (_) in
                     // 메서드
                 }

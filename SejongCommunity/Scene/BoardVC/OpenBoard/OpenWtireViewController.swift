@@ -253,7 +253,7 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
         print("UploadImageTapped - called()")
         if(imageNum >= 5){
             // 최대 5장으로 제한! Alert
-            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드 할 수 있습니다!", message: nil, preferredStyle: .alert)
+            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드 할 수 있습니다", message: nil, preferredStyle: .alert)
             let OkAction = UIAlertAction(title: "확인", style: .default) { (_) in
                 //확인 액션
             }
@@ -489,7 +489,7 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
         if(titleText == ""){
             if(messageText == "내용"){
                 //둘다 없을때
-                let alertController = UIAlertController(title: nil, message: "제목과 내용을 작성해 주세요.", preferredStyle: .alert)
+                let alertController = UIAlertController(title: nil, message: "제목과 내용을 작성해 주세요", preferredStyle: .alert)
                 let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                 }
                 alertController.addAction(CancelController)
@@ -497,14 +497,14 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
             }
             //게시글의 제목이 없을때 팝업
             else{
-                let alertController = UIAlertController(title: nil, message: "제목을 작성해 주세요.", preferredStyle: .alert)
+                let alertController = UIAlertController(title: nil, message: "제목을 작성해 주세요", preferredStyle: .alert)
                 let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                 }
                 alertController.addAction(CancelController)
                 present(alertController, animated: true)}
         }else if(messageText == "내용"){
             //게시글의 내용이 없을때 팝업
-            let alertController = UIAlertController(title: nil, message: "내용을 작성해 주세요.", preferredStyle: .alert)
+            let alertController = UIAlertController(title: nil, message: "내용을 작성해 주세요", preferredStyle: .alert)
             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
             }
             alertController.addAction(CancelController)
@@ -557,7 +557,7 @@ extension OpenWriteViewController: UIImagePickerControllerDelegate, UINavigation
                         //적절할때. 업로드 완료가 되었을때. 팝업. reload
                         DispatchQueue.main.async{
                             self.loadingIndicator.stopAnimating()
-                            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
+                            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다", preferredStyle: .alert)
                             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                                 // OpenBoardViewController로 이동
                                 if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {

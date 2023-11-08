@@ -224,7 +224,7 @@ class CouncilRegisterViewController : UIViewController{
                 //적절할때. 업로드 완료가 되었을때. 팝업. reload
                 DispatchQueue.main.async{
                     self.codetext?.text = ""
-                    let alertController = UIAlertController(title: "신청이 완료 되었습니다.", message: "승인 메일 수신 시 로그아웃", preferredStyle: .alert)
+                    let alertController = UIAlertController(title: "신청이 완료 되었습니다", message: "승인 메일 수신 시 로그아웃", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                         // OpenBoardViewController로 이동
                         if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is MypageViewController }) {
@@ -237,7 +237,7 @@ class CouncilRegisterViewController : UIViewController{
             }else if msg == "코드가 일치하지 않습니다."{
                 DispatchQueue.main.async{
                     self.codetext?.text = ""
-                    let alertController = UIAlertController(title: "코드가 일치하지 않습니다.", message: nil, preferredStyle: .alert)
+                    let alertController = UIAlertController(title: "코드가 일치하지 않습니다", message: nil, preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                         
                     }
