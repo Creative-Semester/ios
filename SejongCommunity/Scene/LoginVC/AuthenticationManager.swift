@@ -90,10 +90,14 @@ class AuthenticationManager {
                                 saveAuthToken(token: accessToken, refresh: refreshToken)
                         }else{
                             print("토큰 재발행 에러 - Invalid JSON response")
+                            isValid = false
+                            AuthenticationManager.logoutUser()
                         }
                     }
                 }else{
                     print("reissue - 통신 에러")
+                    isValid = false
+                    AuthenticationManager.logoutUser()
                 }
             }
         }
