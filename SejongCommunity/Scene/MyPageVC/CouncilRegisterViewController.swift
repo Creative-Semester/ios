@@ -212,7 +212,7 @@ class CouncilRegisterViewController : UIViewController{
             // 서버 응답 데이터 처리 (만약 필요하다면)
             if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 // 서버로부터 받은 JSON 데이터 처리
-//                print("Response JSON: \(responseJSON)")
+                print("Response JSON: \(responseJSON)")
                 status = responseJSON["status"] as? Int ?? 0
                 print("학생회 신청 결과 값 - \(responseJSON)")
                 if let message = responseJSON["message"] as? String{
@@ -224,7 +224,7 @@ class CouncilRegisterViewController : UIViewController{
                 //적절할때. 업로드 완료가 되었을때. 팝업. reload
                 DispatchQueue.main.async{
                     self.codetext?.text = ""
-                    let alertController = UIAlertController(title: "신청이 완료 되었습니다", message: "승인 메일 수신 시 로그아웃", preferredStyle: .alert)
+                    let alertController = UIAlertController(title: "학생회 승인", message: "학생회 계정으로 변경되었습니다", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                         // OpenBoardViewController로 이동
                         if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is MypageViewController }) {
