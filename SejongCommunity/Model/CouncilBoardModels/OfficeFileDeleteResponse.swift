@@ -12,9 +12,4 @@ struct OfficeFileDeleteResponse: Codable {
     let status: Int
     let code: String
     let message: String
-    let result: OfficeFileDelete?
-}
-
-struct OfficeFileDelete: Codable {
-    let imageName, imageUrl: String
 }

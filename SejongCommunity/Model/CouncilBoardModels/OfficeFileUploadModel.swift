@@ -12,9 +12,9 @@ struct OfficeFileUploadResponse: Codable {
     let status: Int
     let code: String
     let message: String
-    let result: OfficeFileUpload
+    let result: [OfficeFileUpload]
 }
 
 struct OfficeFileUpload: Codable {
-    let imageName, imageUrl: String
+    let fileName, fileUrl: String
 }

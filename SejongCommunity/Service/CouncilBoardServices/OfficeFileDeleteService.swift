@@ -19,7 +19,7 @@ class OfficeFileDeleteService {
         //토큰 유효성 검사
         guard AuthenticationManager.isTokenValid() else { return }
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken") ?? ""
-        let url = "\(APIConstants.fileUploadURL)?imageName=\(fileName)"
+        let url = "\(APIConstants.fileUploadURL)?fileName=\(fileName)"
         
         let header : HTTPHeaders = [
             "Content-Type" : "application/json",

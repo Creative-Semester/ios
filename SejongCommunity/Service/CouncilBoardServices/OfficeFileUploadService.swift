@@ -13,9 +13,8 @@ class OfficeFileUploadService {
     
     static let shared = OfficeFileUploadService()
     
-    func postOfficeFileUpload(fileURL: URL, fileName: String, completion : @escaping (NetworkResult<Any>) -> Void) {
+    func postOfficeFileUpload(fileURL: URL, fileName: String, completion: @escaping (NetworkResult<Any>) -> Void){
         
-        //토큰 유효성 검사
         guard AuthenticationManager.isTokenValid() else { return }
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken") ?? ""
         let url = "\(APIConstants.fileUploadURL)"
@@ -26,30 +25,44 @@ class OfficeFileUploadService {
         ]
         
         AF.upload(multipartFormData: { multipartFormData in
-            // 파일 업로드
-            multipartFormData.append(fileURL, withName: "file", fileName: fileName, mimeType: "application/octet-stream")
-        }, to: url, headers: header)
-        .uploadProgress(queue: .main, closure: { progress in
-            // 업로드 진행 상황 모니터링
-            print("Upload Progress: \(progress.fractionCompleted)")
-        })
-        .response { response in
-            switch response.result {
+            multipartFormData.append(fileURL, withName: "files", fileName: fileName, mimeType: "application/vnd.ms-excel")
+        }, to: url, method: .post, headers: header)
+        .response { dataResponse in
+            // 업로드 완료 후의 응답 처리
+            switch dataResponse.result {
             case .success:
-                if let data = response.data {
-                    if let resultString = String(data: data, encoding: .utf8) {
-                        completion(.success(resultString))
-                    } else {
-                        completion(.networkFail)
-                    }
-                } else {
-                    completion(.networkFail)
+                
+                guard let statusCode = dataResponse.response?.statusCode else {return}
+                guard let value = dataResponse.value else {return}
+                
+                let networkResult = self.judgeStatus(by: statusCode, value!)
+                
+                switch networkResult {
+                case .success:
+                    completion(networkResult)
+                default:
+                    completion(networkResult)
                 }
-            case .failure(_):
-                completion(.networkFail)
+                
+            case .failure(let error):
+                if let underlyingError = error.underlyingError {
+                    print("Multipart Form Data Upload Error: \(underlyingError)")
+                } else {
+                    print("Multipart Form Data Upload Error: \(error.localizedDescription)")
+                }
+                completion(.pathErr)
             }
         }
-        
+    }
+    
+    private func judgeStatus(by statusCode: Int, _ data: Data) -> NetworkResult<Any> {
+        switch statusCode {
+        case 200 : return isVaildData(data: data)
+        case 400 : return .pathErr
+        case 403 : return .tokenErr
+        case 500 : return .serverErr
+        default : return .networkFail
+        }
     }
     
     private func isVaildData(data: Data) -> NetworkResult<Any> {
@@ -61,4 +74,3 @@ class OfficeFileUploadService {
         return .success(decodedData as Any)
     }
 }
-
