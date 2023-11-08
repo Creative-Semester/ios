@@ -559,6 +559,7 @@ extension MyCommentDetailViewController{
             //쪽지 보내기
             let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
                 // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+                self.navigationController?.pushViewController(ChatRoomViewController(), animated: true)
             }
             alertController.addAction(SendMessageController)
             //신고
@@ -1115,6 +1116,7 @@ extension MyCommentDetailViewController{
             //쪽지 보내기
             let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
                 // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+                self.navigationController?.pushViewController(ChatRoomViewController(), animated: true)
             }
             alertController.addAction(SendMessageController)
             //신고
