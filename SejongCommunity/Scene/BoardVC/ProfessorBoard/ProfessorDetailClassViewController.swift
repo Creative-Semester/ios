@@ -67,6 +67,8 @@ class ProfessorDetailClassViewController: UIViewController {
         
         setupKeyboardDismissRecognizer()
         setupLayout()
+        
+        UserDefaults.standard.set("강민수", forKey: "userName")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -104,7 +106,7 @@ class ProfessorDetailClassViewController: UIViewController {
     }
     
     @objc func refreshTableView() {
-        //통신 다시 재 업로드 코드
+        getProfessorEvaluationData()
         professorReviewTableView.refreshControl?.endRefreshing()
     }
     
@@ -324,6 +326,7 @@ extension ProfessorDetailClassViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProfessorReviewTableViewCell", for: indexPath) as! ProfessorReviewTableViewCell
+        cell.delegate = self
         
         if let evaluationList = evaluationList?[indexPath.row] {
             cell.configure(evaluationList: evaluationList)
@@ -351,4 +354,57 @@ extension ProfessorDetailClassViewController: UITableViewDelegate {
             return 0
         }
     }
+}
+
+
+extension ProfessorDetailClassViewController: ProfessorReviewTableViewCellDelegate {
+    
+    func deleteProfessorEvaluationData(evaluationId: Int) {
+        
+        guard let professorId = professorId else { return }
+        guard let courseId = courseId else { return }
+        print(professorId, courseId, evaluationId)
+        
+        ProfessorEvaluationDeleteService.shared.deleteProfessorEvaluationInfo(professorId: professorId, courseId: courseId, evaluationId: evaluationId) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorPostReviewResponse else { return }
+                let alertController = UIAlertController(title: "알림", message: "삭제가 완료되었습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                self.getProfessorEvaluationData()
+            
+            default:
+                let alertController = UIAlertController(title: "알림", message: "삭제가 실패했습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func buttonTappedWithEvaluationId(_ evaluationId: Int, task: String) {
+        if task == "remove" {
+            let alertController = UIAlertController(title: "삭제하시겠습니까?", message: "삭제한 데이터는 복구할 수 없습니다.", preferredStyle: .alert)
+            
+            let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+                // 삭제 버튼이 눌렸을 때의 동작
+                self.deleteProfessorEvaluationData(evaluationId: evaluationId)
+            }
+            
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            
+            alertController.addAction(deleteAction)
+            alertController.addAction(cancelAction)
+            
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+    
 }
