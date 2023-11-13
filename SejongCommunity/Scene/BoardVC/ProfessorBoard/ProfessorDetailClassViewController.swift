@@ -51,13 +51,13 @@ class ProfessorDetailClassViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "신호 및 시스템 강의평"
         
         professorReviewTableView.dataSource = self
         professorReviewTableView.delegate = self
         professorReviewTableView.register(ProfessorReviewTableViewCell.self, forCellReuseIdentifier: "ProfessorReviewTableViewCell")
         refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         professorReviewTableView.refreshControl = refreshControl
+        reviewRegisterButton.addTarget(self, action: #selector(reviewRegisterButtonTapped), for: .touchUpInside)
         
         reviewTextView.delegate = self
         
@@ -90,6 +90,19 @@ class ProfessorDetailClassViewController: UIViewController {
        view.addGestureRecognizer(tapGesture)
     }
     
+    @objc func reviewRegisterButtonTapped() {
+        if reviewTextView.text == "" {
+            let alertController = UIAlertController(title: "알림", message: "작성한 내용이 없습니다.", preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            
+            present(alertController, animated: true, completion: nil)
+        } else {
+            postProfessorEvaluationData(text: reviewTextView.text)
+        }
+    }
+    
     @objc func refreshTableView() {
         //통신 다시 재 업로드 코드
         professorReviewTableView.refreshControl?.endRefreshing()
@@ -120,6 +133,38 @@ class ProfessorDetailClassViewController: UIViewController {
                 print("서버에러가 발생했습니다.")
             default:
                 print("networkFail")
+            }
+        }
+    }
+    
+    func postProfessorEvaluationData(text: String) {
+        
+        guard let professorId = professorId else { return }
+        guard let courseId = courseId else { return }
+        
+        ProfessorEvaluationPostService.shared.postProfessorEvaluationInfo(professorId: professorId, courseId: courseId, text: text) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorPostReviewResponse else { return }
+                let alertController = UIAlertController(title: "알림", message: "작성이 완료되었습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                self.reviewTextView.text = ""
+                self.getProfessorEvaluationData()
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            
+            default:
+                let alertController = UIAlertController(title: "알림", message: "작성에 실패했습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
             }
         }
     }
