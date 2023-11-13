@@ -106,5 +106,16 @@ class ProfessorReviewTableViewCell: UITableViewCell {
         }
         
     }
+    
+    func configure(evaluationList: EvaluationList) {
+        nameLabel.text = "익명\(evaluationList.evaluationId)"
+        reviewLabel.text = evaluationList.text
+        
+        let time = evaluationList.createdTime
+        if let index = time.firstIndex(of: "T") {
+            let dateSubstring = String(time[..<index])
+            dateLabel.text = dateSubstring
+        }
+    }
 
 }

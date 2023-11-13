@@ -1,5 +1,5 @@
 //
-//  OfficeFileDeleteResponse.swift
+//  OfficeFileDeleteModel.swift
 //  SejongCommunity
 //
 //  Created by 강민수 on 11/5/23.

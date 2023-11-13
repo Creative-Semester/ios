@@ -293,6 +293,11 @@ extension ProfessorInfoViewController: UITableViewDelegate {
     //cell이 클릭되었을때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let nextViewController = ProfessorDetailClassViewController()
+        guard let professorId = professorId else { return }
+        guard let courseId = professorLectureList?[indexPath.row].courseId else { return }
+        
+        nextViewController.professorId = professorId
+        nextViewController.courseId = courseId
         
         navigationController?.pushViewController(nextViewController, animated: true)
     }

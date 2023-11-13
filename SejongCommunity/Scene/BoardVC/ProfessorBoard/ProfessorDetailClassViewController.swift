@@ -9,6 +9,10 @@ import UIKit
 import SnapKit
 
 class ProfessorDetailClassViewController: UIViewController {
+    
+    var professorId: Int?
+    var courseId: Int?
+    var evaluationList: [EvaluationList]?
 
     private let professorReviewTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -67,6 +71,7 @@ class ProfessorDetailClassViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        getProfessorEvaluationData()
         tabBarController?.tabBar.isHidden = true
     }
     
@@ -92,6 +97,31 @@ class ProfessorDetailClassViewController: UIViewController {
     
     @objc private func dismissKeyboard() {
        view.endEditing(true)
+    }
+    
+    func getProfessorEvaluationData() {
+        
+        guard let professorId = professorId else { return }
+        guard let courseId = courseId else { return }
+        
+        ProfessorEvaluationService.shared.getProfessorEvaluationInfo(professorId: professorId, courseId: courseId, page: 0) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorEvaluationResponse else { return }
+                
+                self.evaluationList = infoData.result.evaluationList
+                self.professorReviewTableView.reloadData()
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
     }
 
     func setupLayout() {
@@ -242,13 +272,17 @@ extension ProfessorDetailClassViewController: UITableViewDataSource {
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 15
+        return evaluationList?.count ?? 0
     }
     
     // 각 센션 마다 사용할 cell의 종류
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProfessorReviewTableViewCell", for: indexPath) as! ProfessorReviewTableViewCell
+        
+        if let evaluationList = evaluationList?[indexPath.row] {
+            cell.configure(evaluationList: evaluationList)
+        }
         
         return cell
     }
@@ -259,17 +293,17 @@ extension ProfessorDetailClassViewController: UITableViewDelegate {
     
     //Cell의 높이를 지정한다.
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let commtenText =
-        """
-        요즘 이것만큼 좋은 강의가 있나?
-        이것은 혁명이다.
-        조선 혁명당입니다만 김씨일가 화이팅
-        """
         
-        let textHeight = heightForText(commtenText)
-        let additionalSpacing = CGFloat(76) //강의평으로 작성된 것이 아닌, 닉네임, 날짜 등의 공백의 길이입니다.
-        
-        //다른 공백과 댓글이 작성된 높이의 합이 cell의 높이로 지정합니다.
-        return textHeight + additionalSpacing
+        if let evaluationList = evaluationList?[indexPath.row] {
+            let commentText = evaluationList.text
+            
+            let textHeight = heightForText(commentText)
+            let additionalSpacing = CGFloat(76) //강의평으로 작성된 것이 아닌, 닉네임, 날짜 등의 공백의 길이입니다.
+            
+            //다른 공백과 댓글이 작성된 높이의 합이 cell의 높이로 지정합니다.
+            return textHeight + additionalSpacing
+        } else {
+            return 0
+        }
     }
 }
