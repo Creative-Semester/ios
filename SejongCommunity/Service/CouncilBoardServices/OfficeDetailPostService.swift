@@ -19,7 +19,7 @@ class OfficeDetailPostService {
         //토큰 유효성 검사
         guard AuthenticationManager.isTokenValid() else { return }
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken") ?? ""
-        let url = "\(APIConstants.OfficeDetailURL)"
+        let url = "\(APIConstants.OfficeDetailURL)/council"
         
         let header : HTTPHeaders = [
             "Content-Type" : "application/json",
