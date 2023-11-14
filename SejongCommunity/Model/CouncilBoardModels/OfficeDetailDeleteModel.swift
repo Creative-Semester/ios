@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct OfficeDetailDeleteResponse: Codable {
+    let time: String
+    let status: Int
+    let code: String
+    let message: String
+}
