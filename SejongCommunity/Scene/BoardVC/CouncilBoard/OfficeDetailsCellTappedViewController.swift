@@ -149,8 +149,7 @@ class OfficeDetailsCellTappedViewController: UIViewController {
             let confirmAlertController = UIAlertController(title: "해당 게시글이 삭제됩니다.", message: "해당 게시글은 복구되지 않습니다.", preferredStyle: .alert)
             
             let confirmDeleteAction = UIAlertAction(title: "삭제", style: .destructive) { (_) in
-                // 게시글 삭제 로직을 여기에 구현
-                self.navigationController?.popViewController(animated: true)
+                self.deleteOfficeDetailData()
             }
             
             let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
@@ -170,6 +169,25 @@ class OfficeDetailsCellTappedViewController: UIViewController {
         alertController.addAction(cancelAction)
         
         present(alertController, animated: true, completion: nil)
+    }
+    
+    func deleteOfficeDetailData() {
+        guard let affairId = officeDetailList?.affairId else { return }
+        guard let fileName = officeDetailList?.fileInfo.fileName else { return }
+        OfficeDetailDeleteService.shared.deleteOfficeDetailFile(affairId: affairId, fileName: fileName) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? OfficeDetailDeleteResponse else { return }
+                self.navigationController?.popViewController(animated: true)
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
     }
     
 

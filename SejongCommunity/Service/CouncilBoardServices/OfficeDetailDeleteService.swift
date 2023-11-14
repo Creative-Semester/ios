@@ -14,12 +14,12 @@ class OfficeDetailDeleteService {
     static let shared = OfficeDetailDeleteService()
     
     
-    func deleteOfficeDetailFile(affairId: Int, affairName: String, completion : @escaping (NetworkResult<Any>) -> Void) {
+    func deleteOfficeDetailFile(affairId: Int, fileName: String, completion : @escaping (NetworkResult<Any>) -> Void) {
         
         //토큰 유효성 검사
         guard AuthenticationManager.isTokenValid() else { return }
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken") ?? ""
-        let url = "\(APIConstants.OfficeDetailURL)/\(String(affairId))"
+        let url = "\(APIConstants.OfficeDetailURL)/council/\(String(affairId))"
         
         let header : HTTPHeaders = [
             "Content-Type" : "application/json",
@@ -27,7 +27,7 @@ class OfficeDetailDeleteService {
         ]
         
         let parameters: [String: Any] = [
-            "affairName": affairName
+            "fileName": fileName
         ]
         
         let dataRequest = AF.request(url,
