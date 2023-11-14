@@ -74,6 +74,14 @@ class ProfessorReviewTableViewCell: UITableViewCell {
         setupLayout()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        // 셀이 재사용될 때 버튼의 이미지 초기화
+        reportButton.setImage(nil, for: .normal)
+        reportButton.tintColor = .black
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -126,10 +134,11 @@ class ProfessorReviewTableViewCell: UITableViewCell {
         if let userName = UserDefaults.standard.string(forKey: "userName") {
             if userName == evaluationList.name {
                 reportButton.setImage(UIImage(systemName: "trash"), for: .normal)
-                reportButton.tintColor = .black
+                reportButton.tintColor = .systemBlue
                 task = "remove"
             } else {
                 reportButton.setImage(UIImage(systemName: "light.beacon.min"), for: .normal)
+                reportButton.tintColor = .systemRed
                 task = "report"
             }
         }

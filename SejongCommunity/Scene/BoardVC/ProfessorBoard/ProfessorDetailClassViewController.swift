@@ -68,7 +68,7 @@ class ProfessorDetailClassViewController: UIViewController {
         setupKeyboardDismissRecognizer()
         setupLayout()
         
-        UserDefaults.standard.set("강민수", forKey: "userName")
+        UserDefaults.standard.set("강민수", forKey: "userName") //임시로 추가한 것임 나중에 삭제해야 함 !
     }
     
     override func viewWillAppear(_ animated: Bool) {
