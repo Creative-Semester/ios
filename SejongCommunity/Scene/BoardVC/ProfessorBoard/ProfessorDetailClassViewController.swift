@@ -12,7 +12,9 @@ class ProfessorDetailClassViewController: UIViewController {
     
     var professorId: Int?
     var courseId: Int?
-    var evaluationList: [EvaluationList]?
+    var evaluationList: [EvaluationList] = []
+    private var currentPage: Int = 0
+    private var totalPage: Int = 1
 
     private let professorReviewTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -68,12 +70,12 @@ class ProfessorDetailClassViewController: UIViewController {
         setupKeyboardDismissRecognizer()
         setupLayout()
         
-        UserDefaults.standard.set("강민수", forKey: "userName") //임시로 추가한 것임 나중에 삭제해야 함 !
+        UserDefaults.standard.set("19011725", forKey: "userName") //임시로 추가한 것임 나중에 삭제해야 함 !
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getProfessorEvaluationData()
+        getProfessorEvaluationData(currentPage: currentPage)
         tabBarController?.tabBar.isHidden = true
     }
     
@@ -106,7 +108,7 @@ class ProfessorDetailClassViewController: UIViewController {
     }
     
     @objc func refreshTableView() {
-        getProfessorEvaluationData()
+        getProfessorEvaluationData(currentPage: currentPage)
         professorReviewTableView.refreshControl?.endRefreshing()
     }
     
@@ -114,18 +116,25 @@ class ProfessorDetailClassViewController: UIViewController {
        view.endEditing(true)
     }
     
-    func getProfessorEvaluationData() {
+    func getProfessorEvaluationData(currentPage: Int) {
         
         guard let professorId = professorId else { return }
         guard let courseId = courseId else { return }
         
-        ProfessorEvaluationService.shared.getProfessorEvaluationInfo(professorId: professorId, courseId: courseId, page: 0) { response in
+        ProfessorEvaluationService.shared.getProfessorEvaluationInfo(professorId: professorId, courseId: courseId, page: currentPage) { [weak self] response in
+            guard let self = self else { return }
             switch response {
                 
             case .success(let data):
                 guard let infoData = data as? ProfessorEvaluationResponse else { return }
-                
-                self.evaluationList = infoData.result.evaluationList
+                if infoData.result.currentPage == 0 {
+                    self.evaluationList = infoData.result.evaluationList
+                } else {
+                    let existingSet = Set(self.evaluationList.map { $0.evaluationId })
+                    let newData = infoData.result.evaluationList.filter { !existingSet.contains($0.evaluationId) }
+                    self.evaluationList.append(contentsOf: newData)
+                }
+                self.totalPage = infoData.result.totalPage
                 self.professorReviewTableView.reloadData()
                 
                 // 실패할 경우에 분기처리는 아래와 같이 합니다.
@@ -144,7 +153,8 @@ class ProfessorDetailClassViewController: UIViewController {
         guard let professorId = professorId else { return }
         guard let courseId = courseId else { return }
         
-        ProfessorEvaluationPostService.shared.postProfessorEvaluationInfo(professorId: professorId, courseId: courseId, text: text) { response in
+        ProfessorEvaluationPostService.shared.postProfessorEvaluationInfo(professorId: professorId, courseId: courseId, text: text) { [weak self] response in
+            guard let self = self else { return }
             switch response {
                 
             case .success(let data):
@@ -156,7 +166,7 @@ class ProfessorDetailClassViewController: UIViewController {
                 
                 self.present(alertController, animated: true, completion: nil)
                 self.reviewTextView.text = ""
-                self.getProfessorEvaluationData()
+                self.getProfessorEvaluationData(currentPage: self.currentPage)
                 
                 // 실패할 경우에 분기처리는 아래와 같이 합니다.
             
@@ -269,7 +279,6 @@ extension ProfessorDetailClassViewController: UITextViewDelegate {
                 return false
             }
         }
-        print(textField)
         return true
     }
     
@@ -319,7 +328,7 @@ extension ProfessorDetailClassViewController: UITableViewDataSource {
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return evaluationList?.count ?? 0
+        return evaluationList.count
     }
     
     // 각 센션 마다 사용할 cell의 종류
@@ -328,9 +337,7 @@ extension ProfessorDetailClassViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProfessorReviewTableViewCell", for: indexPath) as! ProfessorReviewTableViewCell
         cell.delegate = self
         
-        if let evaluationList = evaluationList?[indexPath.row] {
-            cell.configure(evaluationList: evaluationList)
-        }
+        cell.configure(evaluationList: evaluationList[indexPath.row])
         
         return cell
     }
@@ -341,18 +348,13 @@ extension ProfessorDetailClassViewController: UITableViewDelegate {
     
     //Cell의 높이를 지정한다.
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let commentText = evaluationList[indexPath.row].text
         
-        if let evaluationList = evaluationList?[indexPath.row] {
-            let commentText = evaluationList.text
-            
-            let textHeight = heightForText(commentText)
-            let additionalSpacing = CGFloat(76) //강의평으로 작성된 것이 아닌, 닉네임, 날짜 등의 공백의 길이입니다.
-            
-            //다른 공백과 댓글이 작성된 높이의 합이 cell의 높이로 지정합니다.
-            return textHeight + additionalSpacing
-        } else {
-            return 0
-        }
+        let textHeight = heightForText(commentText)
+        let additionalSpacing = CGFloat(76) //강의평으로 작성된 것이 아닌, 닉네임, 날짜 등의 공백의 길이입니다.
+        
+        //다른 공백과 댓글이 작성된 높이의 합이 cell의 높이로 지정합니다.
+        return textHeight + additionalSpacing
     }
 }
 
@@ -363,9 +365,9 @@ extension ProfessorDetailClassViewController: ProfessorReviewTableViewCellDelega
         
         guard let professorId = professorId else { return }
         guard let courseId = courseId else { return }
-        print(professorId, courseId, evaluationId)
         
-        ProfessorEvaluationDeleteService.shared.deleteProfessorEvaluationInfo(professorId: professorId, courseId: courseId, evaluationId: evaluationId) { response in
+        ProfessorEvaluationDeleteService.shared.deleteProfessorEvaluationInfo(professorId: professorId, courseId: courseId, evaluationId: evaluationId) { [weak self] response in
+            guard let self = self else { return }
             switch response {
                 
             case .success(let data):
@@ -376,7 +378,10 @@ extension ProfessorDetailClassViewController: ProfessorReviewTableViewCellDelega
                 alertController.addAction(okAction)
                 
                 self.present(alertController, animated: true, completion: nil)
-                self.getProfessorEvaluationData()
+                if let index = self.evaluationList.firstIndex(where: { $0.evaluationId == evaluationId }) {
+                    self.evaluationList.remove(at: index)
+                    self.professorReviewTableView.reloadData()
+                }
             
             default:
                 let alertController = UIAlertController(title: "알림", message: "삭제가 실패했습니다.", preferredStyle: .alert)
@@ -407,4 +412,18 @@ extension ProfessorDetailClassViewController: ProfessorReviewTableViewCellDelega
         }
     }
     
+}
+
+extension ProfessorDetailClassViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let screenHeight = scrollView.frame.height
+        
+        // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
+        if offsetY > contentHeight - screenHeight && currentPage + 1 < totalPage {
+            currentPage += 1
+            getProfessorEvaluationData(currentPage: currentPage)
+        }
+    }
 }

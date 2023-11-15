@@ -21,5 +21,5 @@ struct ProfessorEvaluation: Codable {
 
 struct EvaluationList: Codable {
     let evaluationId: Int
-    let name, text, createdTime: String
+    let studentNum, text, createdTime: String
 }

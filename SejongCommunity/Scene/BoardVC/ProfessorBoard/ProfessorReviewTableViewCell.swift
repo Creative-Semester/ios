@@ -132,7 +132,7 @@ class ProfessorReviewTableViewCell: UITableViewCell {
             dateLabel.text = dateSubstring
         }
         if let userName = UserDefaults.standard.string(forKey: "userName") {
-            if userName == evaluationList.name {
+            if userName == evaluationList.studentNum {
                 reportButton.setImage(UIImage(systemName: "trash"), for: .normal)
                 reportButton.tintColor = .systemBlue
                 task = "remove"
