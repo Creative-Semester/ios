@@ -82,8 +82,12 @@ class OfficeDetailsCellTappedViewController: UIViewController {
     }
     
     func setupNavigation() {
-        let editButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(showPopup))
-            navigationItem.rightBarButtonItem = editButton
+        if let role = UserDefaults.standard.string(forKey: "role") {
+            if role == "ROLE_COUNCIL" {
+                let editButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(showPopup))
+                    navigationItem.rightBarButtonItem = editButton
+            }
+        }
     }
     
     func setupConfigure() {

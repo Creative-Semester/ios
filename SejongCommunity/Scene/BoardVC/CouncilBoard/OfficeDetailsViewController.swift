@@ -42,10 +42,11 @@ class OfficeDetailsViewController: UIViewController {
     }
     
     func setupNavigation() {
-        // 네비게이션 바에 버튼 추가
-        if true { //학생회 일 경우로 수정하기.
-            let writingButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(writingButtonTapped))
-            self.navigationItem.rightBarButtonItem = writingButton
+        if let role = UserDefaults.standard.string(forKey: "role") {
+            if role == "ROLE_COUNCIL" {
+                let writingButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(writingButtonTapped))
+                self.navigationItem.rightBarButtonItem = writingButton
+            }
         }
     }
     

@@ -267,16 +267,20 @@ extension PledgeBoardViewController: UICollectionViewDelegateFlowLayout {
 
 private extension PledgeBoardViewController {
     func setupNavigationBar() {
-        let editButtonTitle = isEditingMode ? "저장" : "편집"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: editButtonTitle,
-            style: .plain,
-            target: self,
-            action: #selector(editButtonTapped)
-        )
-        
-        let textColor = isEditingMode ? UIColor.systemBlue : UIColor.systemRed
-        navigationItem.rightBarButtonItem?.setTitleTextAttributes([.foregroundColor: textColor], for: .normal)
+        if let role = UserDefaults.standard.string(forKey: "role") {
+            if role == "ROLE_COUNCIL" {
+                let editButtonTitle = isEditingMode ? "저장" : "편집"
+                navigationItem.rightBarButtonItem = UIBarButtonItem(
+                    title: editButtonTitle,
+                    style: .plain,
+                    target: self,
+                    action: #selector(editButtonTapped)
+                )
+                
+                let textColor = isEditingMode ? UIColor.systemBlue : UIColor.systemRed
+                navigationItem.rightBarButtonItem?.setTitleTextAttributes([.foregroundColor: textColor], for: .normal)
+            }
+        }
     }
     
     
