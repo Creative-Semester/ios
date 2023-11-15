@@ -55,6 +55,7 @@
 		F174D8522B01FB150087A60E /* ProfessorEvaluationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8512B01FB150087A60E /* ProfessorEvaluationService.swift */; };
 		F174D8562B025ADD0087A60E /* ProfessorEvaluationPostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8552B025ADD0087A60E /* ProfessorEvaluationPostService.swift */; };
 		F174D8582B02699F0087A60E /* ProfessorEvaluationDeleteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */; };
+		F174D8662B04A1800087A60E /* ProfessorEvaluationReportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */; };
 		F19345B82AD0350100BB5D5E /* CouncilInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */; };
 		F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */; };
 		F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */; };
@@ -142,6 +143,7 @@
 		F174D8512B01FB150087A60E /* ProfessorEvaluationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationService.swift; sourceTree = "<group>"; };
 		F174D8552B025ADD0087A60E /* ProfessorEvaluationPostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationPostService.swift; sourceTree = "<group>"; };
 		F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationDeleteService.swift; sourceTree = "<group>"; };
+		F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationReportService.swift; sourceTree = "<group>"; };
 		F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilInfoModel.swift; sourceTree = "<group>"; };
 		F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoService.swift; sourceTree = "<group>"; };
 		F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoModel.swift; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 				F174D8512B01FB150087A60E /* ProfessorEvaluationService.swift */,
 				F174D8552B025ADD0087A60E /* ProfessorEvaluationPostService.swift */,
 				F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */,
+				F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */,
 			);
 			path = ProfessorServices;
 			sourceTree = "<group>";
@@ -648,6 +651,7 @@
 				F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */,
 				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,
 				F1D495532AD2A5C100078232 /* PromisesPercentageModel.swift in Sources */,
+				F174D8662B04A1800087A60E /* ProfessorEvaluationReportService.swift in Sources */,
 				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,
 				F1C838D52AF6614D00303D20 /* ProfessorLectureModel.swift in Sources */,
 				F16C94052AF6A46100CD01E8 /* OfficeDetailPostService.swift in Sources */,
