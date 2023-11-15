@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE13DF38BA29EA33DC36E417 /* Pods_SejongCommunity.framework */; };
+		2C38AE61A054E257F30D24C5 /* Pods_SejongCommunity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AC489C9190C284EB876D4FE /* Pods_SejongCommunity.framework */; };
 		E4021E6B2A6F8B1000FFEAB2 /* OpenBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E6A2A6F8B1000FFEAB2 /* OpenBoardViewController.swift */; };
 		E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E702A6F8B5100FFEAB2 /* CouncilBoardViewController.swift */; };
 		E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4021E742A750A4F00FFEAB2 /* CouncilRegisterViewController.swift */; };
@@ -21,6 +21,9 @@
 		E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E472375D2AB83DA5003BD82B /* WebViewController.swift */; };
 		E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237602AB972DE003BD82B /* MyWriteViewController.swift */; };
 		E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47237622ABC0823003BD82B /* NetworkManager.swift */; };
+		E49CCEF42B03DBA3006D08B3 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E49CCEF32B03DBA3006D08B3 /* SnapKit */; };
+		E49CCEF72B03DC12006D08B3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E49CCEF62B03DC12006D08B3 /* Kingfisher */; };
+		E49CCEFD2B03DDC9006D08B3 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = E49CCEFC2B03DDC9006D08B3 /* Alamofire */; };
 		E4B1E7522ABD769A00CD4DE2 /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */; };
 		E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4D466562AAB08B6003E5DD9 /* AuthenticationManager.swift */; };
 		E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = E4D466592AB1B7DA003E5DD9 /* FSCalendar */; };
@@ -76,7 +79,7 @@
 
 /* Begin PBXFileReference section */
 		0B32C66B2BBF22586B302105 /* Pods-SejongCommunity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SejongCommunity.release.xcconfig"; path = "Target Support Files/Pods-SejongCommunity/Pods-SejongCommunity.release.xcconfig"; sourceTree = "<group>"; };
-		AE13DF38BA29EA33DC36E417 /* Pods_SejongCommunity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SejongCommunity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AC489C9190C284EB876D4FE /* Pods_SejongCommunity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SejongCommunity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4021E6A2A6F8B1000FFEAB2 /* OpenBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenBoardViewController.swift; sourceTree = "<group>"; };
 		E4021E702A6F8B5100FFEAB2 /* CouncilBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilBoardViewController.swift; sourceTree = "<group>"; };
 		E4021E742A750A4F00FFEAB2 /* CouncilRegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilRegisterViewController.swift; sourceTree = "<group>"; };
@@ -148,10 +151,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BB337D2859872AFAC0F6268 /* Pods_SejongCommunity.framework in Frameworks */,
+				E49CCEFD2B03DDC9006D08B3 /* Alamofire in Frameworks */,
+				E49CCEF72B03DC12006D08B3 /* Kingfisher in Frameworks */,
 				F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */,
+				E49CCEF42B03DBA3006D08B3 /* SnapKit in Frameworks */,
 				E4D4665A2AB1B7DA003E5DD9 /* FSCalendar in Frameworks */,
 				E4B1E7522ABD769A00CD4DE2 /* SwiftKeychainWrapper in Frameworks */,
+				2C38AE61A054E257F30D24C5 /* Pods_SejongCommunity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,7 +167,7 @@
 		326442ED12FEEED8B182975A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AE13DF38BA29EA33DC36E417 /* Pods_SejongCommunity.framework */,
+				3AC489C9190C284EB876D4FE /* Pods_SejongCommunity.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -428,6 +434,9 @@
 				E4D466592AB1B7DA003E5DD9 /* FSCalendar */,
 				F1E5479A2AC2B27E00671182 /* DGCharts */,
 				E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */,
+				E49CCEF32B03DBA3006D08B3 /* SnapKit */,
+				E49CCEF62B03DC12006D08B3 /* Kingfisher */,
+				E49CCEFC2B03DDC9006D08B3 /* Alamofire */,
 			);
 			productName = SejongCommunity;
 			productReference = F124650C2A67BAB500037D8C /* SejongCommunity.app */;
@@ -458,9 +467,12 @@
 			);
 			mainGroup = F12465032A67BAB500037D8C;
 			packageReferences = (
-				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */,
-				F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */,
-				E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
+				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar.git" */,
+				F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts.git" */,
+				E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper.git" */,
+				E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit.git" */,
+				E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher.git" */,
+				E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire.git" */,
 			);
 			productRefGroup = F124650D2A67BAB500037D8C /* Products */;
 			projectDirPath = "";
@@ -802,7 +814,31 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */ = {
+		E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit.git" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
+		E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher.git" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+		E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire.git" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jrendel/SwiftKeychainWrapper.git";
 			requirement = {
@@ -810,7 +846,7 @@
 				kind = branch;
 			};
 		};
-		E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+		E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
 			requirement = {
@@ -818,7 +854,7 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */ = {
+		F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/danielgindi/Charts.git";
 			requirement = {
@@ -829,19 +865,34 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E49CCEF32B03DBA3006D08B3 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit.git" */;
+			productName = SnapKit;
+		};
+		E49CCEF62B03DC12006D08B3 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher.git" */;
+			productName = Kingfisher;
+		};
+		E49CCEFC2B03DDC9006D08B3 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire.git" */;
+			productName = Alamofire;
+		};
 		E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;
+			package = E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper.git" */;
 			productName = SwiftKeychainWrapper;
 		};
 		E4D466592AB1B7DA003E5DD9 /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar.git" */;
 			productName = FSCalendar;
 		};
 		F1E5479A2AC2B27E00671182 /* DGCharts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */;
+			package = F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts.git" */;
 			productName = DGCharts;
 		};
 /* End XCSwiftPackageProductDependency section */
