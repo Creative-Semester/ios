@@ -69,6 +69,8 @@ class ProfessorDetailClassViewController: UIViewController {
         
         setupKeyboardDismissRecognizer()
         setupLayout()
+        
+        UserDefaults.standard.set("19011725", forKey: "userName") //임시로 추가한 것임 나중에 삭제해야 함 !
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -392,35 +394,6 @@ extension ProfessorDetailClassViewController: ProfessorReviewTableViewCellDelega
         }
     }
     
-    func reportProfessorEvaluation(evaluationId: Int) {
-        
-        guard let professorId = professorId else { return }
-        guard let courseId = courseId else { return }
-        
-        ProfessorEvaluationReportService.shared.reportProfessorEvaluation(professorId: professorId, courseId: courseId, evaluationId: evaluationId) { [weak self] response in
-            guard let self = self else { return }
-            switch response {
-                
-            case .success(let data):
-                guard let infoData = data as? ProfessorPostReviewResponse else { return }
-                let alertController = UIAlertController(title: "알림", message: "신고가 완료되었습니다.", preferredStyle: .alert)
-                
-                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
-                alertController.addAction(okAction)
-                
-                self.present(alertController, animated: true, completion: nil)
-            
-            default:
-                let alertController = UIAlertController(title: "알림", message: "신고에 실패했습니다.", preferredStyle: .alert)
-                
-                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
-                alertController.addAction(okAction)
-                
-                self.present(alertController, animated: true, completion: nil)
-            }
-        }
-    }
-    
     func buttonTappedWithEvaluationId(_ evaluationId: Int, task: String) {
         if task == "remove" {
             let alertController = UIAlertController(title: "삭제하시겠습니까?", message: "삭제한 데이터는 복구할 수 없습니다.", preferredStyle: .alert)
@@ -428,19 +401,6 @@ extension ProfessorDetailClassViewController: ProfessorReviewTableViewCellDelega
             let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
                 // 삭제 버튼이 눌렸을 때의 동작
                 self.deleteProfessorEvaluationData(evaluationId: evaluationId)
-            }
-            
-            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-            
-            alertController.addAction(deleteAction)
-            alertController.addAction(cancelAction)
-            
-            present(alertController, animated: true, completion: nil)
-        } else if task == "report" {
-            let alertController = UIAlertController(title: "신고하시겠습니까?", message: "해당 유저는 검토 후 이용이 제한됩니다.", preferredStyle: .alert)
-            let deleteAction = UIAlertAction(title: "신고", style: .destructive) { _ in
-                // 신고 버튼이 눌렸을 때의 동작
-                self.reportProfessorEvaluation(evaluationId: evaluationId)
             }
             
             let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
