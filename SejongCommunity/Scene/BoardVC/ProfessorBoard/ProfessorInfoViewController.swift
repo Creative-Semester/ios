@@ -10,13 +10,18 @@ import SnapKit
 
 class ProfessorInfoViewController: UIViewController {
     
+    var professorId: Int?
+    private var professorLectureList: [ProfessorLecture] = []
+    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
 
-        scrollView.showsVerticalScrollIndicator = false
+//        scrollView.showsVerticalScrollIndicator = false
         
         return scrollView
     }()
+    
+    private let contentView = UIView()
 
     private let professorImageView: UIImageView = {
         let imageView = UIImageView()
@@ -33,7 +38,7 @@ class ProfessorInfoViewController: UIViewController {
     private let professorNameLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "김세원"
@@ -42,20 +47,73 @@ class ProfessorInfoViewController: UIViewController {
         return label
     }()
     
-    private let professorExpLabel: UILabel = {
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.distribution = .equalSpacing
+        stackView.spacing = 4
+        
+        return stackView
+    }()
+    
+    private let professorLocationLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         label.textColor = .black
         label.textAlignment = .left
-        label.text = """
-        교수실 : AI센터 524호
-        연락처 : 02-6935-2678
-        이메일 : sewonkim@sejong.ac.kr
-        전  공 : Autonomous Ship
-        연구실 : Autonomous Shipping Lab
-        """
-        label.numberOfLines = 0
+        label.text = "AI센터 524호"
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
+    private let professorNumberLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .black
+        label.textAlignment = .left
+        label.text = "02-6935-2678"
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
+    private let professorEmailLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .black
+        label.textAlignment = .left
+        label.text = "sewonkim@sejong.ac.kr"
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
+    private let professorMajorLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .black
+        label.textAlignment = .left
+        label.text = "Autonomous Ship"
+        label.numberOfLines = 1
+        
+        return label
+    }()
+    
+    private let professorRoomLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .black
+        label.textAlignment = .left
+        label.text = "Autonomous Shipping Lab"
+        label.numberOfLines = 1
         
         return label
     }()
@@ -98,18 +156,20 @@ class ProfessorInfoViewController: UIViewController {
         professorClassTableView.delegate = self
         professorClassTableView.register(ProfessorClassTableViewCell.self, forCellReuseIdentifier: "ProfessorClassTableViewCell")
         
+        getProfessorLectureData()
         setupLayout()
     }
     
     // 스크롤 뷰의 높이 계산
-    func calculateScrollViewHeight() -> CGFloat {
-        let infoViewHeight: CGFloat = 203
-        let cellCount: CGFloat  = 15
-        let cellHeight: CGFloat  = 60
-        print(cellCount * cellHeight + infoViewHeight)
-        
-        return cellCount * cellHeight + infoViewHeight
-    }
+//    func calculateScrollViewHeight() {
+//        let infoViewHeight: CGFloat = 203
+//        let cellCount: CGFloat  = CGFloat(professorLectureList?.count ?? 0)
+//        let cellHeight: CGFloat  = 60
+//        
+//        scrollView.snp.makeConstraints { make in
+//            make.height.equalTo(max(cellCount * cellHeight + infoViewHeight, UIScreen.main.bounds.height))
+//        }
+//    }
     
 
     func setupLayout() {
@@ -118,31 +178,41 @@ class ProfessorInfoViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            make.height.equalTo(calculateScrollViewHeight())
         }
         
-        scrollView.addSubview(professorImageView)
+        scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints{ make in
+            make.edges.equalToSuperview()
+        }
+        
+        contentView.addSubview(professorImageView)
         professorImageView.snp.makeConstraints{ make in
-            make.top.equalTo(scrollView.snp.top).offset(14)
-            make.leading.equalTo(scrollView.snp.leading).offset(14)
+            make.top.equalTo(contentView.snp.top).offset(14)
+            make.leading.equalTo(contentView.snp.leading).offset(14)
             make.height.width.equalTo(130)
         }
         
-        scrollView.addSubview(professorNameLabel)
+        contentView.addSubview(professorNameLabel)
         professorNameLabel.snp.makeConstraints{ make in
             make.top.equalTo(professorImageView.snp.top).offset(4)
             make.leading.equalTo(professorImageView.snp.trailing).offset(14)
             make.height.equalTo(20)
         }
         
-        scrollView.addSubview(professorExpLabel)
-        professorExpLabel.snp.makeConstraints{ make in
+        contentView.addSubview(stackView)
+        stackView.snp.makeConstraints{ make in
             make.top.equalTo(professorNameLabel.snp.bottom).offset(14)
             make.leading.equalTo(professorImageView.snp.trailing).offset(14)
             make.trailing.equalTo(scrollView.snp.trailing).inset(14)
         }
+        stackView.addArrangedSubview(professorLocationLabel)
+        stackView.addArrangedSubview(professorNumberLabel)
+        stackView.addArrangedSubview(professorEmailLabel)
+        stackView.addArrangedSubview(professorMajorLabel)
+        stackView.addArrangedSubview(professorRoomLabel)
         
-        scrollView.addSubview(lineView)
+        
+        contentView.addSubview(lineView)
         lineView.snp.makeConstraints{ make in
             make.top.equalTo(professorImageView.snp.bottom).offset(14)
             make.leading.trailing.equalToSuperview().inset(14)
@@ -150,22 +220,55 @@ class ProfessorInfoViewController: UIViewController {
             make.height.equalTo(1)
         }
         
-        scrollView.addSubview(professorClassTitleLabel)
+        contentView.addSubview(professorClassTitleLabel)
         professorClassTitleLabel.snp.makeConstraints{ make in
             make.top.equalTo(lineView.snp.bottom).offset(14)
-            make.leading.equalTo(scrollView.snp.leading).offset(14)
+            make.leading.equalTo(contentView.snp.leading).offset(14)
         }
         
-        scrollView.addSubview(professorClassTableView)
+        contentView.addSubview(professorClassTableView)
         professorClassTableView.snp.makeConstraints{ make in
             make.top.equalTo(professorClassTitleLabel.snp.bottom).offset(14)
             make.leading.trailing.equalToSuperview().inset(14)
             make.centerX.equalToSuperview()
-            make.height.equalTo(60 * 15)
-            make.bottom.equalTo(scrollView.snp.bottom)
+            make.height.equalTo(60 * professorLectureList.count)
+            make.bottom.equalTo(contentView.snp.bottom)
         }
     }
     
+    func getProfessorLectureData() {
+        
+        guard let professorId = professorId else { return }
+        
+        ProfessorLectureService.shared.getProfessorLectureInfo(professorId: professorId, page: 0) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorLectureResponse else { return }
+                self.professorNameLabel.text = infoData.result.professorSimpleResponseDto.name
+                self.professorLocationLabel.text = "교수실: \(infoData.result.professorSimpleResponseDto.location)"
+                self.professorNumberLabel.text = "연락처: \(infoData.result.professorSimpleResponseDto.phoneNum)"
+                self.professorEmailLabel.text = "이메일: \(infoData.result.professorSimpleResponseDto.email)"
+                self.professorMajorLabel.text = "전 공: \(infoData.result.professorSimpleResponseDto.majorSub)"
+                self.professorRoomLabel.text = "연구실: \(infoData.result.professorSimpleResponseDto.lab)"
+                
+                self.professorLectureList = infoData.result.list
+                self.professorClassTableView.snp.updateConstraints { make in
+                    make.height.equalTo(60 * infoData.result.list.count)
+                }
+                self.professorClassTableView.reloadData()
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
 }
 
 
@@ -179,13 +282,15 @@ extension ProfessorInfoViewController: UITableViewDataSource{
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 15
+        return professorLectureList.count
     }
     
     // 각 센션 마다 사용할 cell의 종류
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProfessorClassTableViewCell", for: indexPath) as! ProfessorClassTableViewCell
+        
+        cell.configure(professorLecture: professorLectureList[indexPath.row])
         
         return cell
     }
@@ -196,6 +301,10 @@ extension ProfessorInfoViewController: UITableViewDelegate {
     //cell이 클릭되었을때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let nextViewController = ProfessorDetailClassViewController()
+        guard let professorId = professorId else { return }
+        
+        nextViewController.professorId = professorId
+        nextViewController.courseId = professorLectureList[indexPath.row].courseId
         
         navigationController?.pushViewController(nextViewController, animated: true)
     }

@@ -7,9 +7,20 @@
 
 import UIKit
 import SnapKit
+import MobileCoreServices
 
 class WriteOfficeDetailsViewController: UIViewController {
 
+    var officeDetailPostMenu = OfficeDetailPostMenu(
+        affairName: "미입력",
+        affairUrl: "미입력",
+        restMoney: "미입력",
+        title: "미입력",
+        usedMoney: "미입력"
+    )
+    
+    private var fileName: String?
+    
     private let userImageView: UIImageView = {
         let imageView = UIImageView()
         
@@ -24,7 +35,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let userNameLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "학생회 사무내역"
@@ -36,7 +47,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let titleLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "제목"
@@ -48,12 +59,17 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let titleTextField: UITextField = {
         let textField = UITextField()
         
-        textField.placeholder = "제목"
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 16)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "제목", attributes: placeholderAttributes)
+
         textField.borderStyle = .roundedRect
         textField.keyboardType = .default
         textField.font = UIFont.systemFont(ofSize: 18)
         textField.textColor = .black
-        
+        textField.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 0))
         textField.leftView = paddingView
         textField.leftViewMode = .always
@@ -64,7 +80,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let usedAmoutLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "사용 금액"
@@ -76,11 +92,15 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let usedAmountTextField: UITextField = {
         let textField = UITextField()
         
-        // 텍스트 필드의 스타일 설정
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 16)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "사용 금액", attributes: placeholderAttributes)
         textField.borderStyle = .roundedRect // 테두리 스타일
-        textField.placeholder = "사용 금액" // 플레이스홀더 텍스트
         textField.keyboardType = .decimalPad // 숫자 입력용 키보드
-        
+        textField.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
+        textField.textColor = .black
         // 금액 입력 시 패딩을 줄 수 있습니다.
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
         textField.leftView = paddingView
@@ -92,7 +112,7 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let remainingAmoutLabel: UILabel = {
        let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)//임시로 추가
+        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
         label.textColor = .black
         label.textAlignment = .left
         label.text = "남은 금액"
@@ -104,11 +124,15 @@ class WriteOfficeDetailsViewController: UIViewController {
     private let remainingAmountTextField: UITextField = {
         let textField = UITextField()
         
-        // 텍스트 필드의 스타일 설정
+        let placeholderAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray,
+            .font: UIFont.systemFont(ofSize: 16)
+        ]
+        textField.attributedPlaceholder = NSAttributedString(string: "남은 금액", attributes: placeholderAttributes)
         textField.borderStyle = .roundedRect // 테두리 스타일
-        textField.placeholder = "남은 금액" // 플레이스홀더 텍스트
         textField.keyboardType = .decimalPad // 숫자 입력용 키보드
-        
+        textField.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
+        textField.textColor = .black
         // 금액 입력 시 패딩을 줄 수 있습니다.
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
         textField.leftView = paddingView
@@ -142,6 +166,16 @@ class WriteOfficeDetailsViewController: UIViewController {
         return button
     }()
     
+    private let fileDeleteButton: UIButton = {
+        let button = UIButton()
+        
+        button.setImage(UIImage(systemName: "x.square")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal), for: .normal)
+        button.isUserInteractionEnabled = false
+        button.isHidden = true
+        
+        return button
+    }()
+    
     private let completeButton: UIButton = {
         let button = UIButton()
         
@@ -159,7 +193,8 @@ class WriteOfficeDetailsViewController: UIViewController {
         view.backgroundColor = .white
         
         fileUploadButton.addTarget(self, action: #selector(fileUploadButtonTapped), for: .touchUpInside)
-        completeButton.addTarget(self, action: #selector(completeButtonButtonTapped), for: .touchUpInside)
+        fileDeleteButton.addTarget(self, action: #selector(fileDeleteButtonTapped), for: .touchUpInside)
+        completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
         
         setupKeyboardDismissRecognizer()
         setupLayout()
@@ -167,9 +202,18 @@ class WriteOfficeDetailsViewController: UIViewController {
     
     @objc func fileUploadButtonTapped() {
         // 파일 선택 기능 실행
-        let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.spreadsheetml.sheet"], in: .import)
+        let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypeItem as String], in: .import)
         documentPicker.delegate = self
         present(documentPicker, animated: true, completion: nil)
+        fileUploadButton.isUserInteractionEnabled = false
+    }
+    
+    @objc func fileDeleteButtonTapped() {
+        fileDeleteButton.isUserInteractionEnabled = false
+        fileUploadButton.isUserInteractionEnabled = true
+        fileDeleteButton.isHidden = true
+        fileUploadButton.setTitle("엑셀파일 업로드하기", for: .normal)
+        deleteOfficeDetailFile()
     }
 
     //화면의 다른 곳을 클릭했을 때 키보드가 내려가게 합니다.
@@ -182,9 +226,105 @@ class WriteOfficeDetailsViewController: UIViewController {
        view.endEditing(true)
     }
     
-    @objc func completeButtonButtonTapped() {
-        //저장하는 통신 코드 추가해야합니다.
-        navigationController?.popViewController(animated: true)
+    @objc func completeButtonTapped() {
+        if let text = titleTextField.text {
+            officeDetailPostMenu.title = text
+        }
+        
+        if let text = usedAmountTextField.text {
+            officeDetailPostMenu.usedMoney = text
+        }
+        
+        if let text = remainingAmountTextField.text {
+            officeDetailPostMenu.restMoney = text
+        }
+        
+        if officeDetailPostMenu.title == "" {
+            let alertController = UIAlertController(title: "알림", message: "제목을 작성해주세요", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        } else if officeDetailPostMenu.usedMoney == "" {
+            let alertController = UIAlertController(title: "알림", message: "사용 금액을 작성해주세요", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        } else if officeDetailPostMenu.restMoney == "" {
+            let alertController = UIAlertController(title: "알림", message: "남은 금액을 작성해주세요", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        } else if officeDetailPostMenu.affairName == "미입력" {
+            let alertController = UIAlertController(title: "알림", message: "파일을 첨부해주세요", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        } else {
+            postOfficeDetailData()
+            
+            let alertController = UIAlertController(title: "알림", message: "저장되었습니다", preferredStyle: .alert)
+
+            let okAction = UIAlertAction(title: "확인", style: .default) { (action) in
+                self.navigationController?.popViewController(animated: true)
+            }
+            alertController.addAction(okAction)
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func postOfficeDetailData() {
+        OfficeDetailPostService.shared.postOfficeDetailPost(officeDetailPostMenu: officeDetailPostMenu) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? OfficeDetailPostResponse else { return }
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func OfficeDetailFileUpload(selectedFileURL: URL, fileName: String) {
+        OfficeFileUploadService.shared.postOfficeFileUpload(fileURL: selectedFileURL, fileName: fileName) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? OfficeFileUploadResponse else { return }
+                self.fileName = infoData.result[0].fileName
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func deleteOfficeDetailFile() {
+        guard let fileName = fileName else { return }
+        OfficeFileDeleteService.shared.deleteOfficeDetailFile(fileName: fileName) { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? OfficeFileDeleteResponse else { return }
+                print(infoData.message)
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
     }
     
     func setupLayout() {
@@ -203,7 +343,7 @@ class WriteOfficeDetailsViewController: UIViewController {
         
         view.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(userNameLabel.snp.bottom).offset(70)
+            make.top.equalTo(userNameLabel.snp.bottom).offset(60)
             make.leading.equalTo(view.snp.leading).offset(20)
             make.height.equalTo(16)
         }
@@ -257,6 +397,13 @@ class WriteOfficeDetailsViewController: UIViewController {
             make.height.equalTo(30)
         }
         
+        view.addSubview(fileDeleteButton)
+        fileDeleteButton.snp.makeConstraints { make in
+            make.centerY.equalTo(fileUploadButton.snp.centerY)
+            make.trailing.equalTo(fileUploadButton.snp.trailing).inset(24)
+            make.width.height.equalTo(44)
+        }
+        
         view.addSubview(completeButton)
         completeButton.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(30)
@@ -271,13 +418,17 @@ extension WriteOfficeDetailsViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         if let selectedFileURL = urls.first {
             // 선택한 파일을 사용하거나 업로드할 수 있음
-            print("선택한 파일 경로: \(selectedFileURL)")
+            officeDetailPostMenu.affairUrl = "\(selectedFileURL)"
             fileUploadButton.setTitle("\(selectedFileURL)", for: .normal)
+            
+            let fileName = selectedFileURL.lastPathComponent
+            officeDetailPostMenu.affairName = "\(fileName)"
+            fileUploadButton.setTitle(fileName, for: .normal)
+            
+            OfficeDetailFileUpload(selectedFileURL: selectedFileURL, fileName: fileName)
         }
+        fileDeleteButton.isUserInteractionEnabled = true
+        fileDeleteButton.isHidden = false
     }
     
-    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-        // 파일 선택이 취소된 경우 처리
-        print("파일 선택이 취소되었습니다.")
-    }
 }

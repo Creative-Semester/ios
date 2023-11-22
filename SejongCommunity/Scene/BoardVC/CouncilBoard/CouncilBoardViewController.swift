@@ -120,7 +120,7 @@ class CouncilBoardViewController : UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.title = "학생회"
+        getPromisesPercentageData()
     }
     
     override func viewDidLoad() {
@@ -128,13 +128,14 @@ class CouncilBoardViewController : UIViewController {
         self.navigationController?.navigationBar.tintColor = .red
         self.view.backgroundColor = .white
         
+        self.title = "학생회"
+        
         barChartView = HorizontalBarChartView()
         
         pledgeButton.addTarget(self, action: #selector(pledgeButtonTabbed), for: .touchUpInside)
         officeDetailButton.addTarget(self, action: #selector(officeDetailButtonTapped), for: .touchUpInside)
 
         getCouncilInfoData()
-        getPromisesPercentageData()
         setupStudentCouncilView()
     }
     
@@ -171,7 +172,7 @@ class CouncilBoardViewController : UIViewController {
         
         // X축 레이블 설정
         var titles = deptPromiseRate.map { $0.departmentName }
-        titles.append("전체공약률")
+        titles.append("전 체\n공약률")
         barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: titles)
         barChartView.xAxis.labelPosition = .bottom
         barChartView.xAxis.granularityEnabled = true
@@ -190,7 +191,7 @@ class CouncilBoardViewController : UIViewController {
         barChartView.data = data
         
         // 애니메이션 설정 (선택사항)
-        barChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0, easingOption: .linear)
+        barChartView.animate(xAxisDuration: 0.0, yAxisDuration: 2.0, easingOption: .linear)
         
         
         // 바탕색 변경

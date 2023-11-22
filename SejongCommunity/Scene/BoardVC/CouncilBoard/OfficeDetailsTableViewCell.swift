@@ -36,8 +36,8 @@ class OfficeDetailsTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .default // 선택되었을때 효과
-        
-        setup()
+        backgroundColor = .white
+        setupLayout()
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -55,10 +55,12 @@ class OfficeDetailsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setup() {
-        
-        
-        setupLayout()
+    func configure(officeDetailList: OfficeDetailList, time: String) {
+        officeDetailTitleLabel.text = officeDetailList.title
+        if let index = time.firstIndex(of: "T") {
+            let dateSubstring = String(time[..<index])
+            officeDetailDateLabel.text = dateSubstring
+        }
     }
     
     func setupLayout() {

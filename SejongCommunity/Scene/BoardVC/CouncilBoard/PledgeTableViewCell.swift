@@ -30,7 +30,7 @@ class PledgeTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .default // 선택되었을때 효과
-        
+        backgroundColor = .white
         setupLayout()
     }
     

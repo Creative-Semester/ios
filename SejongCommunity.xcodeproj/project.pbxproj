@@ -41,11 +41,29 @@
 		F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */; };
 		F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */; };
 		F154DAA22A6D2C0A00B6C7F0 /* MypageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */; };
+		F16C94032AF6A36900CD01E8 /* OfficeDetailPostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C94022AF6A36900CD01E8 /* OfficeDetailPostModel.swift */; };
+		F16C94052AF6A46100CD01E8 /* OfficeDetailPostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C94042AF6A46100CD01E8 /* OfficeDetailPostService.swift */; };
+		F16C94072AF6B03400CD01E8 /* OfficeFileUploadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C94062AF6B03400CD01E8 /* OfficeFileUploadModel.swift */; };
+		F16C94092AF6B2AF00CD01E8 /* OfficeFileUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C94082AF6B2AF00CD01E8 /* OfficeFileUploadService.swift */; };
+		F16C940B2AF76EDF00CD01E8 /* OfficeFileDeleteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C940A2AF76EDF00CD01E8 /* OfficeFileDeleteModel.swift */; };
+		F16C940D2AF76F3F00CD01E8 /* OfficeFileDeleteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C940C2AF76F3F00CD01E8 /* OfficeFileDeleteService.swift */; };
 		F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16FE9EE2A70FEEE005F194C /* OfficeDetailsViewController.swift */; };
 		F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */; };
+		F174D7E92AFB7A6A0087A60E /* OfficeDetailDeleteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D7E82AFB7A6A0087A60E /* OfficeDetailDeleteModel.swift */; };
+		F174D7EB2AFB7AE30087A60E /* OfficeDetailDeleteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D7EA2AFB7AE30087A60E /* OfficeDetailDeleteService.swift */; };
+		F174D8502B01FA520087A60E /* ProfessorEvaluationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D84F2B01FA520087A60E /* ProfessorEvaluationModel.swift */; };
+		F174D8522B01FB150087A60E /* ProfessorEvaluationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8512B01FB150087A60E /* ProfessorEvaluationService.swift */; };
+		F174D8562B025ADD0087A60E /* ProfessorEvaluationPostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8552B025ADD0087A60E /* ProfessorEvaluationPostService.swift */; };
+		F174D8582B02699F0087A60E /* ProfessorEvaluationDeleteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */; };
+		F174D8662B04A1800087A60E /* ProfessorEvaluationReportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */; };
 		F19345B82AD0350100BB5D5E /* CouncilInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */; };
 		F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */; };
 		F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */; };
+		F1C838D52AF6614D00303D20 /* ProfessorLectureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D42AF6614D00303D20 /* ProfessorLectureModel.swift */; };
+		F1C838D72AF6631000303D20 /* ProfessorLectureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D62AF6631000303D20 /* ProfessorLectureService.swift */; };
+		F1C838D92AF677DA00303D20 /* ProfessorPostReviewMedel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D82AF677DA00303D20 /* ProfessorPostReviewMedel.swift */; };
+		F1C838DB2AF67DDD00303D20 /* OfficeDetailListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838DA2AF67DDD00303D20 /* OfficeDetailListModel.swift */; };
+		F1C838DD2AF67FD900303D20 /* OfficeDetailListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838DC2AF67FD900303D20 /* OfficeDetailListService.swift */; };
 		F1D495532AD2A5C100078232 /* PromisesPercentageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */; };
 		F1D495552AD2A6D500078232 /* PromisesPercentageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */; };
 		F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */; };
@@ -111,11 +129,29 @@
 		F154DA9C2A6D2B4400B6C7F0 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F154DA9F2A6D2BE800B6C7F0 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		F154DAA12A6D2C0A00B6C7F0 /* MypageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MypageViewController.swift; sourceTree = "<group>"; };
+		F16C94022AF6A36900CD01E8 /* OfficeDetailPostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailPostModel.swift; sourceTree = "<group>"; };
+		F16C94042AF6A46100CD01E8 /* OfficeDetailPostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailPostService.swift; sourceTree = "<group>"; };
+		F16C94062AF6B03400CD01E8 /* OfficeFileUploadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeFileUploadModel.swift; sourceTree = "<group>"; };
+		F16C94082AF6B2AF00CD01E8 /* OfficeFileUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeFileUploadService.swift; sourceTree = "<group>"; };
+		F16C940A2AF76EDF00CD01E8 /* OfficeFileDeleteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeFileDeleteModel.swift; sourceTree = "<group>"; };
+		F16C940C2AF76F3F00CD01E8 /* OfficeFileDeleteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeFileDeleteService.swift; sourceTree = "<group>"; };
 		F16FE9EE2A70FEEE005F194C /* OfficeDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailsViewController.swift; sourceTree = "<group>"; };
 		F16FE9F02A70FF1B005F194C /* PledgeBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeBoardViewController.swift; sourceTree = "<group>"; };
+		F174D7E82AFB7A6A0087A60E /* OfficeDetailDeleteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailDeleteModel.swift; sourceTree = "<group>"; };
+		F174D7EA2AFB7AE30087A60E /* OfficeDetailDeleteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailDeleteService.swift; sourceTree = "<group>"; };
+		F174D84F2B01FA520087A60E /* ProfessorEvaluationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationModel.swift; sourceTree = "<group>"; };
+		F174D8512B01FB150087A60E /* ProfessorEvaluationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationService.swift; sourceTree = "<group>"; };
+		F174D8552B025ADD0087A60E /* ProfessorEvaluationPostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationPostService.swift; sourceTree = "<group>"; };
+		F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationDeleteService.swift; sourceTree = "<group>"; };
+		F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationReportService.swift; sourceTree = "<group>"; };
 		F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilInfoModel.swift; sourceTree = "<group>"; };
 		F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoService.swift; sourceTree = "<group>"; };
 		F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoModel.swift; sourceTree = "<group>"; };
+		F1C838D42AF6614D00303D20 /* ProfessorLectureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorLectureModel.swift; sourceTree = "<group>"; };
+		F1C838D62AF6631000303D20 /* ProfessorLectureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorLectureService.swift; sourceTree = "<group>"; };
+		F1C838D82AF677DA00303D20 /* ProfessorPostReviewMedel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorPostReviewMedel.swift; sourceTree = "<group>"; };
+		F1C838DA2AF67DDD00303D20 /* OfficeDetailListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailListModel.swift; sourceTree = "<group>"; };
+		F1C838DC2AF67FD900303D20 /* OfficeDetailListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfficeDetailListService.swift; sourceTree = "<group>"; };
 		F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesPercentageModel.swift; sourceTree = "<group>"; };
 		F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesPercentageService.swift; sourceTree = "<group>"; };
 		F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeTableViewCell.swift; sourceTree = "<group>"; };
@@ -290,6 +326,11 @@
 				F14E43CB2AD2B2540096221D /* DepartmentPromisesModel.swift */,
 				F1D495522AD2A5C100078232 /* PromisesPercentageModel.swift */,
 				F1F91D472AD3015E009D95B0 /* PromiseCheckModel.swift */,
+				F1C838DA2AF67DDD00303D20 /* OfficeDetailListModel.swift */,
+				F16C94022AF6A36900CD01E8 /* OfficeDetailPostModel.swift */,
+				F16C94062AF6B03400CD01E8 /* OfficeFileUploadModel.swift */,
+				F16C940A2AF76EDF00CD01E8 /* OfficeFileDeleteModel.swift */,
+				F174D7E82AFB7A6A0087A60E /* OfficeDetailDeleteModel.swift */,
 			);
 			path = CouncilBoardModels;
 			sourceTree = "<group>";
@@ -298,6 +339,11 @@
 			isa = PBXGroup;
 			children = (
 				F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */,
+				F1C838D62AF6631000303D20 /* ProfessorLectureService.swift */,
+				F174D8512B01FB150087A60E /* ProfessorEvaluationService.swift */,
+				F174D8552B025ADD0087A60E /* ProfessorEvaluationPostService.swift */,
+				F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */,
+				F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */,
 			);
 			path = ProfessorServices;
 			sourceTree = "<group>";
@@ -306,6 +352,9 @@
 			isa = PBXGroup;
 			children = (
 				F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */,
+				F1C838D42AF6614D00303D20 /* ProfessorLectureModel.swift */,
+				F1C838D82AF677DA00303D20 /* ProfessorPostReviewMedel.swift */,
+				F174D84F2B01FA520087A60E /* ProfessorEvaluationModel.swift */,
 			);
 			path = ProfessorModels;
 			sourceTree = "<group>";
@@ -402,6 +451,11 @@
 				F14E43CD2AD2B33D0096221D /* DepartmentPromisesService.swift */,
 				F1F91D452AD300EA009D95B0 /* PromiseCheckService.swift */,
 				F1D495542AD2A6D500078232 /* PromisesPercentageService.swift */,
+				F1C838DC2AF67FD900303D20 /* OfficeDetailListService.swift */,
+				F16C94042AF6A46100CD01E8 /* OfficeDetailPostService.swift */,
+				F16C94082AF6B2AF00CD01E8 /* OfficeFileUploadService.swift */,
+				F16C940C2AF76F3F00CD01E8 /* OfficeFileDeleteService.swift */,
+				F174D7EA2AFB7AE30087A60E /* OfficeDetailDeleteService.swift */,
 			);
 			path = CouncilBoardServices;
 			sourceTree = "<group>";
@@ -534,6 +588,9 @@
 				F14E43CE2AD2B33D0096221D /* DepartmentPromisesService.swift in Sources */,
 				E4021E6B2A6F8B1000FFEAB2 /* OpenBoardViewController.swift in Sources */,
 				E4021E782A76414400FFEAB2 /* PostDetailViewController.swift in Sources */,
+				F1C838DD2AF67FD900303D20 /* OfficeDetailListService.swift in Sources */,
+				F174D8502B01FA520087A60E /* ProfessorEvaluationModel.swift in Sources */,
+				F174D8522B01FB150087A60E /* ProfessorEvaluationService.swift in Sources */,
 				F1E5472C2A82680B00671182 /* OfficeDetailsTableViewCell.swift in Sources */,
 				F1E5478D2AB1EC5A00671182 /* ProfessorDetailClassViewController.swift in Sources */,
 				F1E547962AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift in Sources */,
@@ -545,8 +602,12 @@
 				F1E547A22ACABED300671182 /* sampleModel.swift in Sources */,
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
+				F16C940D2AF76F3F00CD01E8 /* OfficeFileDeleteService.swift in Sources */,
 				E4021E7A2A76494000FFEAB2 /* OpenWtireViewController.swift in Sources */,
+				F174D7E92AFB7A6A0087A60E /* OfficeDetailDeleteModel.swift in Sources */,
+				F1C838D72AF6631000303D20 /* ProfessorLectureService.swift in Sources */,
 				E4E9F6622AD06C5200F8AEAD /* CustomCommentTableViewCell.swift in Sources */,
+				F174D7EB2AFB7AE30087A60E /* OfficeDetailDeleteService.swift in Sources */,
 				F1E547352A84C13D00671182 /* DepartOpenWriteViewController.swift in Sources */,
 				F12465102A67BAB500037D8C /* AppDelegate.swift in Sources */,
 				F1E5477F2AA0878700671182 /* ProfessorBoardViewController.swift in Sources */,
@@ -555,17 +616,21 @@
 				F16FE9F12A70FF1B005F194C /* PledgeBoardViewController.swift in Sources */,
 				F154DA9B2A6D244100B6C7F0 /* MainTabBarController.swift in Sources */,
 				F1F91D462AD300EA009D95B0 /* PromiseCheckService.swift in Sources */,
+				F1C838DB2AF67DDD00303D20 /* OfficeDetailListModel.swift in Sources */,
 				F12FE6B72AD0434C00B47DA0 /* NetworkResult.swift in Sources */,
 				F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */,
 				E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */,
 				E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */,
 				F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */,
+				F174D8562B025ADD0087A60E /* ProfessorEvaluationPostService.swift in Sources */,
 				F1448FF92AD2AEAE00AE9E7A /* DepartmentModel.swift in Sources */,
 				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
+				F1C838D92AF677DA00303D20 /* ProfessorPostReviewMedel.swift in Sources */,
 				F1E5478B2AAF3CB900671182 /* ProfessorClassTableViewCell.swift in Sources */,
 				E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */,
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
 				F1EA83A72AD02583006B9741 /* CouncilInfoService.swift in Sources */,
+				F16C940B2AF76EDF00CD01E8 /* OfficeFileDeleteModel.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
 				F1E547A52ACABEF700671182 /* APIContants.swift in Sources */,
 				F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */,
@@ -574,18 +639,25 @@
 				F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */,
 				F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */,
 				F19345B82AD0350100BB5D5E /* CouncilInfoModel.swift in Sources */,
+				F16C94032AF6A36900CD01E8 /* OfficeDetailPostModel.swift in Sources */,
 				F1D495552AD2A6D500078232 /* PromisesPercentageService.swift in Sources */,
+				F16C94092AF6B2AF00CD01E8 /* OfficeFileUploadService.swift in Sources */,
 				F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
+				F16C94072AF6B03400CD01E8 /* OfficeFileUploadModel.swift in Sources */,
 				F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */,
 				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,
 				F1D495532AD2A5C100078232 /* PromisesPercentageModel.swift in Sources */,
+				F174D8662B04A1800087A60E /* ProfessorEvaluationReportService.swift in Sources */,
 				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,
+				F1C838D52AF6614D00303D20 /* ProfessorLectureModel.swift in Sources */,
+				F16C94052AF6A46100CD01E8 /* OfficeDetailPostService.swift in Sources */,
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,
+				F174D8582B02699F0087A60E /* ProfessorEvaluationDeleteService.swift in Sources */,
 				E47237612AB972DE003BD82B /* MyWriteViewController.swift in Sources */,
 				F1E5479D2AC8502D00671182 /* MyChattingTableViewCell.swift in Sources */,
 				F16FE9EF2A70FEEE005F194C /* OfficeDetailsViewController.swift in Sources */,
@@ -656,7 +728,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -710,7 +782,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -728,7 +800,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q653PU93R6;
+				DEVELOPMENT_TEAM = 5YM44C4YT8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SejongCommunity/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -757,7 +829,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Q653PU93R6;
+				DEVELOPMENT_TEAM = 5YM44C4YT8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SejongCommunity/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

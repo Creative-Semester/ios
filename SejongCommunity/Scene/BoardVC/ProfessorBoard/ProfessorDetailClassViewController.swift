@@ -9,6 +9,12 @@ import UIKit
 import SnapKit
 
 class ProfessorDetailClassViewController: UIViewController {
+    
+    var professorId: Int?
+    var courseId: Int?
+    var evaluationList: [EvaluationList] = []
+    private var currentPage: Int = 0
+    private var totalPage: Int = 1
 
     private let professorReviewTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -42,21 +48,18 @@ class ProfessorDetailClassViewController: UIViewController {
         return button
     }()
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tabBarController?.tabBar.isHidden = true
-    }
-    
+    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "신호 및 시스템 강의평"
         
         professorReviewTableView.dataSource = self
         professorReviewTableView.delegate = self
         professorReviewTableView.register(ProfessorReviewTableViewCell.self, forCellReuseIdentifier: "ProfessorReviewTableViewCell")
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        professorReviewTableView.refreshControl = refreshControl
+        reviewRegisterButton.addTarget(self, action: #selector(reviewRegisterButtonTapped), for: .touchUpInside)
         
         reviewTextView.delegate = self
         
@@ -66,6 +69,14 @@ class ProfessorDetailClassViewController: UIViewController {
         
         setupKeyboardDismissRecognizer()
         setupLayout()
+        
+        UserDefaults.standard.set("19011725", forKey: "userName") //임시로 추가한 것임 나중에 삭제해야 함 !
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getProfessorEvaluationData(currentPage: currentPage)
+        tabBarController?.tabBar.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -83,8 +94,91 @@ class ProfessorDetailClassViewController: UIViewController {
        view.addGestureRecognizer(tapGesture)
     }
     
+    @objc func reviewRegisterButtonTapped() {
+        if reviewTextView.text == "" {
+            let alertController = UIAlertController(title: "알림", message: "작성한 내용이 없습니다.", preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            
+            present(alertController, animated: true, completion: nil)
+        } else {
+            postProfessorEvaluationData(text: reviewTextView.text)
+        }
+    }
+    
+    @objc func refreshTableView() {
+        getProfessorEvaluationData(currentPage: currentPage)
+        professorReviewTableView.refreshControl?.endRefreshing()
+    }
+    
     @objc private func dismissKeyboard() {
        view.endEditing(true)
+    }
+    
+    func getProfessorEvaluationData(currentPage: Int) {
+        
+        guard let professorId = professorId else { return }
+        guard let courseId = courseId else { return }
+        
+        ProfessorEvaluationService.shared.getProfessorEvaluationInfo(professorId: professorId, courseId: courseId, page: currentPage) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorEvaluationResponse else { return }
+                if infoData.result.currentPage == 0 {
+                    self.evaluationList = infoData.result.evaluationList
+                } else {
+                    let existingSet = Set(self.evaluationList.map { $0.evaluationId })
+                    let newData = infoData.result.evaluationList.filter { !existingSet.contains($0.evaluationId) }
+                    self.evaluationList.append(contentsOf: newData)
+                }
+                self.totalPage = infoData.result.totalPage
+                self.professorReviewTableView.reloadData()
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func postProfessorEvaluationData(text: String) {
+        
+        guard let professorId = professorId else { return }
+        guard let courseId = courseId else { return }
+        
+        ProfessorEvaluationPostService.shared.postProfessorEvaluationInfo(professorId: professorId, courseId: courseId, text: text) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorPostReviewResponse else { return }
+                let alertController = UIAlertController(title: "알림", message: "작성이 완료되었습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                self.reviewTextView.text = ""
+                self.getProfessorEvaluationData(currentPage: self.currentPage)
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            
+            default:
+                let alertController = UIAlertController(title: "알림", message: "작성에 실패했습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
     }
 
     func setupLayout() {
@@ -185,7 +279,6 @@ extension ProfessorDetailClassViewController: UITextViewDelegate {
                 return false
             }
         }
-        print(textField)
         return true
     }
     
@@ -235,13 +328,16 @@ extension ProfessorDetailClassViewController: UITableViewDataSource {
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 15
+        return evaluationList.count
     }
     
     // 각 센션 마다 사용할 cell의 종류
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ProfessorReviewTableViewCell", for: indexPath) as! ProfessorReviewTableViewCell
+        cell.delegate = self
+        
+        cell.configure(evaluationList: evaluationList[indexPath.row])
         
         return cell
     }
@@ -252,17 +348,82 @@ extension ProfessorDetailClassViewController: UITableViewDelegate {
     
     //Cell의 높이를 지정한다.
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let commtenText =
-        """
-        요즘 이것만큼 좋은 강의가 있나?
-        이것은 혁명이다.
-        조선 혁명당입니다만 김씨일가 화이팅
-        """
+        let commentText = evaluationList[indexPath.row].text
         
-        let textHeight = heightForText(commtenText)
+        let textHeight = heightForText(commentText)
         let additionalSpacing = CGFloat(76) //강의평으로 작성된 것이 아닌, 닉네임, 날짜 등의 공백의 길이입니다.
         
         //다른 공백과 댓글이 작성된 높이의 합이 cell의 높이로 지정합니다.
         return textHeight + additionalSpacing
+    }
+}
+
+
+extension ProfessorDetailClassViewController: ProfessorReviewTableViewCellDelegate {
+    
+    func deleteProfessorEvaluationData(evaluationId: Int) {
+        
+        guard let professorId = professorId else { return }
+        guard let courseId = courseId else { return }
+        
+        ProfessorEvaluationDeleteService.shared.deleteProfessorEvaluationInfo(professorId: professorId, courseId: courseId, evaluationId: evaluationId) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? ProfessorPostReviewResponse else { return }
+                let alertController = UIAlertController(title: "알림", message: "삭제가 완료되었습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                if let index = self.evaluationList.firstIndex(where: { $0.evaluationId == evaluationId }) {
+                    self.evaluationList.remove(at: index)
+                    self.professorReviewTableView.reloadData()
+                }
+            
+            default:
+                let alertController = UIAlertController(title: "알림", message: "삭제가 실패했습니다.", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    func buttonTappedWithEvaluationId(_ evaluationId: Int, task: String) {
+        if task == "remove" {
+            let alertController = UIAlertController(title: "삭제하시겠습니까?", message: "삭제한 데이터는 복구할 수 없습니다.", preferredStyle: .alert)
+            
+            let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+                // 삭제 버튼이 눌렸을 때의 동작
+                self.deleteProfessorEvaluationData(evaluationId: evaluationId)
+            }
+            
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            
+            alertController.addAction(deleteAction)
+            alertController.addAction(cancelAction)
+            
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+}
+
+extension ProfessorDetailClassViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let screenHeight = scrollView.frame.height
+        
+        // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
+        if offsetY > contentHeight - screenHeight && currentPage + 1 < totalPage {
+            currentPage += 1
+            getProfessorEvaluationData(currentPage: currentPage)
+        }
     }
 }

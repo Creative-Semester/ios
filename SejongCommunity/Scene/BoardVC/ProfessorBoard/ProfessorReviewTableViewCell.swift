@@ -8,8 +8,16 @@
 import UIKit
 import SnapKit
 
+protocol ProfessorReviewTableViewCellDelegate: AnyObject {
+    func buttonTappedWithEvaluationId(_ evaluationId: Int, task: String)
+}
+
 class ProfessorReviewTableViewCell: UITableViewCell {
 
+    private var evaluationId: Int?
+    private var task: String?
+    weak var delegate: ProfessorReviewTableViewCellDelegate?
+    
     private let nameLabel: UILabel = {
         let label = UILabel()
         
@@ -59,23 +67,29 @@ class ProfessorReviewTableViewCell: UITableViewCell {
         return button
     }()
     
-    private let deleteButton: UIButton = {
-        let button = UIButton()
-        
-        button.setImage(UIImage(systemName: "trash"), for: .normal)
-        button.tintColor = .black
-        
-        return button
-    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+        backgroundColor = .white
+        reportButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         setupLayout()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        // 셀이 재사용될 때 버튼의 이미지 초기화
+        reportButton.setImage(nil, for: .normal)
+        reportButton.tintColor = .black
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc func buttonTapped(_ sender: UIButton) {
+        guard let evaluationId = evaluationId else { return }
+        guard let task = task else { return }
+        delegate?.buttonTappedWithEvaluationId(evaluationId, task: task)
     }
     
     func setupLayout() {
@@ -105,6 +119,29 @@ class ProfessorReviewTableViewCell: UITableViewCell {
             make.centerY.equalTo(nameLabel.snp.centerY)
         }
         
+    }
+    
+    func configure(evaluationList: EvaluationList) {
+        evaluationId = evaluationList.evaluationId
+        nameLabel.text = "익명\(evaluationList.evaluationId)"
+        reviewLabel.text = evaluationList.text
+        
+        let time = evaluationList.createdTime
+        if let index = time.firstIndex(of: "T") {
+            let dateSubstring = String(time[..<index])
+            dateLabel.text = dateSubstring
+        }
+        if let userName = UserDefaults.standard.string(forKey: "userName") {
+            if userName == evaluationList.studentNum {
+                reportButton.setImage(UIImage(systemName: "trash"), for: .normal)
+                reportButton.tintColor = .systemBlue
+                task = "remove"
+            } else {
+                reportButton.setImage(UIImage(systemName: "light.beacon.min"), for: .normal)
+                reportButton.tintColor = .systemRed
+                task = "report"
+            }
+        }
     }
 
 }

@@ -9,17 +9,7 @@ import UIKit
 
 class OfficeDetailsViewController: UIViewController {
     
-    private let officeDetailsTitleLabel: UILabel = {
-       let label = UILabel()
-
-        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        label.textColor = .black
-        label.textAlignment = .left
-        label.text = "사무내역"
-        label.numberOfLines = 1
-
-        return label
-    }()
+    private var officeDetailListResponse: OfficeDetailListResponse?
     
     private let officeDetailsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -28,6 +18,8 @@ class OfficeDetailsViewController: UIViewController {
         
         return tableView
     }()
+    
+    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,14 +32,28 @@ class OfficeDetailsViewController: UIViewController {
         officeDetailsTableView.dataSource = self
         officeDetailsTableView.delegate = self
         officeDetailsTableView.register(OfficeDetailsTableViewCell.self, forCellReuseIdentifier: "OfficeDetailsTableViewCell")
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        officeDetailsTableView.refreshControl = refreshControl
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getOfficeDetailData()
     }
     
     func setupNavigation() {
-        // 네비게이션 바에 버튼 추가
-        if true { //학생회 일 경우로 수정하기.
-            let writingButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(writingButtonTapped))
-            self.navigationItem.rightBarButtonItem = writingButton
+        if let role = UserDefaults.standard.string(forKey: "role") {
+            if role == "ROLE_COUNCIL" {
+                let writingButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(writingButtonTapped))
+                self.navigationItem.rightBarButtonItem = writingButton
+            }
         }
+    }
+    
+    @objc func refreshTableView() {
+        
+        getOfficeDetailData()
+        officeDetailsTableView.refreshControl?.endRefreshing()
     }
     
     @objc func writingButtonTapped() {
@@ -55,6 +61,28 @@ class OfficeDetailsViewController: UIViewController {
         let vc = WriteOfficeDetailsViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    func getOfficeDetailData() {
+        
+        OfficeDetailListService.shared.getOfficeDetailList() { response in
+            switch response {
+                
+            case .success(let data):
+                guard let infoData = data as? OfficeDetailListResponse else { return }
+                self.officeDetailListResponse = infoData
+                self.officeDetailsTableView.reloadData()
+                
+                // 실패할 경우에 분기처리는 아래와 같이 합니다.
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
 }
 
 extension OfficeDetailsViewController: UITableViewDelegate, UITableViewDataSource{
@@ -67,13 +95,17 @@ extension OfficeDetailsViewController: UITableViewDelegate, UITableViewDataSourc
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 15
+        return officeDetailListResponse?.result.count ?? 0
     }
     
     // 각 센션 마다 사용할 cell의 종류
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "OfficeDetailsTableViewCell", for: indexPath) as! OfficeDetailsTableViewCell
+        
+        if let officeDetailListResponse = officeDetailListResponse{
+            cell.configure(officeDetailList: officeDetailListResponse.result[indexPath.row], time: officeDetailListResponse.time)
+        }
         
         return cell
     }
@@ -86,6 +118,15 @@ extension OfficeDetailsViewController: UITableViewDelegate, UITableViewDataSourc
     //cell이 클릭되었을때
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let nextViewController = OfficeDetailsCellTappedViewController()
+        if let officeDetailList = officeDetailListResponse?.result[indexPath.row] {
+            nextViewController.officeDetailList = officeDetailList
+            
+            guard let postTime = officeDetailListResponse?.time else { return }
+            if let index = postTime.firstIndex(of: "T") {
+                let dateSubstring = String(postTime[..<index])
+                nextViewController.time = dateSubstring
+            }
+        }
         
         navigationController?.pushViewController(nextViewController, animated: true)
     }
@@ -96,13 +137,7 @@ private extension OfficeDetailsViewController {
     
     private func setupUI() {
 
-        view.addSubview(officeDetailsTitleLabel)
         view.addSubview(officeDetailsTableView)
-        
-        officeDetailsTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
-            make.leading.equalTo(view.snp.leading).offset(20)
-        }
         
         officeDetailsTableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
