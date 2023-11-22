@@ -9,13 +9,17 @@ import Foundation
 import UIKit
 import SwiftKeychainWrapper
 class AuthenticationManager {
-    // 사용자 정보 및 토큰을 저장하는 UserDefaults 키
+    // 사용자 정보 및 토큰을 저장하는 KeyChain/UserDefault 키
     private static let kAuthTokenKey = "AuthToken"
     private static let krefreshTokenKey = "refreshToken"
-    static func saveAuthToken(token: String, refresh: String){
+    private static let kuserName = "userName"
+    private static let krole = "role"
+    static func saveAuthToken(token: String, refresh: String, userName: String, role: String){
         print("AuthenticationManager.saveAuthToken - called()")
         KeychainWrapper.standard.set(token, forKey: kAuthTokenKey)
         KeychainWrapper.standard.set(refresh, forKey: krefreshTokenKey)
+        UserDefaults.standard.set(userName, forKey: "userName")
+        UserDefaults.standard.set(role, forKey: "role")
     }
     
     //현재 로그인 상태 확인
@@ -62,14 +66,14 @@ class AuthenticationManager {
             } else if let data = data {
                 if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
                     //서버로부터 받은 JSON 데이터 처리
-                    print("Response JSON: \(responseJSON)")
+//                    print("Response JSON: \(responseJSON)")
                     //토큰이 만료 되었는지 확인
-                    print("토큰 유효성 검사 메서드에서의 status - \(responseJSON["status"]), code - \(responseJSON["code"]),  result - \(responseJSON["result"])")
+//                    print("토큰 유효성 검사 메서드에서의 status - \(responseJSON["status"]), code - \(responseJSON["code"]),  result - \(responseJSON["result"])")
                     if let serverResponseCode = responseJSON["code"] as? String,
                         let message = responseJSON["message"] as? String{
                         Expiration = serverResponseCode
                         Message = message
-                        print("토큰 유효성 검사 : \(Expiration), 메시지 : \(message)")
+//                        print("토큰 유효성 검사 : \(Expiration), 메시지 : \(message)")
                     }else{
                         print("토큰 유효성 검사 에러 - Invalid JSON response")
                     }
@@ -84,16 +88,22 @@ class AuthenticationManager {
                     }else if Expiration != "L003"{
                         if let result = responseJSON["result"] as? [String: Any],
                             let accessToken = result["accessToken"] as? String,
-                            let refreshToken = result["refreshToken"] as? String{
+                            let refreshToken = result["refreshToken"] as? String,
+                            let userName = result["name"] as? String,
+                            let role = result["role"] as? String{
                             
-                                print("refreshToken이 만료되지 않았습니다. 새로운 토큰을 발급받고 저장합니다. accessToken :  \(accessToken), refreshToken : \(refreshToken)")
-                                saveAuthToken(token: accessToken, refresh: refreshToken)
+//                                print("refreshToken이 만료되지 않았습니다. 새로운 토큰을 발급받고 저장합니다. accessToken :  \(accessToken), refreshToken : \(refreshToken)")
+                                saveAuthToken(token: accessToken, refresh: refreshToken,userName: userName,role: role)
                         }else{
                             print("토큰 재발행 에러 - Invalid JSON response")
+                            isValid = false
+                            AuthenticationManager.logoutUser()
                         }
                     }
                 }else{
                     print("reissue - 통신 에러")
+                    isValid = false
+                    AuthenticationManager.logoutUser()
                 }
             }
         }

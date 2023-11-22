@@ -252,7 +252,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
         print("UploadImageTapped - called()")
         if(imageNum >= 5){
             // 최대 5장으로 제한! Alert
-            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드 할 수 있습니다!", message: nil, preferredStyle: .alert)
+            let Alert = UIAlertController(title: "이미지는 최대 5개 업로드 할 수 있습니다", message: nil, preferredStyle: .alert)
             let OkAction = UIAlertAction(title: "확인", style: .default) { (_) in
                 //확인 액션
             }
@@ -279,7 +279,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]){
         loadingIndicator.stopAnimating()
         if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            print("imagePickerController - \(selectedImage)")
+//            print("imagePickerController - \(selectedImage)")
             // 선택한 이미지를 업로드하거나 다른 처리를 수행
             // 선택한 이미지를 어딘가에 저장하는 등 작업 수행
             addImage = selectedImage
@@ -295,7 +295,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
             AddImageView = Array(repeating: UIImageView(), count: 5)
         }
         if imageNum >= 0 && imageNum < AddImageView.count {
-            print("이미지를 추가합니다. AddimageView : \(AddImageView.count), imageNum : \(imageNum)")
+//            print("이미지를 추가합니다. AddimageView : \(AddImageView.count), imageNum : \(imageNum)")
             AddImageView[imageNum] = UIImageView(image: addImage)
             // 이미지뷰와 삭제 버튼을 포함하는 뷰 생성
             let imageContainerView = UIView()
@@ -337,7 +337,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
                 make.width.equalTo(100)
                 make.height.equalTo(100)
             }
-            print("이미지 프레임 입니다. \(imageframe)")
+//            print("이미지 프레임 입니다. \(imageframe)")
             // 이미지 스택에 뷰 추가
             imageStack.addArrangedSubview(imageContainerView)
             // 이미지뷰를 추가할 때마다 imageStack의 width 제약을 업데이트합니다.
@@ -356,7 +356,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
     // 삭제 메서드
     @objc func deleteImage(_ sender: UIButton) {
         let indexToDelete = sender.tag
-        print("\(indexToDelete+1)번째 이미지가 삭제되었습니다.")
+//        print("\(indexToDelete+1)번째 이미지가 삭제되었습니다.")
         AddImageView = Array(repeating: UIImageView(), count: imageNum)
         if indexToDelete >= 0 && indexToDelete < AddImageView.count {
             // 이미지뷰와 삭제 버튼을 포함하는 뷰를 가져옴
@@ -369,12 +369,12 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
                 imageStack.removeArrangedSubview(imageContainerView)
                 imageNum -= 1
                 imageframe -= 120
-                print("남은 이미지 개수입니다 - \(imageNum)개")
+//                print("남은 이미지 개수입니다 - \(imageNum)개")
                 // 이미지 스택의 너비 업데이트
                 updateImageStackWidth()
                 //AddImageView = Array(repeating: UIImageView(), count: 5)
                 // 삭제된 이미지 뒤의 이미지들의 인덱스를 업데이트
-                print("이미지 갯수 \(AddImageView.count)")
+//                print("이미지 갯수 \(AddImageView.count)")
                 // 이미지와 버튼의 태그 업데이트
                 for i in 0..<AddImageView.count {
                     if let imageContainerView = imageStack.arrangedSubviews[i] as? UIView {
@@ -406,7 +406,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
                 "Content-Type" : "multipart/form-data",
                 "accessToken" : "\(accesToken)"
             ]
-            print("서버로 보낼 이미지 갯수 : \(images.count)")
+//            print("서버로 보낼 이미지 갯수 : \(images.count)")
             if(images.count == 0) {
                 self.imageInfoArray = []
                 completion()
@@ -418,7 +418,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
                     if let imageData = image.pngData(){
                         let imageName = "image\(index).jpg"
                         // 내용을 추가하기 전에 로그에 출력
-                        print("Adding image with name: \(imageName)")
+//                        print("Adding image with name: \(imageName)")
                         multipartFormData.append(imageData, withName: "files", fileName: "image\(index).jpg", mimeType: "image/jpeg")
                         //서버와의 맞춤 필요
 //                        withname – 서버에서 요구하는 key값
@@ -439,16 +439,16 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
                     if let data = data {
                         do {
                             if let responseData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                                print("업로드 결과 입니다. \(responseData)")
+//                                print("업로드 결과 입니다. \(responseData)")
                                 // JSON 파싱 성공
                                 if let resultArray = responseData["result"] as? [[String: Any]] {
                                         for result in resultArray {
-                                            if let imageName = result["imageName"] as? String,
-                                               let imageUrl = result["imageUrl"] as? String {
+                                            if let imageName = result["fileName"] as? String,
+                                               let imageUrl = result["fileUrl"] as? String {
                                                 // imageName과 imageUrl을 사용
                                                 let imageInfo = ["imageName": imageName, "imageUrl": imageUrl]
                                                 self.imageInfoArray.append(imageInfo)
-                                                print("이미지 배열 입니다. \(self.imageInfoArray)")
+//                                                print("이미지 배열 입니다. \(self.imageInfoArray)")
                                             } else {
                                                 print("imageName 또는 imageUrl을 찾을 수 없습니다.")
                                             }
@@ -483,12 +483,12 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
         let titleText = titleTextField?.text ?? ""
         let messageText = messageTextView?.text ?? ""
                 
-        print("UploadBtnTapped() - \(titleText), \(messageText)")
+//        print("UploadBtnTapped() - \(titleText), \(messageText)")
         loadingIndicator.startAnimating()
         if(titleText == ""){
             if(messageText == "내용"){
                 //둘다 없을때
-                let alertController = UIAlertController(title: nil, message: "제목과 내용을 작성해 주세요.", preferredStyle: .alert)
+                let alertController = UIAlertController(title: nil, message: "제목과 내용을 작성해 주세요", preferredStyle: .alert)
                 let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                 }
                 alertController.addAction(CancelController)
@@ -496,14 +496,14 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
             }
             //게시글의 제목이 없을때 팝업
             else{
-                let alertController = UIAlertController(title: nil, message: "제목을 작성해 주세요.", preferredStyle: .alert)
+                let alertController = UIAlertController(title: nil, message: "제목을 작성해 주세요", preferredStyle: .alert)
                 let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                 }
                 alertController.addAction(CancelController)
                 present(alertController, animated: true)}
         }else if(messageText == "내용"){
             //게시글의 내용이 없을때 팝업
-            let alertController = UIAlertController(title: nil, message: "내용을 작성해 주세요.", preferredStyle: .alert)
+            let alertController = UIAlertController(title: nil, message: "내용을 작성해 주세요", preferredStyle: .alert)
             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
             }
             alertController.addAction(CancelController)
@@ -548,7 +548,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
                     // 서버 응답 데이터 처리 (만약 필요하다면)
                     if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                         // 서버로부터 받은 JSON 데이터 처리
-                        print("Response JSON: \(responseJSON)")
+//                        print("Response JSON: \(responseJSON)")
                         status = responseJSON["status"] as? Int ?? 0
                         }
                     }
@@ -556,7 +556,7 @@ extension DepartOpenWriteViewController: UIImagePickerControllerDelegate, UINavi
                         //적절할때. 업로드 완료가 되었을때. 팝업. reload
                         DispatchQueue.main.async{
                             self.loadingIndicator.stopAnimating()
-                            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다.", preferredStyle: .alert)
+                            let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다", preferredStyle: .alert)
                             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                                 // OpenBoardViewController로 이동
                                 if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is DepartBoardViewController }) {

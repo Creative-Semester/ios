@@ -50,7 +50,7 @@ class CouncilRegisterViewController : UIViewController{
         let text = UITextView()
         text.textColor = #colorLiteral(red: 0.6696126461, green: 0.6785762906, blue: 0.6784186959, alpha: 1)
         text.backgroundColor = #colorLiteral(red: 0.9680508971, green: 0.9680508971, blue: 0.9680508971, alpha: 1)
-        text.text = "학생회장, 학생회분들은\n@Sejong_Community\nor\naskdjflasjf@naver.com\n로 연락주시면 인증코드를 보내드리겠습니다."
+        text.text = "\n학생회분들은\nbrian876373@gmail.com\n로 메일 전송\n\n확인 후 인증코드가 발송됩니다."
         text.textAlignment = .center
         text.isEditable = false
         text.font = UIFont.boldSystemFont(ofSize: 15)
@@ -100,7 +100,7 @@ class CouncilRegisterViewController : UIViewController{
          CodeBtn.backgroundColor = #colorLiteral(red: 0.9744978547, green: 0.7001121044, blue: 0.6978833079, alpha: 1)
          CodeBtn.setTitle("인증받기", for: .normal)
          CodeBtn.setTitleColor(.black, for: .normal)
-         CodeBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+         CodeBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
          CodeBtn.layer.cornerRadius = 20
          CodeBtn.layer.masksToBounds = true
          CodeBtn.addTarget(self, action: #selector(CodeBtnTapped), for: .touchUpInside)
@@ -183,20 +183,22 @@ class CouncilRegisterViewController : UIViewController{
     @objc func CodeBtnTapped() {
         print("CodeBtnTapped - called()")
         //인증 코드
+        var msg = ""
         let code = codetext?.text ?? ""
-        print("code - \(code)")
-        let urlString = ""
+        let urlString = "https://keep-ops.shop/api/v1/council/auth"
         guard let url = URL(string: urlString) else{
             return //유효하지 않은 URL 처리
         }
         var request = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = "PUT"
         let requestbody : [String:Any] = [
-            "code" : code
+            "grantCode" : code
         ]
         if let jsonData = try?JSONSerialization.data(withJSONObject: requestbody, options: []){
             request.httpBody = jsonData
         }
+        // 토큰 유효성 검사
+        if AuthenticationManager.isTokenValid(){}else{}
         // HTTP 요성 헤더 설정(필요에 따라 추가)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         let token = KeychainWrapper.standard.string(forKey: "AuthToken")
@@ -212,17 +214,32 @@ class CouncilRegisterViewController : UIViewController{
                 // 서버로부터 받은 JSON 데이터 처리
                 print("Response JSON: \(responseJSON)")
                 status = responseJSON["status"] as? Int ?? 0
+                print("학생회 신청 결과 값 - \(responseJSON)")
+                if let message = responseJSON["message"] as? String{
+                    msg = message
+                    }
                 }
             }
             if status == 200 {
                 //적절할때. 업로드 완료가 되었을때. 팝업. reload
                 DispatchQueue.main.async{
-                    let alertController = UIAlertController(title: "신청이 완료 되었습니다.", message: "승인 메일 수신 시 로그아웃", preferredStyle: .alert)
+                    self.codetext?.text = ""
+                    let alertController = UIAlertController(title: "학생회 승인", message: "학생회 계정으로 변경되었습니다", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                         // OpenBoardViewController로 이동
                         if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is MypageViewController }) {
                             self.navigationController?.popToViewController(openboardViewController, animated: true)
                         }
+                    }
+                    alertController.addAction(CancelController)
+                    self.present(alertController, animated: true)
+                }
+            }else if msg == "코드가 일치하지 않습니다."{
+                DispatchQueue.main.async{
+                    self.codetext?.text = ""
+                    let alertController = UIAlertController(title: "코드가 일치하지 않습니다", message: nil, preferredStyle: .alert)
+                    let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                        
                     }
                     alertController.addAction(CancelController)
                     self.present(alertController, animated: true)
