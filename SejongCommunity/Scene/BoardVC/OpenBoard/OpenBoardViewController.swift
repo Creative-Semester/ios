@@ -24,7 +24,7 @@ struct Post: Decodable {
     }
 }
 //UITableViewDataSource, UITableViewDelegate 테이블뷰와 데이터를 연결
-class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource,UIScrollViewDelegate {
+class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     //페이지 번호와 크기
     var currentPage = 0
     
