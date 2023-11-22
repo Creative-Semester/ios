@@ -59,10 +59,6 @@ class AuthenticationManager {
                 print("Error: \(error.localizedDescription)")
             } else if let data = data {
                 if let responseJSON = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-                    //서버로부터 받은 JSON 데이터 처리
-//                    print("Response JSON: \(responseJSON)")
-                    //토큰이 만료 되었는지 확인
-//                    print("토큰 유효성 검사 메서드에서의 status - \(responseJSON["status"]), code - \(responseJSON["code"]),  result - \(responseJSON["result"])")
                     if  let result = responseJSON["result"] as? String,
                         let serverResponseCode = responseJSON["code"] as? String,
                         let message = responseJSON["message"] as? String{
