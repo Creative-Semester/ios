@@ -68,8 +68,8 @@ class AuthenticationManager {
                         let message = responseJSON["message"] as? String{
                         Expiration = serverResponseCode
                         Message = message
-                        Result = "reissue not required"
-                        print("토큰 유효성 검사 : \(serverResponseCode), \(Expiration), 메시지 : \(message)")
+                        Result = result
+//                        print("토큰 유효성 검사 : \(serverResponseCode), \(Expiration), 메시지 : \(message)")
                     }else{
                         print("토큰 유효성 검사 에러 - Invalid JSON response")
                     }
