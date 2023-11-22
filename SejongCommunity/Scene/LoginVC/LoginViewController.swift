@@ -14,8 +14,6 @@ class LoginViewController : UIViewController {
     // 아이디와 비밀번호 입력 필드 선언
     private let idText = UITextField()
     private let passwordText = UITextField()
-    // 로딩 인디케이터
-    var loadingIndicator: UIActivityIndicatorView!
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated) // 백 버튼 숨기기
@@ -33,11 +31,9 @@ class LoginViewController : UIViewController {
     override func viewDidLoad() {
         print("LoginViewController - called()")
         super.viewDidLoad()
+        self.idText.backgroundColor = .black
+        self.passwordText.backgroundColor = .black
         self.view.backgroundColor = .white
-        loadingIndicator = UIActivityIndicatorView(style: .large)
-        loadingIndicator.color = .gray
-        loadingIndicator.center = self.view.center
-        self.view.addSubview(loadingIndicator)
         setupTapGesture()
         setUpAutoLayout()
     }
@@ -100,7 +96,6 @@ class LoginViewController : UIViewController {
         let id = idText.text ?? "" //아이디 가져오기
         let password = passwordText.text ?? "" //비밀번호 가져오기
         print("LoginBtnTapped - Called \(id), \(password)")
-        self.loadingIndicator.startAnimating()
         // 이후 서버와 통신하기 위한 URL 설정
         let urlString = "https://keep-ops.shop/api/v1/auth/login"
         guard let url = URL(string: urlString) else {
@@ -131,7 +126,14 @@ class LoginViewController : UIViewController {
                     guard let httpResponse = response as? HTTPURLResponse,
                           (200...299).contains(httpResponse.statusCode) else {
                         // 서버 응답 상태 코드 처리
-                        print("Invalid response status code - \(response)")
+//                        print("Invalid response status code - \(response)")
+                        //로그인 에러
+                        DispatchQueue.main.async {
+                            let alert = UIAlertController(title: "아이디 혹은 비밀번호를 다시 확인해주세요", message: nil, preferredStyle: .alert)
+                            let ok = UIAlertAction(title: "확인", style: .default)
+                            alert.addAction(ok)
+                            self.present(alert, animated: true)
+                        }
                         return
                     }
                     if let data = data {
@@ -142,11 +144,13 @@ class LoginViewController : UIViewController {
                                 // 예: 로그인 성공 또는 실패 처리
                                 if let result = jsonResponse["result"] as? [String: Any],
                                    let accessToken = result["accessToken"] as? String,
-                                   let refreshToken = result["refreshToken"] as? String {
-                                    print("검사들어갑니다")
-                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
+                                   let refreshToken = result["refreshToken"] as? String,
+                                   let userName = result["name"] as? String,
+                                   let role = result["role"] as? String{
+//                                    print("검사들어갑니다")
+//                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
                                     // 토큰 저장
-                                    AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken)
+                                    AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken, userName: userName, role: role)
                                     DispatchQueue.main.async {
                                         let mainTabBarController = MainTabBarController()
                                         mainTabBarController.setRootViewController()
@@ -154,9 +158,6 @@ class LoginViewController : UIViewController {
                                         if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                                             sceneDeleagate.window?.makeKeyAndVisible()
                                         }
-                                    }
-                                    DispatchQueue.main.async {
-                                        self.loadingIndicator.stopAnimating()
                                     }
                                 }
                             } else {
