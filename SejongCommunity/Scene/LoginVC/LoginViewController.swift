@@ -90,9 +90,17 @@ class LoginViewController : UIViewController {
         
        return view
     }()
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .gray
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
     //MARK: - Login Method
     //로그인 버튼 메서드
     @objc func LoginBtnTapped() {
+        loadingIndicator.startAnimating()
         let id = idText.text ?? "" //아이디 가져오기
         let password = passwordText.text ?? "" //비밀번호 가져오기
         print("LoginBtnTapped - Called \(id), \(password)")
@@ -129,6 +137,7 @@ class LoginViewController : UIViewController {
 //                        print("Invalid response status code - \(response)")
                         //로그인 에러
                         DispatchQueue.main.async {
+                            self.loadingIndicator.stopAnimating()
                             let alert = UIAlertController(title: "아이디 혹은 비밀번호를 다시 확인해주세요", message: nil, preferredStyle: .alert)
                             let ok = UIAlertAction(title: "확인", style: .default)
                             alert.addAction(ok)
@@ -147,13 +156,14 @@ class LoginViewController : UIViewController {
                                    let refreshToken = result["refreshToken"] as? String,
                                    let userName = result["name"] as? String,
                                    let role = result["role"] as? String{
-//                                    print("검사들어갑니다")
-//                                    print("액세스토큰 - \(accessToken), 리프레시토큰 - \(refreshToken)")
+                                    UserDefaults.standard.set(userName, forKey: "userName")
+                                    UserDefaults.standard.set(role, forKey: "role")
                                     // 토큰 저장
                                     AuthenticationManager.saveAuthToken(token: accessToken, refresh: refreshToken, userName: userName, role: role)
                                     DispatchQueue.main.async {
                                         let mainTabBarController = MainTabBarController()
                                         mainTabBarController.setRootViewController()
+                                        self.loadingIndicator.stopAnimating()
                                         (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(mainTabBarController, animated: true)
                                         if let sceneDeleagate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                                             sceneDeleagate.window?.makeKeyAndVisible()
@@ -283,6 +293,11 @@ extension LoginViewController{
         }
         SecondLabel.snp.makeConstraints{ (make) in
             make.trailing.leading.equalToSuperview().inset(20)
+        }
+        view.addSubview(loadingIndicator)
+        loadingIndicator.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview()
         }
     }
     // 버튼을 누르면 비밀번호가 보임
