@@ -223,7 +223,7 @@ class OfficeDetailsCellTappedViewController: UIViewController {
         view.addSubview(downloadButton)
         downloadButton.snp.makeConstraints { make in
             make.top.equalTo(remainingAountLabel.snp.bottom).offset(5)
-            make.leading.equalTo(view.snp.leading).offset(20)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
     }
 

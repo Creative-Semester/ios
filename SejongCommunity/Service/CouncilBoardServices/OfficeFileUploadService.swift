@@ -25,7 +25,12 @@ class OfficeFileUploadService {
         ]
         
         AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(fileURL, withName: "files", fileName: fileName, mimeType: "application/vnd.ms-excel")
+            do {
+                let fileData = try Data(contentsOf: fileURL)
+                multipartFormData.append(fileData, withName: "files", fileName: fileName, mimeType: "application/octet-stream")
+            } catch {
+                print("Error loading file data: \(error)")
+            }
         }, to: url, method: .post, headers: header)
         .response { dataResponse in
             // 업로드 완료 후의 응답 처리
