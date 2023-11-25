@@ -36,6 +36,7 @@
 		F12465192A67BAB600037D8C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F12465182A67BAB600037D8C /* Assets.xcassets */; };
 		F124651C2A67BAB600037D8C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F124651A2A67BAB600037D8C /* LaunchScreen.storyboard */; };
 		F12FE6B72AD0434C00B47DA0 /* NetworkResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12FE6B62AD0434C00B47DA0 /* NetworkResult.swift */; };
+		F14120E82B11F4E300909941 /* FileWebKitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14120E72B11F4E300909941 /* FileWebKitViewController.swift */; };
 		F1448FF92AD2AEAE00AE9E7A /* DepartmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1448FF82AD2AEAE00AE9E7A /* DepartmentModel.swift */; };
 		F1448FFB2AD2AF6D00AE9E7A /* DepartmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1448FFA2AD2AF6D00AE9E7A /* DepartmentService.swift */; };
 		F14E43CC2AD2B2540096221D /* DepartmentPromisesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14E43CB2AD2B2540096221D /* DepartmentPromisesModel.swift */; };
@@ -124,6 +125,7 @@
 		F124651B2A67BAB600037D8C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F124651D2A67BAB600037D8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F12FE6B62AD0434C00B47DA0 /* NetworkResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkResult.swift; sourceTree = "<group>"; };
+		F14120E72B11F4E300909941 /* FileWebKitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWebKitViewController.swift; sourceTree = "<group>"; };
 		F1448FF82AD2AEAE00AE9E7A /* DepartmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartmentModel.swift; sourceTree = "<group>"; };
 		F1448FFA2AD2AF6D00AE9E7A /* DepartmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartmentService.swift; sourceTree = "<group>"; };
 		F14E43CB2AD2B2540096221D /* DepartmentPromisesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartmentPromisesModel.swift; sourceTree = "<group>"; };
@@ -399,6 +401,7 @@
 				F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */,
 				F1E547272A7E780A00671182 /* PledgeTableViewCell.swift */,
 				F1E547952AB9BC8E00671182 /* WriteOfficeDetailsViewController.swift */,
+				F14120E72B11F4E300909941 /* FileWebKitViewController.swift */,
 			);
 			path = CouncilBoard;
 			sourceTree = "<group>";
@@ -521,12 +524,12 @@
 			);
 			mainGroup = F12465032A67BAB500037D8C;
 			packageReferences = (
-				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar.git" */,
-				F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts.git" */,
-				E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper.git" */,
-				E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit.git" */,
-				E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher.git" */,
-				E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire.git" */,
+				E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */,
+				E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */,
+				E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = F124650D2A67BAB500037D8C /* Products */;
 			projectDirPath = "";
@@ -645,6 +648,7 @@
 				F16C940B2AF76EDF00CD01E8 /* OfficeFileDeleteModel.swift in Sources */,
 				F12465122A67BAB500037D8C /* SceneDelegate.swift in Sources */,
 				F1E547A52ACABEF700671182 /* APIContants.swift in Sources */,
+				F14120E82B11F4E300909941 /* FileWebKitViewController.swift in Sources */,
 				F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */,
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				E4E9F65E2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift in Sources */,
@@ -886,7 +890,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit.git" */ = {
+		E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
@@ -894,7 +898,7 @@
 				kind = branch;
 			};
 		};
-		E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher.git" */ = {
+		E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
 			requirement = {
@@ -902,7 +906,7 @@
 				minimumVersion = 7.0.0;
 			};
 		};
-		E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire.git" */ = {
+		E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -910,7 +914,7 @@
 				kind = branch;
 			};
 		};
-		E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper.git" */ = {
+		E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jrendel/SwiftKeychainWrapper.git";
 			requirement = {
@@ -918,7 +922,7 @@
 				kind = branch;
 			};
 		};
-		E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar.git" */ = {
+		E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
 			requirement = {
@@ -926,7 +930,7 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts.git" */ = {
+		F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/danielgindi/Charts.git";
 			requirement = {
@@ -939,32 +943,32 @@
 /* Begin XCSwiftPackageProductDependency section */
 		E49CCEF32B03DBA3006D08B3 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit.git" */;
+			package = E49CCEF22B03DBA3006D08B3 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 		E49CCEF62B03DC12006D08B3 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher.git" */;
+			package = E49CCEF52B03DC12006D08B3 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
 		E49CCEFC2B03DDC9006D08B3 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire.git" */;
+			package = E49CCEFB2B03DDC9006D08B3 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 		E4B1E7512ABD769A00CD4DE2 /* SwiftKeychainWrapper */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper.git" */;
+			package = E4B1E7502ABD769A00CD4DE2 /* XCRemoteSwiftPackageReference "SwiftKeychainWrapper" */;
 			productName = SwiftKeychainWrapper;
 		};
 		E4D466592AB1B7DA003E5DD9 /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar.git" */;
+			package = E4D466582AB1B7DA003E5DD9 /* XCRemoteSwiftPackageReference "FSCalendar" */;
 			productName = FSCalendar;
 		};
 		F1E5479A2AC2B27E00671182 /* DGCharts */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts.git" */;
+			package = F1E547992AC2B27E00671182 /* XCRemoteSwiftPackageReference "Charts" */;
 			productName = DGCharts;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -7,11 +7,19 @@
 
 import UIKit
 import SnapKit
+import WebKit
 
 class OfficeDetailsCellTappedViewController: UIViewController {
     
     var officeDetailList: OfficeDetailList?
     var time: String?
+    
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .gray
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -97,54 +105,27 @@ class OfficeDetailsCellTappedViewController: UIViewController {
         dateLabel.text = time
         usedAmountLabel.text = "사용 금액 : " + officeDetailList.usedMoney + "원"
         remainingAountLabel.text = "남은 금액 : " + officeDetailList.restMoney + "원"
-        let fileTitle: String = "\"\(officeDetailList.fileInfo.fileName)\" 파일 다운로드"
+        let fileTitle: String = "\"\(officeDetailList.fileInfo.fileName)\" 파일 보기"
         downloadButton.setTitle(fileTitle, for: .normal)
     }
     
     @objc func downloadFile() {
         // 파일 다운로드 URL 또는 경로 설정
+        loadingIndicator.startAnimating()
         guard let officeDetailList = officeDetailList,
               let fileURL = URL(string: officeDetailList.fileInfo.fileUrl) else {
             print("Invalid file URL")
             return
         }
-        
-        URLSession.shared.downloadTask(with: fileURL) { (tempURL, response, error) in
-            guard let tempURL = tempURL, error == nil else {
-                print("File download failed with error: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
+        DispatchQueue.global().async {
+            let webViewController = FileWebKitViewController(excelFileURL: fileURL)
             
-            // 원하는 파일 형식을 여기에서 확인합니다
-            let destinationURL: URL?
-            if fileURL.pathExtension.lowercased() == "xlsx" {
-                destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("your-excel-file.xlsx")
-            } else if fileURL.pathExtension.lowercased() == "pdf" {
-                destinationURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("your-pdf-file.pdf")
-            } else {
-                print("Unsupported file type: \(fileURL.pathExtension)")
-                return
+            DispatchQueue.main.async {
+                self.loadingIndicator.stopAnimating()
+                self.navigationController?.pushViewController(webViewController, animated: true)
             }
-            
-            guard let finalURL = destinationURL else {
-                print("Destination URL is nil")
-                return
-            }
-            
-            do {
-                try FileManager.default.moveItem(at: tempURL, to: finalURL)
-                
-                print("File downloaded to: \(finalURL)")
-                
-                // 다운로드 완료 후 원하는 동작 수행
-                // 예를 들어, 파일 다운로드 완료 후 다운로드한 파일을 열도록 설정할 수 있습니다.
-                // self.openDownloadedFile(at: finalURL)
-            } catch {
-                print("File move error: \(error.localizedDescription)")
-            }
-        }.resume()
+        }
     }
-
     
     @objc func showPopup() {
         let alertController = UIAlertController(title: "글 편집", message: nil, preferredStyle: .actionSheet)
@@ -225,6 +206,11 @@ class OfficeDetailsCellTappedViewController: UIViewController {
             make.top.equalTo(remainingAountLabel.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
         }
+        
+        view.addSubview(loadingIndicator)
+        loadingIndicator.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview()
+        }
     }
-
 }
