@@ -25,25 +25,27 @@ struct DepartPost: Decodable {
 class DepartBoardViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     //페이지 번호와 크기
     var currentPage = 0
-    
+    var totalPage = 1
     //게시글을 저장시킬 테이블 뷰 생성
     let tableView = UITableView()
-    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     var departposts : [DepartPost] = [
     ]
+    let refreshControl = UIRefreshControl()
     override func viewDidLoad() {
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
         self.navigationController?.navigationBar.tintColor = .red
         title = "학생회 공지사항"
         setupTableView()
-        //글쓰기 버튼을 상단 바에 추가
-        let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
-        // 우측 바 버튼 아이템 배열에 추가
-        navigationItem.rightBarButtonItems = [addButton]
-        // 로딩 인디케이터 뷰 초기 설정
-        activityIndicator.color = .gray
-        activityIndicator.center = view.center
-        
+        //해당 학생이 학생회 권한을 가지고 있을 경우
+        let role = UserDefaults.standard.string(forKey: "role")
+        if role == "ROLE_ADMIN" {
+            //글쓰기 버튼을 상단 바에 추가
+            let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
+            // 우측 바 버튼 아이템 배열에 추가
+            navigationItem.rightBarButtonItems = [addButton]
+        }
+        refreshControl.addTarget(self, action: #selector(refreshtableView), for: .valueChanged)
+        tableView.refreshControl = refreshControl
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
@@ -76,6 +78,10 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         self.view.addSubview(tableView)
     }
     // MARK: - UITableViewDataSource
+    @objc func refreshtableView() {
+        updatePage()
+        tableView.refreshControl?.endRefreshing()
+    }
     //테이블 뷰의 데이터 소스 프로토콜을 구현
     //numberOfRowsInSection 메서드 개시물 개수 반환
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -149,7 +155,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         present(Alert, animated: true)
     }
     //MARK: - 서버에서 데이터 가져오기
-    var isLoading = false  // 중복 로드 방지를 위한 플래그
     func fetchPosts(page: Int, completion: @escaping ([DepartPost]?, Error?) -> Void) {
         let url = URL(string: "https://keep-ops.shop/api/v1/boards?page=\(page)&boardType=Council")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
@@ -158,7 +163,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(acToken, forHTTPHeaderField: "accessToken")
-        var page = currentPage
+        let page = currentPage
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completion(nil, error)
@@ -172,7 +177,11 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let result = json?["result"] as? [String: Any], let boards = result["boards"] as? [[String: Any]] {
+                if let result = json?["result"] as? [String: Any],  let total = result["totalPages"] as? Int,
+                   let current = result["currentPage"] as? Int,
+                   let boards = result["boards"] as? [[String: Any]] {
+                    self.totalPage = total
+                    self.currentPage = current
                     var posts = [DepartPost]()
                     for board in boards {
                         if let title = board["title"] as? String,
@@ -202,53 +211,25 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
             }
         }.resume()
     }
-
-    var isScrolling = false
-    var lastContentOffsetY : CGFloat = 0
-    var isScrollingDown = false
-    var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
-    var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentOffsetY = scrollView.contentOffset.y
-        let screenHeight = scrollView.bounds.size.height
-        let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
-
-        if contentOffsetY >= 0 {
-            isScrollingDown = true
-        } else {
-            isScrollingDown = false
-        }
-
-        if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
-            if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
-                loadNextPageCalled = true // 호출되었다고 표시
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating()
-                loadNextPage()
-            }
-        } else if !isScrollingDown && contentOffsetY < threshold {
-            if !updatePageCalled {
-                updatePageCalled = true
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating()
-                updatePage()
-            }
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let screenHeight = scrollView.frame.height
+        
+        // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
+        if offsetY + contentHeight >= screenHeight && currentPage < totalPage {
+            print("현재 페이지 : \(currentPage),\n전체 페이지 : \(totalPage)")
+            loadNextPage()
         }
     }
     //새로운 페이지 새로고침
     @objc func updatePage() {
         print("updatePage() - called")
-        if isLoading {
-                return // 이미 로딩 중이면 중복 로딩 방지
-            }
-            
-        isLoading = true
         currentPage = 0 //처음 페이지부터 다시 시작
         //스크롤을 감지해서 인디케이터가 시작되면 종료가 되면 로딩인디케이터를 멈처야함
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            self.isLoading = false // 로딩 완료
             // 데이터를 비워줌
             self.departposts.removeAll()
             if let newPosts = newPosts {
@@ -264,26 +245,15 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
                 // 오류 처리
                 print("Error fetching next page: \(error.localizedDescription)")
             }
-            // 로딩 인디케이터 멈춤
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-            self.updatePageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
     //스크롤이 아래로 내려갈때 기존페이지 + 다음 페이지 로드
     func loadNextPage() {
         print("loadNextPage() - called")
         currentPage += 1
-        if isLoading {
-                return // 이미 로딩 중이면 중복 로딩 방지
-            }
-        isLoading = true
-        //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
-
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            self.isLoading = false // 로딩 완료
+//            self.isLoading = false // 로딩 완료
             if let newPosts = newPosts {
                 self.departposts += newPosts
                 // 테이블뷰 갱신
@@ -294,12 +264,6 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
             } else if let error = error {
                 print("Error fetching next page: \(error.localizedDescription)")
             }
-            // 로딩 인디케이터 멈춤
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-            self.isLoading = false
-            self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
     override func viewWillDisappear(_ animated: Bool) {

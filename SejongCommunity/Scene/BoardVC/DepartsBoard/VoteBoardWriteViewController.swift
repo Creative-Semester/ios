@@ -361,14 +361,28 @@ class VoteBoardWriteViewController : UIViewController, UITextViewDelegate {
                             let alertController = UIAlertController(title: nil, message: "게시글이 업로드 되었습니다", preferredStyle: .alert)
                             let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                                 if self.boardType == "Free" {
-                                    // OpenBoardViewController로 이동
-                                    if let openboardViewController = self.navigationController?.viewControllers.first(where: { $0 is OpenBoardViewController }) {
-                                        self.navigationController?.popToViewController(openboardViewController, animated: true)
+                                    if let navigationController = self.navigationController {
+                                        var viewControllers = navigationController.viewControllers
+                                        if let postViewController = viewControllers.firstIndex(of: self), postViewController > 0{
+                                            viewControllers.remove(at: postViewController)
+                                            viewControllers.remove(at: postViewController - 1)
+                                        }
+                                        // OpenBoardViewController로 이동
+                                        let openBoardViewController = OpenBoardViewController()
+                                        viewControllers.append(openBoardViewController)
+                                        navigationController.setViewControllers(viewControllers, animated: true)
                                     }
                                 }else if self.boardType == "Council" {
-                                    // DepartBoardViewController로 이동
-                                    if let departBoardViewController = self.navigationController?.viewControllers.first(where: { $0 is DepartBoardViewController }) {
-                                        self.navigationController?.popToViewController(departBoardViewController, animated: true)
+                                    if let navigationController = self.navigationController {
+                                        var viewControllers = navigationController.viewControllers
+                                        if let postViewController = viewControllers.firstIndex(of: self), postViewController > 0{
+                                            viewControllers.remove(at: postViewController)
+                                            viewControllers.remove(at: postViewController - 1)
+                                        }
+                                        // OpenBoardViewController로 이동
+                                        let openBoardViewController = DepartBoardViewController()
+                                        viewControllers.append(openBoardViewController)
+                                        navigationController.setViewControllers(viewControllers, animated: true)
                                     }
                                 }
                             }
