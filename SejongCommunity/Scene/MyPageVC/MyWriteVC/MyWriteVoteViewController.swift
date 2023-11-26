@@ -46,9 +46,9 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
     var cellHeights: [CGFloat] = []
     // 좋아요 버튼
     private let GreatBtn = UIButton()
-    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     //페이지 번호와 크기
     var currentPage = 0
+    var totalPage = 1
     //해당 게시글 작성자와 사용자가 동일한지 비교하기 위해 전역변수 선언
     var IsMine = false
     // 댓글을 저장할 배열
@@ -69,9 +69,9 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
     var vview = UIView()
     var ScrollView = UIScrollView()
     var StackView = UIStackView()
+    let refreshControl = UIRefreshControl()
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.activityIndicator.startAnimating()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,10 +82,6 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         CommentTableView.rowHeight = UITableView.automaticDimension
         BoardDetailShow { [weak self] in
             guard let self = self else { return }} // 게시글의 사용자와 작성자를 비교하기 위한 메서드 호출
-        self.activityIndicator.stopAnimating()
-        // 로딩 인디케이터 뷰 초기 설정
-        activityIndicator.color = .gray
-        activityIndicator.center = view.center
         // 처음 들어오면 투표를 조회해서 찬성, 반대 수 가져오기
         //사용자가 이미 투표한 경우 투표를 못하게 해야함.
         VoteStatusCheck()
@@ -93,6 +89,8 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
         disagreeCountLabel.text = "반대: \(disagreeCount)"
         updateRatioLabel()
         updateProgressViews()
+        refreshControl.addTarget(self, action: #selector(refreshtableView), for: .valueChanged)
+        ScrollView.refreshControl = refreshControl
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
@@ -113,7 +111,11 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
                 }
             }
         title = post.title
-        let toolBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(toolBtnTapped))
+        let ellipsisbtn = UIButton()
+        ellipsisbtn.tintColor = .red
+        ellipsisbtn.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        ellipsisbtn.addTarget(self, action: #selector(toolBtnTapped), for: .touchUpInside)
+        let toolBtn = UIBarButtonItem(customView: ellipsisbtn)
         navigationItem.rightBarButtonItem = toolBtn
         vview = UIView()
         vview.backgroundColor = .white
@@ -394,31 +396,14 @@ class MyWriteVoteViewController : UIViewController, UITableViewDelegate, UITable
 //MARK: - ScrollDetect, SetKeyBoard
 extension MyWriteVoteViewController {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentOffsetY = scrollView.contentOffset.y
-        let screenHeight = scrollView.bounds.size.height
-        let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
-
-        if contentOffsetY >= 0 {
-            isScrollingDown = true
-        } else {
-            isScrollingDown = false
-        }
-
-        if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
-            if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
-                loadNextPageCalled = true // 호출되었다고 표시
-                
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating() // 로딩 인디케이터 시작
-                loadNextPage()
-            }
-        } else if !isScrollingDown && contentOffsetY < threshold {
-            if !updatePageCalled { //호출되지 않은 경우에만 실행
-                updatePageCalled = true // 호출되었다고 표시
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating() // 로딩 인디케이터 시작
-                updatePage()
-            }
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let screenHeight = scrollView.frame.height
+        
+        // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
+        if offsetY + contentHeight >= screenHeight && currentPage < totalPage {
+            print("현재 페이지 : \(currentPage),\n전체 페이지 : \(totalPage)")
+            loadNextPage()
         }
     }
     //화면의 다른 곳을 눌렀을 때 가상키보드가 사라짐
@@ -497,6 +482,10 @@ extension MyWriteVoteViewController {
         // 레이블 내용에 따라 높이를 계산하고, 레이블 높이에 여백을 추가하여 반환
         return labelSize.height + 20
     }
+    @objc func refreshtableView() {
+        updatePage()
+        CommentTableView.refreshControl?.endRefreshing()
+    }
     // MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return comments.count
@@ -565,82 +554,46 @@ extension MyWriteVoteViewController {
         // 서버에서 다음 페이지의 데이터를 가져옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-            let commentCount = self.comments.count
             // 데이터를 비워줌
             self.comments.removeAll()
             if let newPosts = newPosts {
                 // 새로운 데이터를 기존 데이터와 병합
                 self.comments += newPosts
-//                print("갱신된 댓글 테이블입니다 - \(self.comments)")
+                
                 // 테이블 뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
-                }
-                if commentCount < self.comments.count{
-                    DispatchQueue.main.async {
-                        self.CommentTableView.reloadData()
-                        self.StackView.snp.updateConstraints{ (make) in
-                            let totalHeight = self.cellHeights.reduce(0, +)
-                            make.bottom.equalToSuperview().offset(-0)
-                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
-                            make.width.equalTo(self.ScrollView.snp.width)
-                            make.top.equalToSuperview().offset(0)
-                        }
-                    }
+                    // UIRefreshControl 정지
+                    self.refreshControl.endRefreshing()
                 }
                 print("updatePage - Success")
             } else if let error = error {
                 // 오류 처리
                 print("Error fetching next page: \(error.localizedDescription)")
             }
-            // 로딩 인디케이터 멈춤
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-            self.updatePageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
     //스크롤이 아래로 내려갈때 기존페이지 + 다음 페이지 로드
     func loadNextPage() {
         print("loadNextPage() - called")
         currentPage += 1
-        //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
+//            self.isLoading = false // 로딩 완료
             if let newPosts = newPosts {
-                if !newPosts.isEmpty {
-                    // 테이블뷰 갱신
-                    self.comments += newPosts
-                    DispatchQueue.main.async {
-                        self.CommentTableView.reloadData()
-                        self.StackView.snp.updateConstraints{ (make) in
-                            let totalHeight = self.cellHeights.reduce(0, +)
-                            make.bottom.equalToSuperview().offset(-0)
-                            make.height.equalTo(self.view.frame.height + (self.DetailLabel.frame.height + CGFloat(self.ImageStackView.arrangedSubviews.count * 300) + totalHeight))
-                            make.width.equalTo(self.ScrollView.snp.width)
-                            make.top.equalToSuperview().offset(0)
-                        }
-                    }
+                self.comments += newPosts
+                // 테이블뷰 갱신
+                DispatchQueue.main.async {
+                    self.CommentTableView.reloadData()
                 }
                 print("loadNextPage - Success")
             } else if let error = error {
                 print("Error fetching next page: \(error.localizedDescription)")
             }
-            // 로딩 인디케이터 멈춤
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-            self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
     //MARK: - 서버에서 데이터 가져오기 -> 댓글 조회
     func fetchPosts(page: Int, completion: @escaping ([MyVoteComment]?, Error?) -> Void) {
-        // 투표를 조회해서 찬성, 반대 수 가져오기
-        VoteStatusCheck()
-        agreeCountLabel.text = "찬성: \(agreeCount)"
-        disagreeCountLabel.text = "반대: \(disagreeCount)"
-        updateRatioLabel()
-        updateProgressViews()
         let url = URL(string: "https://keep-ops.shop/api/v1/boards/\(post.boardId)/comment?page=\(page)")!
         if AuthenticationManager.isTokenValid(){}else{} //토큰 유효성 검사
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken")
@@ -662,7 +615,12 @@ extension MyWriteVoteViewController {
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let result = json?["result"] as? [String: Any], let comments = result["commentList"] as? [[String: Any]] {
+                if let result = json?["result"] as? [String: Any],
+                   let total = result["totalPage"] as? Int,
+                   let current = result["currentPage"] as? Int,
+                   let comments = result["commentList"] as? [[String: Any]] {
+                    self.totalPage = total
+                    self.currentPage = current
                     var posts = [MyVoteComment]()
                     for comment in comments {
                         if
@@ -766,6 +724,8 @@ extension MyWriteVoteViewController {
                 print("댓글 전송이 성공했습니다. 테이블뷰를 reloadData 할게요.")
                 DispatchQueue.main.async {
                     self.commentField.text = ""
+                    self.updatePage()
+                    self.loadNextPage()
                     self.CommentTableView.reloadData()
                 }
             }
@@ -807,8 +767,16 @@ extension MyWriteVoteViewController {
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
                         // 게시글이 삭제되면 Alert 팝업창과 함께 메인으로 돌아갑니다.
                         if let navigationController = self.navigationController {
-                                    navigationController.popViewController(animated: true)
-                                }
+                            var viewControllers = navigationController.viewControllers
+                            if let postViewController = viewControllers.firstIndex(of: self), postViewController > 0{
+                                viewControllers.remove(at: postViewController)
+                                viewControllers.remove(at: postViewController - 1)
+                            }
+                            // OpenBoardViewController로 이동
+                            let openBoardViewController = MyWriteViewController()
+                            viewControllers.append(openBoardViewController)
+                            navigationController.setViewControllers(viewControllers, animated: true)
+                        }
                     }
                     DeleteAlertController.addAction(CancelController)
                     self.present(DeleteAlertController, animated: true)
@@ -859,6 +827,8 @@ extension MyWriteVoteViewController {
                     // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
                     let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
+                        self.updatePage()
+                        self.loadNextPage()
                     }
                     DeleteAlertController.addAction(CancelController)
                     self.present(DeleteAlertController, animated: true)
