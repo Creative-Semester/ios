@@ -27,22 +27,22 @@ struct MyWritePost: Decodable {
 class MyWriteViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     //페이지 번호와 크기
     var currentPage = 0
+    var totalPage = 1
     var detailViewController = UIViewController()
     //내가 쓴 글에 대해서 보여줄 TableView 전역 선언
     let tableView = UITableView()
-    let activityIndicator = UIActivityIndicatorView(style: .large) // 로딩 인디케이터 뷰
     var posts : [MyWritePost] = [
     ]
+    let refreshControl = UIRefreshControl()
     override func viewDidLoad() {
         super .viewDidLoad()
         self.view.backgroundColor = .white
         navigationController?.navigationBar.tintColor = .red
         title = "내가 쓴 글"
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-        // 로딩 인디케이터 뷰 초기 설정
-        activityIndicator.color = .gray
-        activityIndicator.center = view.center
         setupTableView()
+        refreshControl.addTarget(self, action: #selector(refreshtableView), for: .valueChanged)
+        tableView.refreshControl = refreshControl
         // 처음에 초기 데이터를 불러옴
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
                 guard let self = self else { return }
@@ -74,6 +74,10 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
         view.addSubview(tableView)
     }
     // MARK: - UITableViewDataSource
+    @objc func refreshtableView() {
+        updatePage()
+        tableView.refreshControl?.endRefreshing()
+    }
     //테이블 뷰의 데이터 소스 프로토콜을 구현
     //numberOfRowsInSection 메서드 개시물 개수 반환
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -152,7 +156,7 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(acToken, forHTTPHeaderField: "accessToken")
-        var page = currentPage
+        let page = currentPage
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completion(nil, error)
@@ -166,7 +170,11 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let result = json?["result"] as? [String: Any], let boards = result["boardList"] as? [[String: Any]] {
+                if let result = json?["result"] as? [String: Any], let total = result["totalPage"] as? Int,
+                   let current = result["currentPage"] as? Int,
+                   let boards = result["boardList"] as? [[String: Any]] {
+                    self.totalPage = total
+                    self.currentPage = current
                     var posts = [MyWritePost]()
                     for board in boards {
                         if let title = board["title"] as? String,
@@ -197,38 +205,15 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
             }
         }.resume()
     }
-
-
-    var isScrolling = false
-    var lastContentOffsetY : CGFloat = 0
-    var isScrollingDown = false
-    var loadNextPageCalled = false // loadNextPage가 호출되었는지 여부를 추적
-    var updatePageCalled = false // updatePageCalled가 호출되었는지 여부를 추적
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentOffsetY = scrollView.contentOffset.y
-        let screenHeight = scrollView.bounds.size.height
-        let threshold: CGFloat = -150 // 이 임계값을 조절하여 스크롤 감지 정확도를 조절할 수 있습니다
-
-        if contentOffsetY >= 0 {
-            isScrollingDown = true
-        } else {
-            isScrollingDown = false
-        }
-
-        if isScrollingDown && contentOffsetY + screenHeight >= scrollView.contentSize.height {
-            if !loadNextPageCalled { // 호출되지 않은 경우에만 실행
-                loadNextPageCalled = true // 호출되었다고 표시
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating() // 로딩 인디케이터 시작
-                loadNextPage()
-            }
-        } else if !isScrollingDown && contentOffsetY < threshold {
-            if !updatePageCalled { //호출되지 않은 경우에만 실행
-                updatePageCalled = true // 호출되었다고 표시
-                self.view.addSubview(activityIndicator)
-                activityIndicator.startAnimating() // 로딩 인디케이터 시작
-                updatePage()
-            }
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let screenHeight = scrollView.frame.height
+        
+        // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
+        if offsetY + contentHeight >= screenHeight && currentPage < totalPage {
+            print("현재 페이지 : \(currentPage),\n전체 페이지 : \(totalPage)")
+            loadNextPage()
         }
     }
     //새로운 페이지 새로고침
@@ -254,22 +239,15 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
                 // 오류 처리
                 print("Error fetching next page: \(error.localizedDescription)")
             }
-            // 로딩 인디케이터 멈춤
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-            self.updatePageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
     //스크롤이 아래로 내려갈때 기존페이지 + 다음 페이지 로드
     func loadNextPage() {
         print("loadNextPage() - called")
         currentPage += 1
-        isLoading = true
-        //스크롤을 감지해서 인디케이터가 시작되면 통신이 완료되면 종료해야함.
-
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
+//            self.isLoading = false // 로딩 완료
             if let newPosts = newPosts {
                 self.posts += newPosts
                 // 테이블뷰 갱신
@@ -280,12 +258,6 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
             } else if let error = error {
                 print("Error fetching next page: \(error.localizedDescription)")
             }
-            // 로딩 인디케이터 멈춤
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-            }
-            self.isLoading = false
-            self.loadNextPageCalled = false // 데이터가 로드되었으므로 호출 플래그 초기화
         }
     }
     override func viewWillDisappear(_ animated: Bool) {
