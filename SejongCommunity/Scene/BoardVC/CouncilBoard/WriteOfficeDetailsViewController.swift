@@ -202,8 +202,9 @@ class WriteOfficeDetailsViewController: UIViewController {
     
     @objc func fileUploadButtonTapped() {
         // 파일 선택 기능 실행
-        let documentPicker = UIDocumentPickerViewController(documentTypes: [kUTTypeItem as String], in: .import)
+        let documentPicker = UIDocumentPickerViewController(documentTypes: ["public.content"], in: .import)
         documentPicker.delegate = self
+        documentPicker.allowsMultipleSelection = false
         present(documentPicker, animated: true, completion: nil)
         fileUploadButton.isUserInteractionEnabled = false
     }
@@ -297,6 +298,8 @@ class WriteOfficeDetailsViewController: UIViewController {
             case .success(let data):
                 guard let infoData = data as? OfficeFileUploadResponse else { return }
                 self.fileName = infoData.result[0].fileName
+                self.officeDetailPostMenu.affairName = infoData.result[0].fileName
+                self.officeDetailPostMenu.affairUrl = infoData.result[0].fileUrl
                 // 실패할 경우에 분기처리는 아래와 같이 합니다.
             case .pathErr :
                 print("잘못된 파라미터가 있습니다.")
@@ -418,11 +421,9 @@ extension WriteOfficeDetailsViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         if let selectedFileURL = urls.first {
             // 선택한 파일을 사용하거나 업로드할 수 있음
-            officeDetailPostMenu.affairUrl = "\(selectedFileURL)"
             fileUploadButton.setTitle("\(selectedFileURL)", for: .normal)
             
             let fileName = selectedFileURL.lastPathComponent
-            officeDetailPostMenu.affairName = "\(fileName)"
             fileUploadButton.setTitle(fileName, for: .normal)
             
             OfficeDetailFileUpload(selectedFileURL: selectedFileURL, fileName: fileName)
