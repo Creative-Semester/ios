@@ -33,4 +33,6 @@ struct APIConstants {
     
     //파일 업로드, 삭제시 사용하는 api
     static let fileUploadURL = baseURL + "/api/v1/file"
+    
+    static let chatURL = baseURL + "/chats"
 }

@@ -22,6 +22,8 @@ let chatList: [Chatting] = [
 ]
 
 class ChatRoomViewController: UIViewController {
+    
+    var boardId: Int?
 
     private let chattingTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -60,6 +62,7 @@ class ChatRoomViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
+        print(boardId)
     }
     
     override func viewDidLoad() {
