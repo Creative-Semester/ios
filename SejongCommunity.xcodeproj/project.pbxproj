@@ -61,6 +61,10 @@
 		F174D8582B02699F0087A60E /* ProfessorEvaluationDeleteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */; };
 		F174D8662B04A1800087A60E /* ProfessorEvaluationReportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */; };
 		F19345B82AD0350100BB5D5E /* CouncilInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */; };
+		F1A5F2262B135FCD0001B5A2 /* ChatPostRoomNumService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F2252B135FCD0001B5A2 /* ChatPostRoomNumService.swift */; };
+		F1A5F2292B1361040001B5A2 /* ChatPostRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F2282B1361040001B5A2 /* ChatPostRoomModel.swift */; };
+		F1A5F22B2B1368840001B5A2 /* ChatGetRoomInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F22A2B1368840001B5A2 /* ChatGetRoomInfoService.swift */; };
+		F1A5F22D2B1369B40001B5A2 /* ChatGetRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F22C2B1369B40001B5A2 /* ChatGetRoomModel.swift */; };
 		F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */; };
 		F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */; };
 		F1C838D52AF6614D00303D20 /* ProfessorLectureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D42AF6614D00303D20 /* ProfessorLectureModel.swift */; };
@@ -89,7 +93,6 @@
 		F1E5479B2AC2B27E00671182 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = F1E5479A2AC2B27E00671182 /* DGCharts */; };
 		F1E5479D2AC8502D00671182 /* MyChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */; };
 		F1E5479F2AC877C500671182 /* YourChattingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */; };
-		F1E547A22ACABED300671182 /* sampleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A12ACABED300671182 /* sampleModel.swift */; };
 		F1E547A52ACABEF700671182 /* APIContants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E547A42ACABEF700671182 /* APIContants.swift */; };
 		F1EA83A72AD02583006B9741 /* CouncilInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1EA83A62AD02583006B9741 /* CouncilInfoService.swift */; };
 		F1F91D462AD300EA009D95B0 /* PromiseCheckService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F91D452AD300EA009D95B0 /* PromiseCheckService.swift */; };
@@ -150,6 +153,10 @@
 		F174D8572B02699F0087A60E /* ProfessorEvaluationDeleteService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationDeleteService.swift; sourceTree = "<group>"; };
 		F174D8652B04A1800087A60E /* ProfessorEvaluationReportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorEvaluationReportService.swift; sourceTree = "<group>"; };
 		F19345B72AD0350100BB5D5E /* CouncilInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilInfoModel.swift; sourceTree = "<group>"; };
+		F1A5F2252B135FCD0001B5A2 /* ChatPostRoomNumService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostRoomNumService.swift; sourceTree = "<group>"; };
+		F1A5F2282B1361040001B5A2 /* ChatPostRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostRoomModel.swift; sourceTree = "<group>"; };
+		F1A5F22A2B1368840001B5A2 /* ChatGetRoomInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGetRoomInfoService.swift; sourceTree = "<group>"; };
+		F1A5F22C2B1369B40001B5A2 /* ChatGetRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGetRoomModel.swift; sourceTree = "<group>"; };
 		F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoService.swift; sourceTree = "<group>"; };
 		F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoModel.swift; sourceTree = "<group>"; };
 		F1C838D42AF6614D00303D20 /* ProfessorLectureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorLectureModel.swift; sourceTree = "<group>"; };
@@ -177,7 +184,6 @@
 		F1E547972AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PledgeBoardMenuCollectionViewCell.swift; sourceTree = "<group>"; };
 		F1E5479C2AC8502D00671182 /* MyChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChattingTableViewCell.swift; sourceTree = "<group>"; };
 		F1E5479E2AC877C500671182 /* YourChattingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourChattingTableViewCell.swift; sourceTree = "<group>"; };
-		F1E547A12ACABED300671182 /* sampleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sampleModel.swift; sourceTree = "<group>"; };
 		F1E547A42ACABEF700671182 /* APIContants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIContants.swift; sourceTree = "<group>"; };
 		F1EA83A62AD02583006B9741 /* CouncilInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouncilInfoService.swift; sourceTree = "<group>"; };
 		F1F91D452AD300EA009D95B0 /* PromiseCheckService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseCheckService.swift; sourceTree = "<group>"; };
@@ -343,6 +349,24 @@
 			path = CouncilBoardModels;
 			sourceTree = "<group>";
 		};
+		F1A5F2242B135F920001B5A2 /* ChattingServices */ = {
+			isa = PBXGroup;
+			children = (
+				F1A5F2252B135FCD0001B5A2 /* ChatPostRoomNumService.swift */,
+				F1A5F22A2B1368840001B5A2 /* ChatGetRoomInfoService.swift */,
+			);
+			path = ChattingServices;
+			sourceTree = "<group>";
+		};
+		F1A5F2272B1360D30001B5A2 /* ChattingModels */ = {
+			isa = PBXGroup;
+			children = (
+				F1A5F2282B1361040001B5A2 /* ChatPostRoomModel.swift */,
+				F1A5F22C2B1369B40001B5A2 /* ChatGetRoomModel.swift */,
+			);
+			path = ChattingModels;
+			sourceTree = "<group>";
+		};
 		F1C838CE2AF6539400303D20 /* ProfessorServices */ = {
 			isa = PBXGroup;
 			children = (
@@ -434,7 +458,7 @@
 		F1E547A02ACABEBA00671182 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				F1E547A12ACABED300671182 /* sampleModel.swift */,
+				F1A5F2272B1360D30001B5A2 /* ChattingModels */,
 				F19345B62AD034EE00BB5D5E /* CouncilBoardModels */,
 				F1C838D12AF6541500303D20 /* ProfessorModels */,
 			);
@@ -446,6 +470,7 @@
 			children = (
 				F1E547A42ACABEF700671182 /* APIContants.swift */,
 				F12FE6B62AD0434C00B47DA0 /* NetworkResult.swift */,
+				F1A5F2242B135F920001B5A2 /* ChattingServices */,
 				F1EA83A52AD0252B006B9741 /* CouncilBoardServices */,
 				F1C838CE2AF6539400303D20 /* ProfessorServices */,
 			);
@@ -604,6 +629,7 @@
 				E4021E6B2A6F8B1000FFEAB2 /* OpenBoardViewController.swift in Sources */,
 				E4021E782A76414400FFEAB2 /* PostDetailViewController.swift in Sources */,
 				F1C838DD2AF67FD900303D20 /* OfficeDetailListService.swift in Sources */,
+				F1A5F2262B135FCD0001B5A2 /* ChatPostRoomNumService.swift in Sources */,
 				F174D8502B01FA520087A60E /* ProfessorEvaluationModel.swift in Sources */,
 				F174D8522B01FB150087A60E /* ProfessorEvaluationService.swift in Sources */,
 				F1E5472C2A82680B00671182 /* OfficeDetailsTableViewCell.swift in Sources */,
@@ -614,7 +640,6 @@
 				E4021E712A6F8B5100FFEAB2 /* CouncilBoardViewController.swift in Sources */,
 				F1448FFB2AD2AF6D00AE9E7A /* DepartmentService.swift in Sources */,
 				F1F91D482AD3015E009D95B0 /* PromiseCheckModel.swift in Sources */,
-				F1E547A22ACABED300671182 /* sampleModel.swift in Sources */,
 				F1E547452A9373B300671182 /* ChatTableViewCell.swift in Sources */,
 				E4021E752A750A4F00FFEAB2 /* CouncilRegisterViewController.swift in Sources */,
 				F16C940D2AF76F3F00CD01E8 /* OfficeFileDeleteService.swift in Sources */,
@@ -641,6 +666,7 @@
 				F1448FF92AD2AEAE00AE9E7A /* DepartmentModel.swift in Sources */,
 				E4021E7C2A76B7D300FFEAB2 /* CustomTableViewCell.swift in Sources */,
 				F1C838D92AF677DA00303D20 /* ProfessorPostReviewMedel.swift in Sources */,
+				F1A5F2292B1361040001B5A2 /* ChatPostRoomModel.swift in Sources */,
 				F1E5478B2AAF3CB900671182 /* ProfessorClassTableViewCell.swift in Sources */,
 				E4021ED72AA5BE4F00FFEAB2 /* NotificationViewController.swift in Sources */,
 				F1E547332A84C11B00671182 /* DepartBoardViewController.swift in Sources */,
@@ -663,6 +689,7 @@
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
+				F1A5F22B2B1368840001B5A2 /* ChatGetRoomInfoService.swift in Sources */,
 				F16C94072AF6B03400CD01E8 /* OfficeFileUploadModel.swift in Sources */,
 				F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */,
 				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,
@@ -671,6 +698,7 @@
 				E4D466572AAB08B6003E5DD9 /* AuthenticationManager.swift in Sources */,
 				F1C838D52AF6614D00303D20 /* ProfessorLectureModel.swift in Sources */,
 				F16C94052AF6A46100CD01E8 /* OfficeDetailPostService.swift in Sources */,
+				F1A5F22D2B1369B40001B5A2 /* ChatGetRoomModel.swift in Sources */,
 				F1E5472E2A8275E300671182 /* OfficeDetailsCellTappedViewController.swift in Sources */,
 				F1E547892AAF289700671182 /* ProfessorInfoViewController.swift in Sources */,
 				F174D8582B02699F0087A60E /* ProfessorEvaluationDeleteService.swift in Sources */,
