@@ -18,7 +18,7 @@ class ChatGetRoomInfoService {
         //토큰 유효성 검사
         guard AuthenticationManager.isTokenValid() else { return }
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken") ?? ""
-        let url = "\(APIConstants.chatURL)/\(String(roomId))"
+        let url = "\(APIConstants.chatRoomURL)/\(String(roomId))"
         
         let header : HTTPHeaders = [
             "Content-Type" : "application/json",
