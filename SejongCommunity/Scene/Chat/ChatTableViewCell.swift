@@ -10,6 +10,8 @@ import SnapKit
 
 class ChatTableViewCell: UITableViewCell {
     
+    static let identifier = "ChatTableViewCell"
+    
     private let profileView: UIView = {
         let view = UIView()
         
@@ -84,5 +86,10 @@ class ChatTableViewCell: UITableViewCell {
             make.leading.equalTo(profileView.snp.trailing).offset(10)
             make.top.equalTo(chatTitleLabel.snp.bottom).offset(5)
         }
+    }
+    
+    func bindData(chatRoomList: ChatRoomDetailInfoResponseList) {
+        chatTitleLabel.text = chatRoomList.boardName + "게시글의 채팅"
+        chatExpLabel.text = chatRoomList.noteInfos.contents
     }
 }
