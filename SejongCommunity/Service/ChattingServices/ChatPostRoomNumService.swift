@@ -18,20 +18,15 @@ class ChatPostRoomNumService {
         //토큰 유효성 검사
         guard AuthenticationManager.isTokenValid() else { return }
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken") ?? ""
-        let url = APIConstants.chatURL
+        let url = "\(APIConstants.findRoomURL)/\(String(boardId))/chats"
         
         let header : HTTPHeaders = [
             "Content-Type" : "application/json",
             "accessToken" : acToken
         ]
         
-        let parameters: [String: Any] = [
-            "boardId": boardId
-        ]
-        
         let dataRequest = AF.request(url,
                                      method: .post,
-                                     parameters: parameters,
                                      encoding: JSONEncoding.default,
                                      headers: header)
         

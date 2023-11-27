@@ -12,10 +12,9 @@ struct ChatPostRoomResponse: Codable {
     let status: Int
     let code: String
     let message: String
-    let result: ChatPostRoomnfo
+    let result: ChatPostRoomInfo
 }
 
-struct ChatPostRoomnfo: Codable {
+struct ChatPostRoomInfo: Codable {
     let roomId: Int
 }
-
