@@ -65,6 +65,10 @@
 		F1A5F2292B1361040001B5A2 /* ChatPostRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F2282B1361040001B5A2 /* ChatPostRoomModel.swift */; };
 		F1A5F22B2B1368840001B5A2 /* ChatGetRoomInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F22A2B1368840001B5A2 /* ChatGetRoomInfoService.swift */; };
 		F1A5F22D2B1369B40001B5A2 /* ChatGetRoomModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F22C2B1369B40001B5A2 /* ChatGetRoomModel.swift */; };
+		F1A5F2302B1487BC0001B5A2 /* SendChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F22F2B1487BC0001B5A2 /* SendChatModel.swift */; };
+		F1A5F2322B14884A0001B5A2 /* SendChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F2312B14884A0001B5A2 /* SendChatService.swift */; };
+		F1A5F2342B14A7CA0001B5A2 /* ChatRoomListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F2332B14A7CA0001B5A2 /* ChatRoomListModel.swift */; };
+		F1A5F2362B14A87B0001B5A2 /* ChatListGetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A5F2352B14A87B0001B5A2 /* ChatListGetService.swift */; };
 		F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */; };
 		F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */; };
 		F1C838D52AF6614D00303D20 /* ProfessorLectureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C838D42AF6614D00303D20 /* ProfessorLectureModel.swift */; };
@@ -157,6 +161,10 @@
 		F1A5F2282B1361040001B5A2 /* ChatPostRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPostRoomModel.swift; sourceTree = "<group>"; };
 		F1A5F22A2B1368840001B5A2 /* ChatGetRoomInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGetRoomInfoService.swift; sourceTree = "<group>"; };
 		F1A5F22C2B1369B40001B5A2 /* ChatGetRoomModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGetRoomModel.swift; sourceTree = "<group>"; };
+		F1A5F22F2B1487BC0001B5A2 /* SendChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatModel.swift; sourceTree = "<group>"; };
+		F1A5F2312B14884A0001B5A2 /* SendChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendChatService.swift; sourceTree = "<group>"; };
+		F1A5F2332B14A7CA0001B5A2 /* ChatRoomListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomListModel.swift; sourceTree = "<group>"; };
+		F1A5F2352B14A87B0001B5A2 /* ChatListGetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListGetService.swift; sourceTree = "<group>"; };
 		F1C838CF2AF653E400303D20 /* ProfessorInfoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoService.swift; sourceTree = "<group>"; };
 		F1C838D22AF6543500303D20 /* ProfessorInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorInfoModel.swift; sourceTree = "<group>"; };
 		F1C838D42AF6614D00303D20 /* ProfessorLectureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfessorLectureModel.swift; sourceTree = "<group>"; };
@@ -354,6 +362,8 @@
 			children = (
 				F1A5F2252B135FCD0001B5A2 /* ChatPostRoomNumService.swift */,
 				F1A5F22A2B1368840001B5A2 /* ChatGetRoomInfoService.swift */,
+				F1A5F2312B14884A0001B5A2 /* SendChatService.swift */,
+				F1A5F2352B14A87B0001B5A2 /* ChatListGetService.swift */,
 			);
 			path = ChattingServices;
 			sourceTree = "<group>";
@@ -363,6 +373,8 @@
 			children = (
 				F1A5F2282B1361040001B5A2 /* ChatPostRoomModel.swift */,
 				F1A5F22C2B1369B40001B5A2 /* ChatGetRoomModel.swift */,
+				F1A5F22F2B1487BC0001B5A2 /* SendChatModel.swift */,
+				F1A5F2332B14A7CA0001B5A2 /* ChatRoomListModel.swift */,
 			);
 			path = ChattingModels;
 			sourceTree = "<group>";
@@ -660,6 +672,7 @@
 				F12FE6B72AD0434C00B47DA0 /* NetworkResult.swift in Sources */,
 				F1E547982AC1A3BD00671182 /* PledgeBoardMenuCollectionViewCell.swift in Sources */,
 				E472375E2AB83DA5003BD82B /* WebViewController.swift in Sources */,
+				F1A5F2322B14884A0001B5A2 /* SendChatService.swift in Sources */,
 				E47237632ABC0823003BD82B /* NetworkManager.swift in Sources */,
 				F1E547372A84C15400671182 /* DepartPostDetailViewController.swift in Sources */,
 				F174D8562B025ADD0087A60E /* ProfessorEvaluationPostService.swift in Sources */,
@@ -679,17 +692,20 @@
 				F154DAA02A6D2BE800B6C7F0 /* ChatViewController.swift in Sources */,
 				E4E9F65E2ACBF69F00F8AEAD /* MyCommentDetailViewController.swift in Sources */,
 				F1E547472A937B8000671182 /* ChatRoomViewController.swift in Sources */,
+				F1A5F2302B1487BC0001B5A2 /* SendChatModel.swift in Sources */,
 				F1E547282A7E780A00671182 /* PledgeTableViewCell.swift in Sources */,
 				F19345B82AD0350100BB5D5E /* CouncilInfoModel.swift in Sources */,
 				F16C94032AF6A36900CD01E8 /* OfficeDetailPostModel.swift in Sources */,
 				F1D495552AD2A6D500078232 /* PromisesPercentageService.swift in Sources */,
 				F16C94092AF6B2AF00CD01E8 /* OfficeFileUploadService.swift in Sources */,
+				F1A5F2362B14A87B0001B5A2 /* ChatListGetService.swift in Sources */,
 				F1E5478F2AB8640800671182 /* ProfessorReviewTableViewCell.swift in Sources */,
 				F154DA9D2A6D2B4400B6C7F0 /* MainViewController.swift in Sources */,
 				E4021EC92A9208A000FFEAB2 /* LoginIntroViewController.swift in Sources */,
 				F1C838D32AF6543500303D20 /* ProfessorInfoModel.swift in Sources */,
 				F1E547812AA08B7200671182 /* ProfessorCollectionViewCell.swift in Sources */,
 				F1A5F22B2B1368840001B5A2 /* ChatGetRoomInfoService.swift in Sources */,
+				F1A5F2342B14A7CA0001B5A2 /* ChatRoomListModel.swift in Sources */,
 				F16C94072AF6B03400CD01E8 /* OfficeFileUploadModel.swift in Sources */,
 				F1C838D02AF653E400303D20 /* ProfessorInfoService.swift in Sources */,
 				E4E9F6642AD32E2200F8AEAD /* MyWriteVoteViewController.swift in Sources */,
