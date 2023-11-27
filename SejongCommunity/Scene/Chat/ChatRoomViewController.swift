@@ -7,24 +7,13 @@
 
 import UIKit
 
-struct Chatting {
-    let text: String
-    let isYour: Bool
-}
-
-let chatList: [Chatting] = [
-    Chatting(text: "안녕하세요!\n오늘날씨가 좋지요~??", isYour: true),
-    Chatting(text: "안녕하세요! 반갑습니다.반가워해야핼까남랑너린아머리ㅏㄴㅁ얼댜ㅓㄹ아ㅓ니렁ㅁ냐덜", isYour: false),
-    Chatting(text: "오늘 날씨 어때요?\n니가 뭘알아\n죄송해요..", isYour: true),
-    Chatting(text: "오늘 날씨는 정말 좋은 걸요~?\n아주 그냥 나이스해요 개꾸리~~\n헐헐!", isYour: false),
-    Chatting(text: "너 친구는 몇명있어요??.반가워해야핼까남랑너린아머리ㅏㄴㅁ얼댜ㅓㄹ아ㅓ니렁ㅁ냐덜", isYour: true),
-    Chatting(text: "친구는 4명이상있어요 ~~\n니가 뭘알아\n죄송해요..", isYour: false)
-]
-
 class ChatRoomViewController: UIViewController {
     
     var boardId: Int?
-
+    var roomId: Int?
+    var chattingList: [ChatNoteInfo] = []
+    var refreshButton: UIBarButtonItem!
+    
     private let chattingTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         
@@ -62,21 +51,19 @@ class ChatRoomViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = true
-        print(boardId)
+        makeRoomChat()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        title = "익명 1"
         navigationItem.largeTitleDisplayMode = .never
-        
         chattingTableView.dataSource = self
         chattingTableView.delegate = self
         chattingTableView.register(MyChattingTableViewCell.self, forCellReuseIdentifier: "MyChattingTableViewCell")
         chattingTableView.register(YourChattingTableViewCell.self, forCellReuseIdentifier: "YourChattingTableViewCell")
-        
+        reviewRegisterButton.addTarget(self, action: #selector(reviewRegisterButtonTapped), for: .touchUpInside)
         reviewTextView.delegate = self
         
         // 키보드가 생성될때, 숨겨질때를 알기 위해서 NotificationCenter를 통해 확인합니다.
@@ -100,7 +87,102 @@ class ChatRoomViewController: UIViewController {
     
     func setupNavigation() {
         let editButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(showPopup))
-            navigationItem.rightBarButtonItem = editButton
+        refreshButton = UIBarButtonItem(image: UIImage(systemName: "arrow.clockwise"), style: .plain, target: self, action: #selector(refreshTableView))
+        navigationItem.rightBarButtonItems = [editButton, refreshButton]
+    }
+    
+    func makeRoomChat() {
+        if roomId == nil {
+            postBoardIdInfo()
+        } else {
+            getRoomInfo()
+        }
+    }
+    
+    func postBoardIdInfo() {
+        guard let boardId = boardId else { return }
+        ChatPostRoomNumService.shared.postChatPostRoomNumInfo(boardId: boardId) { response in
+            switch response {
+            case .success(let data):
+                guard let infoData = data as? ChatPostRoomResponse else { return }
+                self.roomId = infoData.result.roomId
+                self.getRoomInfo()
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func getRoomInfo() {
+        guard let roomId = roomId else { return }
+        ChatGetRoomInfoService.shared.getChatPostRoomInfo(roomId: roomId) { response in
+            switch response {
+            case .success(let data):
+                guard let infoData = data as? ChatGetRoomResponse else { return }
+                self.chattingList = infoData.result.noteInfos
+                self.chattingTableView.reloadData()
+                self.scrollToBottom()
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func sendChatInfo(content: String) {
+        guard let roomId = roomId else { return }
+        SendChatService.shared.postChatInfo(roomId: roomId, content: content) { response in
+            switch response {
+            case .success(let data):
+                guard let infoData = data as? SendChatModelResponse else { return }
+                self.getRoomInfo()
+            case .pathErr :
+                print("잘못된 파라미터가 있습니다.")
+            case .serverErr :
+                print("서버에러가 발생했습니다.")
+            default:
+                print("networkFail")
+            }
+        }
+    }
+    
+    func scrollToBottom() {
+        DispatchQueue.main.async {
+            let indexPath = IndexPath(row: self.chattingList.count - 1, section: 0)
+            if indexPath.row >= 0 {
+                self.chattingTableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
+        }
+    }
+    
+    @objc func refreshTableView() {
+        getRoomInfo()
+        chattingTableView.refreshControl?.endRefreshing()
+        refreshButton.isEnabled = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.refreshButton.isEnabled = true
+        }
+    }
+    
+    @objc func reviewRegisterButtonTapped() {
+        if reviewTextView.text == "" {
+            let alertController = UIAlertController(title: "알림", message: "작성한 내용이 없습니다.", preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            
+            present(alertController, animated: true, completion: nil)
+        } else {
+            sendChatInfo(content: reviewTextView.text)
+            reviewTextView.text = ""
+        }
     }
     
     @objc func showPopup() {
@@ -316,27 +398,29 @@ extension ChatRoomViewController: UITableViewDataSource {
     //각 섹션 마다 cell row 숫자의 갯수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 6
+        return chattingList.count
     }
     
     // 각 센션 마다 사용할 cell의 종류
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if chatList[indexPath.row].isYour {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MyChattingTableViewCell", for: indexPath) as! MyChattingTableViewCell
-            
-            cell.configure(with: chatList[indexPath.row])
-            
-            return cell
+        if let userName = UserDefaults.standard.string(forKey: "userName") {
+            if userName == chattingList[indexPath.row].senderStudentNum {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "MyChattingTableViewCell", for: indexPath) as! MyChattingTableViewCell
+                
+                cell.configure(with: chattingList[indexPath.row])
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "YourChattingTableViewCell", for: indexPath) as! YourChattingTableViewCell
+                
+                cell.configure(with: chattingList[indexPath.row])
+                cell.isUserInteractionEnabled = false
+                return cell
+            }
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "YourChattingTableViewCell", for: indexPath) as! YourChattingTableViewCell
-            
-            cell.configure(with: chatList[indexPath.row])
-            
-            return cell
+            return UITableViewCell()
         }
     }
-    
 }
 
 extension ChatRoomViewController: UITableViewDelegate {
@@ -344,8 +428,8 @@ extension ChatRoomViewController: UITableViewDelegate {
     //Cell의 높이를 지정한다.
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        let textHeight = heightCellForText(chatList[indexPath.row].text)
-        let additionalSpacing = CGFloat(20) //강의평으로 작성된 것이 아닌, 닉네임, 날짜 등의 공백의 길이입니다.
+        let textHeight = heightCellForText(chattingList[indexPath.row].contents)
+        let additionalSpacing = CGFloat(35) //강의평으로 작성된 것이 아닌, 닉네임, 날짜 등의 공백의 길이입니다.
 
         //다른 공백과 댓글이 작성된 높이의 합이 cell의 높이로 지정합니다.
         return textHeight + additionalSpacing
