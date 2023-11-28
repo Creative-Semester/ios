@@ -91,6 +91,7 @@ class MyCommentDetailViewController : UIViewController, UITableViewDelegate, UIT
     let refreshControl = UIRefreshControl()
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -421,9 +422,7 @@ extension MyCommentDetailViewController{
         let contentHeight = scrollView.contentSize.height
         let screenHeight = scrollView.frame.height
         
-        // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
-        if offsetY + contentHeight >= screenHeight && currentPage < totalPage {
-            print("현재 페이지 : \(currentPage),\n전체 페이지 : \(totalPage)")
+        if offsetY + contentHeight >= screenHeight && ((currentPage + 1) < totalPage) {
             loadNextPage()
         }
     }
@@ -597,18 +596,39 @@ extension MyCommentDetailViewController{
     }
     //스크롤이 아래로 내려갈때 기존페이지 + 다음 페이지 로드
     func loadNextPage() {
-        print("loadNextPage() - called")
+        print("DetailloadNextPage() - called")
         currentPage += 1
         fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
             guard let self = self else { return }
-//            self.isLoading = false // 로딩 완료
             if let newPosts = newPosts {
                 self.comments += newPosts
                 // 테이블뷰 갱신
                 DispatchQueue.main.async {
                     self.CommentTableView.reloadData()
                 }
-                print("loadNextPage - Success")
+                print("DeatilloadNextPage - Success")
+            } else if let error = error {
+                print("Error fetching next page: \(error.localizedDescription)")
+            }
+        }
+    }
+    //댓글을 삭제하거나 작성했을때 -> 기존 테이블에 -> 현재 페이지를 다시 로드해 -> 해당 인덱스에 집어 넣기
+    func refreshPage(completion: @escaping () -> Void) {
+        print("refreshPage - called()")
+        fetchPosts(page: currentPage) { [weak self] (newPosts, error) in
+            guard let self = self else { return }
+            if let newPosts = newPosts {
+                // 현재 페이지의 댓글을 삭제
+                self.comments.removeSubrange(((self.currentPage) * 20)..<self.comments.count)
+                // 새로운 페이지의 댓글을 추가
+                self.comments += newPosts
+                // 테이블뷰 갱신
+                DispatchQueue.main.async {
+                    print("refreshPage - reloadData")
+                    self.CommentTableView.reloadData()
+                    completion() // completion handler 호출
+                }
+                print("refreshPage - Success")
             } else if let error = error {
                 print("Error fetching next page: \(error.localizedDescription)")
             }
@@ -761,10 +781,10 @@ extension MyCommentDetailViewController{
                 // 테이블 뷰 업데이트 (메인 스레드에서 실행해야 함)
                 print("댓글 전송이 성공했습니다. 테이블뷰를 reloadData 할게요.")
                 DispatchQueue.main.async {
-                    self.commentField.text = ""
-                    self.updatePage()
-                    self.loadNextPage()
-                    self.CommentTableView.reloadData()
+                    self.refreshPage() {
+                        self.commentField.text = ""
+                        self.CommentTableView.reloadData()
+                    }
                 }
             }
         }.resume()
@@ -865,8 +885,9 @@ extension MyCommentDetailViewController{
                     // 삭제가 성공하면 화면에서 업데이트 필요 >> 메인스레드에서 reload.data 필요
                     let DeleteAlertController = UIAlertController(title: nil, message: "댓글이 삭제 되었습니다", preferredStyle: .alert)
                     let CancelController = UIAlertAction(title: "확인", style: .default) { (_) in
-                        self.updatePage()
-                        self.loadNextPage()
+                        self.refreshPage(){
+                            self.CommentTableView.reloadData()
+                        }
                     }
                     DeleteAlertController.addAction(CancelController)
                     self.present(DeleteAlertController, animated: true)

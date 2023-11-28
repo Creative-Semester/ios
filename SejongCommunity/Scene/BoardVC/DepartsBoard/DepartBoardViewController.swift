@@ -38,7 +38,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         setupTableView()
         //해당 학생이 학생회 권한을 가지고 있을 경우
         let role = UserDefaults.standard.string(forKey: "role")
-        if role == "ROLE_ADMIN" {
+        if role == "ROLE_ADMIN" || role == "ROLE_COUNCIL" {
             //글쓰기 버튼을 상단 바에 추가
             let addButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(WriteBtnTappend))
             // 우측 바 버튼 아이템 배열에 추가
@@ -217,8 +217,7 @@ class DepartBoardViewController : UIViewController, UITableViewDelegate, UITable
         let screenHeight = scrollView.frame.height
         
         // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
-        if offsetY + contentHeight >= screenHeight && currentPage < totalPage {
-            print("현재 페이지 : \(currentPage),\n전체 페이지 : \(totalPage)")
+        if offsetY + contentHeight >= screenHeight && (currentPage + 1) < totalPage {
             loadNextPage()
         }
     }
