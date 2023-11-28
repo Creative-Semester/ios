@@ -17,7 +17,7 @@ struct OfficeDetailListResponse: Codable {
 
 struct OfficeDetailList: Codable {
     let affairId: Int
-    let restMoney, usedMoney, title: String
+    let restMoney, usedMoney, title, createdTime: String
     let fileInfo: FileInfo
 }
 

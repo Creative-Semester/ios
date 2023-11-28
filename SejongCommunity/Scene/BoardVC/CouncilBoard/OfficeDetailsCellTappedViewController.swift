@@ -12,7 +12,6 @@ import WebKit
 class OfficeDetailsCellTappedViewController: UIViewController {
     
     var officeDetailList: OfficeDetailList?
-    var time: String?
     
     private let loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
@@ -100,9 +99,8 @@ class OfficeDetailsCellTappedViewController: UIViewController {
     
     func setupConfigure() {
         guard let officeDetailList = officeDetailList else { return }
-        guard let time = time else { return }
         titleLabel.text = officeDetailList.title
-        dateLabel.text = time
+        dateLabel.text = officeDetailList.createdTime
         usedAmountLabel.text = "사용 금액 : " + officeDetailList.usedMoney + "원"
         remainingAountLabel.text = "남은 금액 : " + officeDetailList.restMoney + "원"
         let fileTitle: String = "\"\(officeDetailList.fileInfo.fileName)\" 파일 보기"

@@ -55,12 +55,9 @@ class OfficeDetailsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(officeDetailList: OfficeDetailList, time: String) {
+    func configure(officeDetailList: OfficeDetailList) {
         officeDetailTitleLabel.text = officeDetailList.title
-        if let index = time.firstIndex(of: "T") {
-            let dateSubstring = String(time[..<index])
-            officeDetailDateLabel.text = dateSubstring
-        }
+        officeDetailDateLabel.text = officeDetailList.createdTime
     }
     
     func setupLayout() {
