@@ -80,7 +80,7 @@ class ProfessorCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(professorInfo: ProfessorInfo) {
-        let url = URL(string: professorInfo.image)
+        let url = URL(string: professorInfo.file.imageUrl)
         professorImageView.kf.setImage(with: url)
         professorNameLabel.text = professorInfo.name
         professorExpLabel.text = professorInfo.intro

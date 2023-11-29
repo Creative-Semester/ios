@@ -30,6 +30,7 @@ class ChatViewController: UIViewController {
         self.title = "메시지"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .automatic // 또는 .always, .never
+        navigationController?.navigationBar.tintColor = .red
         navigationItem.title = "메시지"
         
         chatTableView.dataSource = self

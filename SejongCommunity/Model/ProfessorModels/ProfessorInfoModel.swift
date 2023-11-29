@@ -21,5 +21,10 @@ struct ProfessorInfoResult: Codable {
 
 struct ProfessorInfo: Codable {
     let professorId: Int
-    let name, intro, image: String
+    let name, intro: String
+    let file: ImageFile
+}
+
+struct ImageFile: Codable {
+    let imageName, imageUrl: String
 }
