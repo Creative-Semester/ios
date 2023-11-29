@@ -27,7 +27,6 @@ class ProfessorInfoViewController: UIViewController {
     private let professorImageView: UIImageView = {
         let imageView = UIImageView()
         
-        imageView.image = UIImage(named: "professor")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.backgroundColor = .gray
