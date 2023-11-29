@@ -10,7 +10,9 @@ import SnapKit
 
 class ProfessorBoardViewController: UIViewController {
     
-    private var professorInfoList: [ProfessorInfo]?
+    private var professorInfoList: [ProfessorInfo] = []
+    private var currentPage: Int = 0
+    private var totalPage: Int = 1
 
     private let professorCollecionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -31,7 +33,7 @@ class ProfessorBoardViewController: UIViewController {
         professorCollecionView.delegate = self
         professorCollecionView.dataSource = self
         
-        getProfessorInfoData()
+        getProfessorInfoData(currentPage: currentPage)
         setupLayout()
     }
     
@@ -45,14 +47,21 @@ class ProfessorBoardViewController: UIViewController {
         }
     }
     
-    func getProfessorInfoData() {
+    func getProfessorInfoData(currentPage: Int) {
         
-        ProfessorInfoService.shared.getProfessorInfo(page: 0) { response in
+        ProfessorInfoService.shared.getProfessorInfo(page: currentPage) { response in
             switch response {
                 
             case .success(let data):
                 guard let infoData = data as? ProfessorInfoResponse else { return }
-                self.professorInfoList = infoData.result.list
+                if infoData.result.currentPage == 0 {
+                    self.professorInfoList = infoData.result.list
+                } else {
+                    let existingSet = Set(self.professorInfoList.map { $0.professorId })
+                    let newData = infoData.result.list.filter { !existingSet.contains($0.professorId) }
+                    self.professorInfoList.append(contentsOf: newData)
+                }
+                self.totalPage = infoData.result.totalPage
                 self.professorCollecionView.reloadData()
                 
                 // 실패할 경우에 분기처리는 아래와 같이 합니다.
@@ -69,15 +78,13 @@ class ProfessorBoardViewController: UIViewController {
 
 extension ProfessorBoardViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return professorInfoList?.count ?? 0
+        return professorInfoList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = professorCollecionView.dequeueReusableCell(withReuseIdentifier: "ProfessorCollectionViewCell", for: indexPath) as! ProfessorCollectionViewCell
         
-        if let data = professorInfoList?[indexPath.row] {
-            cell.configure(professorInfo: data)
-        }
+        cell.configure(professorInfo: professorInfoList[indexPath.row])
         
         return cell
     }
@@ -86,9 +93,7 @@ extension ProfessorBoardViewController: UICollectionViewDataSource {
 extension ProfessorBoardViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let vc = ProfessorInfoViewController()
-        if let data = professorInfoList?[indexPath.row] {
-            vc.professorId = professorInfoList?[indexPath.row].professorId
-        }
+        vc.professorId = professorInfoList[indexPath.row].professorId
         navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -106,4 +111,18 @@ extension ProfessorBoardViewController: UICollectionViewDelegateFlowLayout {
         return 12
     }
     
+}
+
+extension ProfessorBoardViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let screenHeight = scrollView.frame.height
+        
+        // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
+        if offsetY > contentHeight - screenHeight && currentPage + 1 < totalPage {
+            currentPage += 1
+            getProfessorInfoData(currentPage: currentPage)
+        }
+    }
 }

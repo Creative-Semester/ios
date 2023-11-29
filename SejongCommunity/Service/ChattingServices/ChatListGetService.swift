@@ -1,24 +1,24 @@
 //
-//  ChatPostRoomNumService.swift
+//  ChatListGetService.swift
 //  SejongCommunity
 //
-//  Created by 강민수 on 11/26/23.
+//  Created by 강민수 on 11/27/23.
 //
 
 import Foundation
 import Alamofire
 import SwiftKeychainWrapper
 
-class ChatPostRoomNumService {
+class ChatListGetService {
     
-    static let shared = ChatPostRoomNumService()
+    static let shared = ChatListGetService()
     
-    func postChatPostRoomNumInfo(boardId: Int, completion : @escaping (NetworkResult<Any>) -> Void) {
+    func getChatRoomListInfo(page: Int, completion : @escaping (NetworkResult<Any>) -> Void) {
         
         //토큰 유효성 검사
         guard AuthenticationManager.isTokenValid() else { return }
         let acToken = KeychainWrapper.standard.string(forKey: "AuthToken") ?? ""
-        let url = "\(APIConstants.findRoomURL)/\(String(boardId))/chats"
+        let url = "\(APIConstants.chatRoomURL)?page=\(String(page))"
         
         let header : HTTPHeaders = [
             "Content-Type" : "application/json",
@@ -26,7 +26,7 @@ class ChatPostRoomNumService {
         ]
         
         let dataRequest = AF.request(url,
-                                     method: .post,
+                                     method: .get,
                                      encoding: JSONEncoding.default,
                                      headers: header)
         
@@ -69,8 +69,9 @@ class ChatPostRoomNumService {
         
         let decoder = JSONDecoder()
         
-        guard let decodedData = try? decoder.decode(ChatPostRoomResponse.self, from: data) else { return .pathErr }
+        guard let decodedData = try? decoder.decode(ChatRoomListModelResponse.self, from: data) else { return .pathErr }
         
         return .success(decodedData as Any)
     }
 }
+

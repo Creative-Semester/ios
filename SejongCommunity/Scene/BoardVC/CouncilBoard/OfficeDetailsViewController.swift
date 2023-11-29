@@ -104,7 +104,7 @@ extension OfficeDetailsViewController: UITableViewDelegate, UITableViewDataSourc
         let cell = tableView.dequeueReusableCell(withIdentifier: "OfficeDetailsTableViewCell", for: indexPath) as! OfficeDetailsTableViewCell
         
         if let officeDetailListResponse = officeDetailListResponse{
-            cell.configure(officeDetailList: officeDetailListResponse.result[indexPath.row], time: officeDetailListResponse.time)
+            cell.configure(officeDetailList: officeDetailListResponse.result[indexPath.row])
         }
         
         return cell
@@ -120,12 +120,6 @@ extension OfficeDetailsViewController: UITableViewDelegate, UITableViewDataSourc
         let nextViewController = OfficeDetailsCellTappedViewController()
         if let officeDetailList = officeDetailListResponse?.result[indexPath.row] {
             nextViewController.officeDetailList = officeDetailList
-            
-            guard let postTime = officeDetailListResponse?.time else { return }
-            if let index = postTime.firstIndex(of: "T") {
-                let dateSubstring = String(postTime[..<index])
-                nextViewController.time = dateSubstring
-            }
         }
         
         navigationController?.pushViewController(nextViewController, animated: true)

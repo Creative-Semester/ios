@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class ProfessorInfoViewController: UIViewController {
     
@@ -26,11 +27,11 @@ class ProfessorInfoViewController: UIViewController {
     private let professorImageView: UIImageView = {
         let imageView = UIImageView()
         
-        imageView.image = UIImage(named: "professor")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.backgroundColor = .gray
         imageView.layer.cornerRadius = 20
+        imageView.backgroundColor = .gray
         
         return imageView
     }()
@@ -182,6 +183,7 @@ class ProfessorInfoViewController: UIViewController {
         
         scrollView.addSubview(contentView)
         contentView.snp.makeConstraints{ make in
+            make.width.equalTo(UIScreen.main.bounds.width)
             make.edges.equalToSuperview()
         }
         
@@ -252,6 +254,9 @@ class ProfessorInfoViewController: UIViewController {
                 self.professorEmailLabel.text = "이메일: \(infoData.result.professorSimpleResponseDto.email)"
                 self.professorMajorLabel.text = "전 공: \(infoData.result.professorSimpleResponseDto.majorSub)"
                 self.professorRoomLabel.text = "연구실: \(infoData.result.professorSimpleResponseDto.lab)"
+                let url = URL(string: infoData.result.professorSimpleResponseDto.image)
+                self.professorImageView.kf.setImage(with: url)
+                
                 
                 self.professorLectureList = infoData.result.list
                 self.professorClassTableView.snp.updateConstraints { make in

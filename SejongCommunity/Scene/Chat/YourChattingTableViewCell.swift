@@ -32,6 +32,17 @@ class YourChattingTableViewCell: UITableViewCell {
         return label
     }()
     
+    private let dataLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        label.textColor = .darkGray
+        label.textAlignment = .left
+        label.numberOfLines = 0
+        
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -47,22 +58,27 @@ class YourChattingTableViewCell: UITableViewCell {
         chattingLabel.snp.makeConstraints{ make in
             make.top.equalTo(contentView.snp.top).offset(10)
             make.leading.equalTo(contentView.snp.leading).inset(12)
-            make.bottom.equalTo(contentView.snp.bottom).inset(10)
             make.width.lessThanOrEqualTo(300) // 원하는 가로 제한 크기 설정
+        }
+        
+        contentView.addSubview(dataLabel)
+        dataLabel.snp.makeConstraints{ make in
+            make.bottom.equalTo(contentView.snp.bottom).offset(-3)
+            make.leading.equalTo(contentView.snp.leading).offset(5)
         }
     }
     
-    func configure(with chatting: Chatting) {
-        chattingLabel.text = chatting.text
+    func configure(with chatting: ChatNoteInfo) {
+        chattingLabel.text = chatting.contents
+        dataLabel.text = chatting.sendTime
         
         contentView.addSubview(chattingBackView)
         chattingBackView.snp.updateConstraints { make in
             make.top.equalTo(contentView.snp.top).offset(3)
             make.leading.equalTo(chattingLabel.snp.leading).offset(-5)
             make.trailing.equalTo(chattingLabel.snp.trailing).offset(5)
-            make.bottom.equalTo(contentView.snp.bottom).offset(-3)
+            make.bottom.equalTo(dataLabel.snp.bottom).offset(-18)
         }
-        
     }
     
 }

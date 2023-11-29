@@ -12,13 +12,16 @@ struct ChatGetRoomResponse: Codable {
     let status: Int
     let code: String
     let message: String
-    let result: ChatGetRoomnfo
+    let result: ChatGetRoomInfo
 }
 
-struct ChatGetRoomnfo: Codable {
+struct ChatGetRoomInfo: Codable {
+    let noteInfos: [ChatNoteInfo]
+    let receiverStudentNum: String
     let roomId: Int
-    let senderStudentNum, receiverStudentNum: String
-
+    let senderStudentNum: String
 }
 
-
+struct ChatNoteInfo: Codable {
+    let contents, sendTime, senderStudentNum: String
+}
