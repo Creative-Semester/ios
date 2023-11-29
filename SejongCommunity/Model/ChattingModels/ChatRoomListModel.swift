@@ -22,7 +22,7 @@ struct ChatGetRoomListInfo: Codable {
 
 struct ChatRoomDetailInfoResponseList: Codable {
     let boardName: String
-    let noteInfos: ChatNoteInfo
+    let noteInfos: ChatNoteInfo?
     let receiverStudentNum: String
     let roomId: Int
     let senderStudentNum: String
