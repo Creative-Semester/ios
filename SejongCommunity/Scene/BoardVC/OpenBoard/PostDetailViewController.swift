@@ -519,13 +519,13 @@ extension PostDetailViewController {
             alertController.addAction(deleteAction)
         }else{ //게시글의 작성자와 현재 사용자가 다를때
             //쪽지 보내기
-            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
-                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
-                let chatRoomViewController = ChatRoomViewController()
-                chatRoomViewController.boardId = self.post.boardId
-                self.navigationController?.pushViewController(chatRoomViewController, animated: true)
-            }
-            alertController.addAction(SendMessageController)
+//            let SendMessageController = UIAlertAction(title: "쪽지 보내기", style: .default) { (_) in
+//                // '쪽지' 버튼을 눌렀을 대의 동작을 구현
+//                let chatRoomViewController = ChatRoomViewController()
+//                chatRoomViewController.boardId = self.post.boardId
+//                self.navigationController?.pushViewController(chatRoomViewController, animated: true)
+//            }
+//            alertController.addAction(SendMessageController)
             //신고
             let DeclarationController = UIAlertAction(title: "신고", style: .default) { (_) in
                 self.CommentDeclaration(commentId: comment.commentId) //댓글 신고 메서드
