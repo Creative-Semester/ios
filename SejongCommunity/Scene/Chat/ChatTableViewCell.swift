@@ -90,6 +90,6 @@ class ChatTableViewCell: UITableViewCell {
     
     func bindData(chatRoomList: ChatRoomDetailInfoResponseList) {
         chatTitleLabel.text = chatRoomList.boardName + "게시글의 채팅"
-        chatExpLabel.text = chatRoomList.noteInfos.contents
+        chatExpLabel.text = chatRoomList.noteInfos?.contents ?? ""
     }
 }
