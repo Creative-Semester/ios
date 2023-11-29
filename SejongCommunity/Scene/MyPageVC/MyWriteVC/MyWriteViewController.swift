@@ -134,17 +134,6 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
             //게시글의 상세 글 볼때 탭바 숨기기
             tabBarController?.tabBar.isHidden = true
             navigationController?.pushViewController(detailViewController, animated: true)
-//        if boardType == "Free" {
-//            let detailViewController = MyWriteDetailViewController(post: post)
-//            //게시글의 상세 글 볼때 탭바 숨기기
-//            tabBarController?.tabBar.isHidden = true
-//            navigationController?.pushViewController(detailViewController, animated: true)
-//        }else{
-//            let detailViewController = MyWriteVoteViewController(post: post)
-//            //게시글의 상세 글 볼때 탭바 숨기기
-//            tabBarController?.tabBar.isHidden = true
-//            navigationController?.pushViewController(detailViewController, animated: true)
-//        }
     }
     //MARK: - 서버에서 데이터 가져오기
     var isLoading = false  // 중복 로드 방지를 위한 플래그
@@ -211,8 +200,7 @@ class MyWriteViewController : UIViewController, UITableViewDelegate, UITableView
         let screenHeight = scrollView.frame.height
         
         // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
-        if offsetY + contentHeight >= screenHeight && currentPage < totalPage {
-            print("현재 페이지 : \(currentPage),\n전체 페이지 : \(totalPage)")
+        if offsetY + contentHeight >= screenHeight && (currentPage + 1) < totalPage {
             loadNextPage()
         }
     }

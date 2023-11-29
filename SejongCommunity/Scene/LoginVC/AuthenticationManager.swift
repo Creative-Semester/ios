@@ -72,13 +72,15 @@ class AuthenticationManager {
                     //리프레시 토큰이 살아있다면, 새로운 토큰을 받아서 저장해야함.
                     if (Message == "사용자를 찾지 못했습니다" && Expiration == "U001") {
                         //사용자를 찾지 못했을 경우 로그아웃 시켜야함.
+                        print("\(Message)")
                         isValid = false
                         AuthenticationManager.logoutUser()
                     }else if(Expiration == "L003"){ //리프레시 토큰이 죽었다면 로그아웃 시켜야함. 로그인이 false(L003)
                         isValid = false
+                        print("\(Message)")
                         AuthenticationManager.logoutUser()
                     }else if(Result == "reissue not required"){
-                        print("액세스 토큰이 유효합니다.")
+                        print("\(Message)")
                         isValid = true
                     }else if Expiration != "L003"{
                         if let result = responseJSON["result"] as? [String: Any],

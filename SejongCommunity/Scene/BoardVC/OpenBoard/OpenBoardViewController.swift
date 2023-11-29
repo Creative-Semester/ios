@@ -176,7 +176,8 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
 
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                if let result = json?["result"] as? [String: Any], let total = result["totalPages"] as? Int,
+                if let result = json?["result"] as? [String: Any],
+                   let total = result["totalPages"] as? Int,
                    let current = result["currentPage"] as? Int,
                    let boards = result["boards"] as? [[String: Any]] {
                     self.totalPage = total
@@ -216,8 +217,7 @@ class OpenBoardViewController : UIViewController, UITableViewDelegate, UITableVi
         let screenHeight = scrollView.frame.height
         
         // 스크롤이 맨 아래에 도달했을 때 새로운 페이지의 정보를 받습니다.
-        if offsetY + contentHeight >= screenHeight && currentPage < totalPage {
-            print("현재 페이지 : \(currentPage),\n전체 페이지 : \(totalPage)")
+        if offsetY + contentHeight >= screenHeight && (currentPage + 1) < totalPage {
             loadNextPage()
         }
     }
