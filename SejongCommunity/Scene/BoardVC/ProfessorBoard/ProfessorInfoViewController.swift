@@ -254,7 +254,7 @@ class ProfessorInfoViewController: UIViewController {
                 self.professorEmailLabel.text = "이메일: \(infoData.result.professorSimpleResponseDto.email)"
                 self.professorMajorLabel.text = "전 공: \(infoData.result.professorSimpleResponseDto.majorSub)"
                 self.professorRoomLabel.text = "연구실: \(infoData.result.professorSimpleResponseDto.lab)"
-                let url = URL(string: infoData.result.professorSimpleResponseDto.image)
+                let url = URL(string: infoData.result.professorSimpleResponseDto.file.imageUrl)
                 self.professorImageView.kf.setImage(with: url)
                 
                 

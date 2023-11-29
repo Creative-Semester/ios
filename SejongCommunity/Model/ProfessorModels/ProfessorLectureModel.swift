@@ -26,6 +26,7 @@ struct ProfessorLecture: Codable {
 }
 
 struct ProfessorLectureInfo: Codable {
-    let name, image, location, phoneNum: String
+    let name, location, phoneNum: String
     let email, majorSub, lab: String
+    let file: ImageFile
 }
