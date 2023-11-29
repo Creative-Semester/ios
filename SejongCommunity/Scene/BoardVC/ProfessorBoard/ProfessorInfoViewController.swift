@@ -183,6 +183,7 @@ class ProfessorInfoViewController: UIViewController {
         
         scrollView.addSubview(contentView)
         contentView.snp.makeConstraints{ make in
+            make.width.equalTo(UIScreen.main.bounds.width)
             make.edges.equalToSuperview()
         }
         
